@@ -1,0 +1,96 @@
+plugins {
+    id 'io.spring.dependency-management' version '1.0.4.RELEASE'
+    id 'com.github.ben-manes.versions' version '0.17.0'
+    id 'com.gorylenko.gradle-git-properties' version '1.4.21'
+    id 'java'
+}
+
+ext {
+    // Project constants
+    github_org = 'Discord4J'
+    project_name = 'stores'
+    artifact_group = 'com.github.discord4j'
+    project_version = '3.0.0-SNAPSHOT'
+    project_description = 'Java interface for the Discord API'
+    project_jdk = '1.8'
+
+    // Dependencies
+    reactor_bom_version = 'Bismuth-SR7'
+    jackson_version = '2.9.4'
+    jsr305_version = '3.0.2'
+    junit_version = '4.12'
+    logback_version = '1.3.0-alpha4'
+    autoservice_version = '1.0-rc4'
+
+    defaultBlank = { closure ->
+        try {
+            closure()
+        } catch (MissingPropertyException e) {
+            ''
+        }
+    }
+}
+
+allprojects {
+
+    group = artifact_group
+    version = project_version
+
+    apply plugin: 'java'
+    apply plugin: 'maven-publish'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'com.gorylenko.gradle-git-properties'
+
+    sourceCompatibility = project_jdk
+    targetCompatibility = project_jdk
+
+    dependencyManagement {
+        imports {
+            mavenBom "io.projectreactor:reactor-bom:$reactor_bom_version"
+        }
+    }
+
+    repositories {
+        jcenter()
+        mavenCentral()
+        maven { url "https://repo.spring.io/snapshot" }
+        maven { url "https://repo.spring.io/milestone" }
+        maven { url 'https://jitpack.io' }
+    }
+
+    jar {
+        baseName = 'stores-' + baseName
+    }
+
+    javadoc {
+        options.encoding = 'UTF-8'
+        options.tags = [
+                "apiNote:a:API Note:",
+                "implSpec:a:Implementation Requirements:",
+                "implNote:a:Implementation Note:"
+        ]
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        baseName = 'stores-' + baseName
+        classifier = 'javadoc'
+        from 'build/docs/javadoc'
+    }
+
+    task sourcesJar(type: Jar) {
+        baseName = 'stores-' + baseName
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    artifacts {
+        archives jar
+        archives javadocJar
+        archives sourcesJar
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.6'
+    distributionUrl = 'https://services.gradle.org/distributions/gradle-4.6-all.zip'
+}
