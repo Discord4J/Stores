@@ -1,14 +1,11 @@
 dependencies {
-    compile project(':common')
-    compile 'io.lettuce:lettuce-core:5.0.2.RELEASE'
-
-    testCompile 'it.ozimov:embedded-redis:0.7.0'
+    compile "commons-codec:commons-codec:$commons_codec_version"
 }
 
 publishing {
     publications {
         common(MavenPublication) {
-            artifactId 'stores-redis'
+            artifactId 'stores-common'
 
             from components.java
 

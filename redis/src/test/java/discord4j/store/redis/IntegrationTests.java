@@ -25,6 +25,7 @@ import reactor.test.StepVerifier;
 import redis.embedded.RedisServer;
 
 import java.io.IOException;
+import java.util.Random;
 
 public class IntegrationTests {
 
@@ -43,10 +44,11 @@ public class IntegrationTests {
     public void testSaveAndImmediatelyFind() {
         LongObjStore<SimpleBean> store = service.provideLongObjStore(SimpleBean.class);
         SimpleBean first = new SimpleBean();
-        first.setId(1);
+        long id = new Random().nextLong();
+        first.setId(id);
         first.setName("Number One");
-        Mono<SimpleBean> saveScenario = store.saveWithLong(1, first)
-                .then(Mono.defer(() -> store.find(1)));
+        Mono<SimpleBean> saveScenario = store.saveWithLong(id, first)
+                .then(Mono.defer(() -> store.find(id)));
         // TODO add more scenarios
         StepVerifier.create(saveScenario)
                 .expectNextMatches(bean -> "Number One".equals(bean.getName()))
