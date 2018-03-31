@@ -1,0 +1,16 @@
+dependencies {
+    compile 'net.openhft:chronicle-map:3.14.5'
+}
+
+publishing {
+    publications {
+        common(MavenPublication) {
+            artifactId 'stores-chronicle'
+
+            from components.java
+
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
+}
