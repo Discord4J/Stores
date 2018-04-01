@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
 /**
  * Extend this class and provide your {@link discord4j.store.service.StoreService} implementation.
  *
- * Running all the tests will ensure that your store implements all the operations as expected in.
+ * Running all the tests will ensure that your store implements all the operations expected.
  *
  * You should probably implement your own tests on top of this to ensure your store's unique features work correctly.
  */

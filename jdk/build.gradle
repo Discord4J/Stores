@@ -1,12 +1,11 @@
 dependencies {
     compile project(':common')
-    compile 'net.openhft:chronicle-map:3.14.5'
 }
 
 publishing {
     publications {
         common(MavenPublication) {
-            artifactId 'stores-chronicle'
+            artifactId 'stores-jdk'
 
             from components.java
 
