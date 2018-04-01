@@ -1,0 +1,16 @@
+dependencies {
+    compile "junit:junit:$junit_version"
+}
+
+publishing {
+    publications {
+        common(MavenPublication) {
+            artifactId 'stores-tck'
+
+            from components.java
+
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
+}
