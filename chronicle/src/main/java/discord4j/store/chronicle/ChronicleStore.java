@@ -79,11 +79,6 @@ public class ChronicleStore<K extends Comparable<K>, V extends Serializable> imp
     }
 
     @Override
-    public Flux<V> findAll() {
-        return values();
-    }
-
-    @Override
     public Flux<V> findAll(Iterable<K> ids) {
         return Flux.defer(() -> Flux.fromIterable(ids)).map(map::get);
     }

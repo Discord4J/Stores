@@ -73,11 +73,6 @@ public class LongChronicleStore<V extends Serializable> implements LongObjStore<
     }
 
     @Override
-    public Flux<V> findAll() {
-        return values();
-    }
-
-    @Override
     public Flux<V> findInRange(long start, long end) {
         return keys().filter(new WithinRangePredicate<>(start, end)).map(LongChronicleStore::toValue).map(map::get);
     }

@@ -100,11 +100,6 @@ public class LettuceStore<K extends Comparable<K>, V extends Serializable> imple
     }
 
     @Override
-    public Flux<V> findAll() {
-        return Flux.defer(() -> commands.hvals(storeName).map(LettuceStore::cast));
-    }
-
-    @Override
     public Flux<V> findAll(Iterable<K> ids) {
         return Flux.defer(() -> Flux.fromIterable(ids)).map(this::find).map(LettuceStore::cast);
     }
