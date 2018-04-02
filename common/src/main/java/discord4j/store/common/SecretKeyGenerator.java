@@ -17,33 +17,21 @@
 
 package discord4j.store.common;
 
-import org.apache.commons.codec.binary.Base64;
-
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.security.*;
+import java.security.NoSuchAlgorithmException;
 
-public class PublicPrivateKeyGenerator {
+public class SecretKeyGenerator {
 
     public static void main(String[] args) throws NoSuchAlgorithmException, IOException {
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-        keyGen.initialize(1024);
-        KeyPair keyPair = keyGen.genKeyPair();
-        PrivateKey privateKey = keyPair.getPrivate();
-        PublicKey publicKey = keyPair.getPublic();
-
-        System.out.println("Generating key/value pair using RSA algorithm");
-
-        byte[] privateKeyBytes = privateKey.getEncoded();
-        byte[] publicKeyBytes = publicKey.getEncoded();
-
-        try (FileOutputStream fos = new FileOutputStream("private.key")) {
-            fos.write(Base64.encodeBase64(privateKeyBytes));
-        }
-
-        try (FileOutputStream fos = new FileOutputStream("public.key")) {
-            fos.write(Base64.encodeBase64(publicKeyBytes));
+        KeyGenerator kgen = KeyGenerator.getInstance("AES");
+        SecretKey skey = kgen.generateKey();
+        String keyFile = "secret.key";
+        try (FileOutputStream out = new FileOutputStream(keyFile)) {
+            byte[] keyb = skey.getEncoded();
+            out.write(keyb);
         }
     }
-
 }

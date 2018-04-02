@@ -17,42 +17,32 @@
 
 package discord4j.store.redis;
 
-import discord4j.store.primitive.LongObjStore;
+import discord4j.store.service.StoreService;
+import discord4j.store.tck.StoreVerification;
 import org.junit.Before;
-import org.junit.Test;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
+import org.junit.BeforeClass;
 import redis.embedded.RedisServer;
 
 import java.io.IOException;
-import java.util.Random;
 
-public class IntegrationTests {
+public class IntegrationTests extends StoreVerification {
 
-    private RedisServer redisServer;
-    private LettuceStoreService service;
+    private RedisStoreService service;
 
-    @Before
-    public void setUp() throws IOException {
-        redisServer = new RedisServer(32768);
+    @BeforeClass
+    public static void setUpTests() throws IOException {
+        RedisServer redisServer = new RedisServer(6379);
         redisServer.start();
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> redisServer.stop()));
-        service = new LettuceStoreService();
+        Runtime.getRuntime().addShutdownHook(new Thread(redisServer::stop));
     }
 
-    @Test
-    public void testSaveAndImmediatelyFind() {
-        LongObjStore<SimpleBean> store = service.provideLongObjStore(SimpleBean.class);
-        SimpleBean first = new SimpleBean();
-        long id = new Random().nextLong();
-        first.setId(id);
-        first.setName("Number One");
-        Mono<SimpleBean> saveScenario = store.saveWithLong(id, first)
-                .then(Mono.defer(() -> store.find(id)));
-        // TODO add more scenarios
-        StepVerifier.create(saveScenario)
-                .expectNextMatches(bean -> "Number One".equals(bean.getName()))
-                .verifyComplete();
-        // TODO more tests
+    @Before
+    public void setUp() {
+        service = new RedisStoreService();
+    }
+
+    @Override
+    public StoreService getStoreService() {
+        return service;
     }
 }

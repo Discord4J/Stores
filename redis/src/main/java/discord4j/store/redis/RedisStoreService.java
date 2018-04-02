@@ -27,11 +27,11 @@ import io.lettuce.core.RedisClient;
 import java.io.Serializable;
 
 @AutoService(StoreService.class)
-public class LettuceStoreService implements StoreService {
+public class RedisStoreService implements StoreService {
 
     private RedisClient client;
 
-    public LettuceStoreService() {
+    public RedisStoreService() {
         String url = System.getenv("D4J_REDIS_URL");
         String redisUri = url != null ? url : "redis://localhost";
         this.client = RedisClient.create(redisUri);
@@ -46,7 +46,7 @@ public class LettuceStoreService implements StoreService {
     @Override
     public <K extends Comparable<K>, V extends Serializable> Store<K, V> provideGenericStore(Class<K> keyClass,
             Class<V> valueClass) {
-        return new LettuceStore<>(client, valueClass.getSimpleName());
+        return new RedisStore<>(client, valueClass.getSimpleName());
     }
 
     @Override

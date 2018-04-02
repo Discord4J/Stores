@@ -3,6 +3,7 @@ dependencies {
     compile 'io.lettuce:lettuce-core:5.0.2.RELEASE'
 
     testCompile 'it.ozimov:embedded-redis:0.7.0'
+    testCompile project(':tck')
 }
 
 publishing {

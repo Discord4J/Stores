@@ -18,7 +18,7 @@
 package discord4j.store.redis;
 
 import discord4j.store.Store;
-import discord4j.store.common.RSA;
+import discord4j.store.common.AES;
 import discord4j.store.util.WithinRangePredicate;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.reactive.RedisReactiveCommands;
@@ -32,28 +32,28 @@ import reactor.util.function.Tuple2;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.security.GeneralSecurityException;
 import java.util.Map;
 
-public class LettuceStore<K extends Comparable<K>, V extends Serializable> implements Store<K, V> {
+public class RedisStore<K extends Comparable<K>, V extends Serializable> implements Store<K, V> {
 
-    private static final Logger log = Loggers.getLogger(LettuceStore.class);
+    private static final Logger log = Loggers.getLogger(RedisStore.class);
 
     private final RedisReactiveCommands<Object, Object> commands;
     private final String storeName;
 
-    public LettuceStore(RedisClient client, String storeName) {
+    public RedisStore(RedisClient client, String storeName) {
         String disableCrypto = System.getenv("D4J_CRYPTO_DISABLE");
         RedisCodec<Object, Object> codec = new SerializedObjectCodec();
         if (!Boolean.parseBoolean(disableCrypto)) {
-            String privateKeyPath = System.getenv("D4J_CRYPTO_PRIVATE_KEY_PATH");
-            String publicKeyPath = System.getenv("D4J_CRYPTO_PUBLIC_KEY_PATH");
-            try {
-                codec = new SecureSerializedObjectCodec(
-                        RSA.getPrivateKey(privateKeyPath),
-                        RSA.getPublicKey(publicKeyPath));
-            } catch (IOException | GeneralSecurityException e) {
-                log.warn("Unable to instantiate secure keys", e);
+            String secretKeyPath = System.getenv("D4J_CRYPTO_SECRET_KEY_PATH");
+            if (secretKeyPath != null) {
+                try {
+                    codec = new SecureSerializedObjectCodec(AES.getSecretKey(secretKeyPath));
+                } catch (IOException e) {
+                    log.warn("Unable to instantiate secure keys", e);
+                }
+            } else {
+                log.warn("Set your secret key path using D4J_CRYPTO_SECRET_KEY_PATH environment variable.");
             }
         }
         this.commands = client.connect(codec).reactive();
@@ -86,7 +86,7 @@ public class LettuceStore<K extends Comparable<K>, V extends Serializable> imple
 
     @Override
     public Mono<V> find(K id) {
-        return Mono.defer(() -> commands.hget(storeName, createKey(id)).map(LettuceStore::cast));
+        return Mono.defer(() -> commands.hget(storeName, createKey(id)).map(RedisStore::cast));
     }
 
     @Override
@@ -101,12 +101,12 @@ public class LettuceStore<K extends Comparable<K>, V extends Serializable> imple
 
     @Override
     public Flux<V> findAll(Iterable<K> ids) {
-        return Flux.defer(() -> Flux.fromIterable(ids)).map(this::find).map(LettuceStore::cast);
+        return Flux.defer(() -> Flux.fromIterable(ids)).map(this::find).map(RedisStore::cast);
     }
 
     @Override
     public Flux<V> findAll(Publisher<K> ids) {
-        return Flux.defer(() -> Flux.from(ids)).map(this::find).map(LettuceStore::cast);
+        return Flux.defer(() -> Flux.from(ids)).map(this::find).map(RedisStore::cast);
     }
 
     @Override
@@ -117,7 +117,7 @@ public class LettuceStore<K extends Comparable<K>, V extends Serializable> imple
                 .flatMap(map -> Flux.fromIterable(map.entrySet()))
                 .filter(entry -> predicate.test((K) entry.getKey()))
                 .map(Map.Entry::getValue)
-                .map(LettuceStore::cast);
+                .map(RedisStore::cast);
     }
 
     @Override
@@ -174,11 +174,11 @@ public class LettuceStore<K extends Comparable<K>, V extends Serializable> imple
 
     @Override
     public Flux<K> keys() {
-        return Flux.defer(() -> commands.hkeys(storeName)).map(LettuceStore::cast);
+        return Flux.defer(() -> commands.hkeys(storeName)).map(RedisStore::cast);
     }
 
     @Override
     public Flux<V> values() {
-        return Flux.defer(() -> commands.hvals(storeName)).map(LettuceStore::cast);
+        return Flux.defer(() -> commands.hvals(storeName)).map(RedisStore::cast);
     }
 }

@@ -17,27 +17,24 @@
 
 package discord4j.store.redis;
 
-import discord4j.store.common.RSA;
+import discord4j.store.common.AES;
 import io.lettuce.core.codec.RedisCodec;
 import reactor.util.Logger;
 import reactor.util.Loggers;
 
+import javax.crypto.SecretKey;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
 
 public class SecureSerializedObjectCodec implements RedisCodec<Object, Object> {
 
     private static final Logger log = Loggers.getLogger(SecureSerializedObjectCodec.class);
 
-    private final PrivateKey privateKey;
-    private final PublicKey publicKey;
+    private final SecretKey secretKey;
 
-    public SecureSerializedObjectCodec(PrivateKey privateKey, PublicKey publicKey) {
-        this.privateKey = privateKey;
-        this.publicKey = publicKey;
+    public SecureSerializedObjectCodec(SecretKey secretKey) {
+        this.secretKey = secretKey;
     }
 
     @Override
@@ -58,7 +55,7 @@ public class SecureSerializedObjectCodec implements RedisCodec<Object, Object> {
         try {
             byte[] array = new byte[bytes.remaining()];
             bytes.get(array);
-            ObjectInputStream is = new ObjectInputStream(new ByteArrayInputStream(RSA.decrypt(array, privateKey)));
+            ObjectInputStream is = new ObjectInputStream(new ByteArrayInputStream(AES.decrypt(array, secretKey)));
             return is.readObject();
         } catch (Exception e) {
             log.warn("Could not decode value", e);
@@ -85,7 +82,7 @@ public class SecureSerializedObjectCodec implements RedisCodec<Object, Object> {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             ObjectOutputStream os = new ObjectOutputStream(bytes);
             os.writeObject(value);
-            return ByteBuffer.wrap(RSA.encrypt(bytes.toByteArray(), publicKey));
+            return ByteBuffer.wrap(AES.encrypt(bytes.toByteArray(), secretKey));
         } catch (IOException | GeneralSecurityException e) {
             log.warn("Could not encode value", e);
             return null;

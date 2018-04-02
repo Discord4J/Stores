@@ -1,5 +1,8 @@
 dependencies {
+    compile project(':common')
     compile "junit:junit:$junit_version"
+    compile 'io.projectreactor:reactor-test'
+    compile "org.apache.commons:commons-lang3:3.7"
 }
 
 publishing {
