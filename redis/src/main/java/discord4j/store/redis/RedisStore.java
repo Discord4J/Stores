@@ -75,11 +75,6 @@ public class RedisStore<K extends Comparable<K>, V extends Serializable> impleme
     }
 
     @Override
-    public Mono<Void> save(Iterable<Tuple2<K, V>> entries) {
-        return Flux.fromIterable(entries).flatMap(tuple -> save(tuple.getT1(), tuple.getT2())).then();
-    }
-
-    @Override
     public Mono<Void> save(Publisher<Tuple2<K, V>> entryStream) {
         return Flux.from(entryStream).flatMap(tuple -> save(tuple.getT1(), tuple.getT2())).then();
     }
@@ -87,26 +82,6 @@ public class RedisStore<K extends Comparable<K>, V extends Serializable> impleme
     @Override
     public Mono<V> find(K id) {
         return Mono.defer(() -> commands.hget(storeName, createKey(id)).map(RedisStore::cast));
-    }
-
-    @Override
-    public Mono<Boolean> exists(K id) {
-        return find(id).map(v -> true).switchIfEmpty(Mono.just(false));
-    }
-
-    @Override
-    public Mono<Boolean> exists(Publisher<K> ids) {
-        return Flux.from(ids).flatMap(this::find).all(v -> true);
-    }
-
-    @Override
-    public Flux<V> findAll(Iterable<K> ids) {
-        return Flux.defer(() -> Flux.fromIterable(ids)).map(this::find).map(RedisStore::cast);
-    }
-
-    @Override
-    public Flux<V> findAll(Publisher<K> ids) {
-        return Flux.defer(() -> Flux.from(ids)).map(this::find).map(RedisStore::cast);
     }
 
     @Override
@@ -136,18 +111,6 @@ public class RedisStore<K extends Comparable<K>, V extends Serializable> impleme
     }
 
     @Override
-    public Mono<Void> delete(Tuple2<K, V> entry) {
-        return Mono.defer(() -> find(entry.getT1())
-                .flatMap(v -> {
-                    if (v.equals(entry.getT2())) {
-                        return Mono.defer(() -> commands.hdel(storeName, createKey(entry.getT1()))).then();
-                    } else {
-                        return Mono.empty();
-                    }
-                }));
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public Mono<Void> deleteInRange(K start, K end) {
         WithinRangePredicate<K> predicate = new WithinRangePredicate<>(start, end);
@@ -155,16 +118,6 @@ public class RedisStore<K extends Comparable<K>, V extends Serializable> impleme
                 .filter(key -> predicate.test((K) key))
                 .flatMap(key -> Mono.defer(() -> commands.hdel(storeName, key).then()))
                 .then();
-    }
-
-    @Override
-    public Mono<Void> deleteAll(Iterable<Tuple2<K, V>> entries) {
-        return Flux.fromIterable(entries).flatMap(this::delete).then();
-    }
-
-    @Override
-    public Mono<Void> deleteAll(Publisher<Tuple2<K, V>> entries) {
-        return Flux.from(entries).flatMap(this::delete).then();
     }
 
     @Override
@@ -180,5 +133,10 @@ public class RedisStore<K extends Comparable<K>, V extends Serializable> impleme
     @Override
     public Flux<V> values() {
         return Flux.defer(() -> commands.hvals(storeName)).map(RedisStore::cast);
+    }
+
+    @Override
+    public Mono<Void> invalidate() {
+        return deleteAll();
     }
 }

@@ -22,7 +22,9 @@ import discord4j.store.Store;
 import discord4j.store.primitive.ForwardingStore;
 import discord4j.store.primitive.LongObjStore;
 import discord4j.store.service.StoreService;
+import discord4j.store.util.StoreContext;
 import io.lettuce.core.RedisClient;
+import reactor.core.publisher.Mono;
 
 import java.io.Serializable;
 
@@ -35,7 +37,6 @@ public class RedisStoreService implements StoreService {
         String url = System.getenv("D4J_REDIS_URL");
         String redisUri = url != null ? url : "redis://localhost";
         this.client = RedisClient.create(redisUri);
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> client.shutdown()));
     }
 
     @Override
@@ -57,5 +58,15 @@ public class RedisStoreService implements StoreService {
     @Override
     public <V extends Serializable> LongObjStore<V> provideLongObjStore(Class<V> valueClass) {
         return new ForwardingStore<>(provideGenericStore(Long.class, valueClass));
+    }
+
+    @Override
+    public Mono<Void> init(StoreContext context) {
+        return Mono.empty();
+    }
+
+    @Override
+    public Mono<Void> dispose() {
+        return Mono.defer(() -> Mono.fromFuture(client.shutdownAsync()));
     }
 }
