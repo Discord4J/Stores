@@ -1,16 +1,3 @@
 dependencies {
     compile "commons-codec:commons-codec:$commons_codec_version"
 }
-
-publishing {
-    publications {
-        common(MavenPublication) {
-            artifactId 'stores-common'
-
-            from components.java
-
-            artifact sourcesJar
-            artifact javadocJar
-        }
-    }
-}

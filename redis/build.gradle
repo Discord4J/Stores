@@ -5,16 +5,3 @@ dependencies {
     testCompile 'it.ozimov:embedded-redis:0.7.0'
     testCompile project(':tck')
 }
-
-publishing {
-    publications {
-        common(MavenPublication) {
-            artifactId 'stores-redis'
-
-            from components.java
-
-            artifact sourcesJar
-            artifact javadocJar
-        }
-    }
-}

@@ -1,16 +1,3 @@
 dependencies {
     compile project(':common')
 }
-
-publishing {
-    publications {
-        common(MavenPublication) {
-            artifactId 'stores-jdk'
-
-            from components.java
-
-            artifact sourcesJar
-            artifact javadocJar
-        }
-    }
-}
