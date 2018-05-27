@@ -58,38 +58,4 @@ public abstract class StoreVerification {
                     .verifyComplete();
         }
     }
-
-    @Test
-    public void testIterableTupleSave() {
-        if (getStoreService().hasGenericStores()) {
-            Store<String, SampleBean> store = getStoreService().provideGenericStore(String.class, SampleBean.class);
-            List<Tuple2<String, SampleBean>> tuples = new ArrayList<>();
-            for (int i = 0; i < 5; i++) {
-                SampleBean bean = new SampleBean();
-                String key = String.valueOf(bean.getId());
-                tuples.add(Tuples.of(key, bean));
-            }
-            Flux<SampleBean> saveScenario = store.save(tuples)
-                    .thenMany(Flux.fromIterable(tuples)
-                            .flatMap(tuple -> store.find(tuple.getT1())));
-            StepVerifier.create(saveScenario)
-                    .expectNextSequence(tuples.stream().map(Tuple2::getT2).collect(Collectors.toList()))
-                    .verifyComplete();
-        }
-        if (getStoreService().hasLongObjStores()) {
-            LongObjStore<SampleBean> store = getStoreService().provideLongObjStore(SampleBean.class);
-            List<LongObjTuple2<SampleBean>> tuples = new ArrayList<>();
-            for (int i = 0; i < 5; i++) {
-                SampleBean bean = new SampleBean();
-                long key = bean.getId();
-                tuples.add(LongObjTuple2.of(key, bean));
-            }
-            Flux<SampleBean> saveScenario = store.saveWithLong(tuples)
-                    .thenMany(Flux.fromIterable(tuples)
-                            .flatMap(tuple -> store.find(tuple.getT1())));
-            StepVerifier.create(saveScenario)
-                    .expectNextSequence(tuples.stream().map(LongObjTuple2::getT2).collect(Collectors.toList()))
-                    .verifyComplete();
-        }
-    }
 }
