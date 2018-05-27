@@ -5,11 +5,15 @@ import discord4j.store.Store;
 import discord4j.store.primitive.ForwardingStore;
 import discord4j.store.primitive.LongObjStore;
 import discord4j.store.service.StoreService;
+import discord4j.store.util.StoreContext;
+import reactor.core.publisher.Mono;
 
 import java.io.Serializable;
 
 @AutoService(StoreService.class)
 public class JdkStoreService implements StoreService {
+
+    volatile Class<?> messageClass;
 
     @Override
     public boolean hasGenericStores() {
@@ -30,5 +34,16 @@ public class JdkStoreService implements StoreService {
     @Override
     public <V extends Serializable> LongObjStore<V> provideLongObjStore(Class<V> valueClass) {
         return new ForwardingStore<>(provideGenericStore(Long.class, valueClass));
+    }
+
+    @Override
+    public Mono<Void> init(StoreContext context) {
+        messageClass = context.getMessageClass();
+        return Mono.empty();
+    }
+
+    @Override
+    public Mono<Void> dispose() {
+        return Mono.empty();
     }
 }
