@@ -54,11 +54,6 @@ public class ChronicleStore<K extends Comparable<K>, V extends Serializable> imp
     }
 
     @Override
-    public Mono<Void> save(Iterable<Tuple2<K, V>> entries) {
-        return Flux.fromIterable(entries).flatMap(tuple -> save(tuple.getT1(), tuple.getT2())).then();
-    }
-
-    @Override
     public Mono<Void> save(Publisher<Tuple2<K, V>> entryStream) {
         return Flux.from(entryStream).flatMap(tuple -> save(tuple.getT1(), tuple.getT2())).then();
     }
@@ -66,26 +61,6 @@ public class ChronicleStore<K extends Comparable<K>, V extends Serializable> imp
     @Override
     public Mono<V> find(K id) {
         return Mono.just(id).map(map::get);
-    }
-
-    @Override
-    public Mono<Boolean> exists(K id) {
-        return Mono.just(id).map(map::containsKey);
-    }
-
-    @Override
-    public Mono<Boolean> exists(Publisher<K> ids) {
-        return Flux.from(ids).all(map::containsKey);
-    }
-
-    @Override
-    public Flux<V> findAll(Iterable<K> ids) {
-        return Flux.defer(() -> Flux.fromIterable(ids)).map(map::get);
-    }
-
-    @Override
-    public Flux<V> findAll(Publisher<K> ids) {
-        return Flux.from(ids).map(map::get);
     }
 
     @Override
@@ -109,26 +84,8 @@ public class ChronicleStore<K extends Comparable<K>, V extends Serializable> imp
     }
 
     @Override
-    public Mono<Void> delete(Tuple2<K, V> entry) {
-        return Mono.defer(() -> {
-            map.remove(entry.getT1(), entry.getT2());
-            return Mono.empty();
-        });
-    }
-
-    @Override
     public Mono<Void> deleteInRange(K start, K end) {
         return keys().filter(new WithinRangePredicate<>(start, end)).doOnNext(map::remove).then();
-    }
-
-    @Override
-    public Mono<Void> deleteAll(Iterable<Tuple2<K, V>> entries) {
-        return Flux.fromIterable(entries).flatMap(this::delete).then();
-    }
-
-    @Override
-    public Mono<Void> deleteAll(Publisher<Tuple2<K, V>> entries) {
-        return Flux.from(entries).flatMap(this::delete).then();
     }
 
     @Override
@@ -144,5 +101,14 @@ public class ChronicleStore<K extends Comparable<K>, V extends Serializable> imp
     @Override
     public Flux<V> values() {
         return Flux.fromIterable(map.values());
+    }
+
+    @Override
+    public Mono<Void> invalidate() {
+        return Mono.fromRunnable(map::clear);
+    }
+
+    public void close() {
+        map.close();
     }
 }

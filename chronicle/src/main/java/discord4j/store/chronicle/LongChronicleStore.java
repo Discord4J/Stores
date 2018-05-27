@@ -48,11 +48,6 @@ public class LongChronicleStore<V extends Serializable> implements LongObjStore<
     }
 
     @Override
-    public Mono<Void> saveWithLong(Iterable<LongObjTuple2<V>> entries) {
-        return Flux.fromIterable(entries).map(entry -> saveWithLong(entry.getT1(), entry.getT2())).then();
-    }
-
-    @Override
     public Mono<Void> saveWithLong(Publisher<LongObjTuple2<V>> entryStream) {
         return Flux.from(entryStream).map(entry -> saveWithLong(entry.getT1(), entry.getT2())).then();
     }
@@ -63,28 +58,8 @@ public class LongChronicleStore<V extends Serializable> implements LongObjStore<
     }
 
     @Override
-    public Mono<Boolean> exists(long id) {
-        return Mono.just(toValue(id)).map(map::containsKey);
-    }
-
-    @Override
-    public Mono<Boolean> exists(Publisher<Long> ids) {
-        return Flux.from(ids).map(LongChronicleStore::toValue).all(map::containsKey);
-    }
-
-    @Override
     public Flux<V> findInRange(long start, long end) {
         return keys().filter(new WithinRangePredicate<>(start, end)).map(LongChronicleStore::toValue).map(map::get);
-    }
-
-    @Override
-    public Flux<V> findAll(Iterable<Long> ids) {
-        return Flux.fromIterable(ids).map(LongChronicleStore::toValue).map(map::get);
-    }
-
-    @Override
-    public Flux<V> findAll(Publisher<Long> ids) {
-        return Flux.from(ids).map(LongChronicleStore::toValue).map(map::get);
     }
 
     @Override
@@ -118,25 +93,16 @@ public class LongChronicleStore<V extends Serializable> implements LongObjStore<
     }
 
     @Override
-    public Mono<Void> delete(LongObjTuple2<V> entry) {
-        return Mono.defer(() -> {
-            map.remove(toValue(entry.getT1()), entry.getT2());
-            return Mono.empty();
-        });
-    }
-
-    @Override
     public Mono<Void> deleteInRange(long start, long end) {
         return keys().filter(new WithinRangePredicate<>(start, end)).map(LongChronicleStore::toValue).doOnNext(map::remove).then();
     }
 
     @Override
-    public Mono<Void> deleteAllWithLongs(Iterable<LongObjTuple2<V>> entries) {
-        return Flux.fromIterable(entries).doOnNext(this::delete).then();
+    public Mono<Void> invalidate() {
+        return Mono.fromRunnable(map::clear);
     }
 
-    @Override
-    public Mono<Void> deleteAllWithLongs(Publisher<LongObjTuple2<V>> entries) {
-        return Flux.from(entries).doOnNext(this::delete).then();
+    public void close() {
+        map.close();
     }
 }

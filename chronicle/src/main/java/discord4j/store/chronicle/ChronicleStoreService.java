@@ -4,15 +4,24 @@ import com.google.auto.service.AutoService;
 import discord4j.store.Store;
 import discord4j.store.primitive.LongObjStore;
 import discord4j.store.service.StoreService;
+import discord4j.store.util.StoreContext;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @AutoService(StoreService.class)
 public class ChronicleStoreService implements StoreService {
 
+    final List<ChronicleStore<?, ?>> storeTracker = new CopyOnWriteArrayList<>();
+    final List<LongChronicleStore<?>> longStoreTracker = new CopyOnWriteArrayList<>();
+
     boolean shouldPersist = Boolean.parseBoolean(System.getenv("Persist-Store"));
+    volatile Class<?> messageClass;
 
     @Override
     public boolean hasGenericStores() {
@@ -23,7 +32,9 @@ public class ChronicleStoreService implements StoreService {
     public <K extends Comparable<K>, V extends Serializable> Store<K, V> provideGenericStore(Class<K> keyClass,
                                                                                              Class<V> valueClass) {
         try {
-            return new ChronicleStore<>(keyClass, valueClass, shouldPersist);
+            ChronicleStore<K, V> store = new ChronicleStore<>(keyClass, valueClass, shouldPersist && !valueClass.equals(messageClass));
+            storeTracker.add(store);
+            return store;
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException | IOException e) {
            throw new RuntimeException(e);
         }
@@ -37,9 +48,26 @@ public class ChronicleStoreService implements StoreService {
     @Override
     public <V extends Serializable> LongObjStore<V> provideLongObjStore(Class<V> valueClass) {
         try {
-            return new LongChronicleStore<>(valueClass, shouldPersist);
+            LongChronicleStore<V> store = new LongChronicleStore<>(valueClass, shouldPersist && !valueClass.equals(messageClass));
+            longStoreTracker.add(store);
+            return store;
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException | IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public Mono<Void> init(StoreContext context) {
+        messageClass = context.getMessageClass();
+        return Mono.empty();
+    }
+
+    @Override
+    public Mono<Void> dispose() {
+        return Flux.fromIterable(storeTracker)
+                .doOnNext(ChronicleStore::close)
+                .thenMany(Flux.fromIterable(longStoreTracker))
+                .doOnNext(LongChronicleStore::close)
+                .then();
     }
 }
