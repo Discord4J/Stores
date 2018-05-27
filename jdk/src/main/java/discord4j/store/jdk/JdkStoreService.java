@@ -23,7 +23,7 @@ public class JdkStoreService implements StoreService {
     @Override
     public <K extends Comparable<K>, V extends Serializable> Store<K, V> provideGenericStore(Class<K> keyClass,
                                                                                              Class<V> valueClass) {
-        return new JdkStore<>();
+        return new JdkStore<>(!valueClass.equals(messageClass));
     }
 
     @Override

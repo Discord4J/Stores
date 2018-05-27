@@ -9,12 +9,26 @@ import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class JdkStore<K extends Comparable<K>, V extends Serializable> implements Store<K, V> {
 
-    private final Map<K, V> map = new ConcurrentHashMap<>();
+    private final Map<K, V> map;
+
+    public JdkStore(Map<K, V> map) {
+        this.map = map;
+    }
+
+    public JdkStore(boolean persist) {
+        if (persist) {
+            this.map = new ConcurrentHashMap<>();
+        } else {
+            this.map = Collections.synchronizedMap(new WeakHashMap<>());
+        }
+    }
 
     @Override
     public Mono<Void> save(K key, V value) {
