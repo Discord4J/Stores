@@ -30,7 +30,6 @@ public class LongChronicleStore<V extends Serializable> implements LongObjStore<
 
     public LongChronicleStore(ChronicleMap<LongValue, V> mapInst) {
         this.map = mapInst;
-        Runtime.getRuntime().addShutdownHook(new Thread(map::close));
     }
 
     static LongValue toValue(long l) {

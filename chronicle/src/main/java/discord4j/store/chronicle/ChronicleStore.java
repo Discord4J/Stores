@@ -30,7 +30,6 @@ public class ChronicleStore<K extends Comparable<K>, V extends Serializable> imp
 
     public ChronicleStore(ChronicleMap<K, V> mapInst) {
         this.map = mapInst;
-        Runtime.getRuntime().addShutdownHook(new Thread(map::close));
     }
 
     static <K, V> ChronicleMap<K, V> makeMap(Class<K> keyClass, Class<V> valueClass, @Nullable File persistLoc) throws
