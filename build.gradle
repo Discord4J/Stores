@@ -16,7 +16,7 @@ ext {
     project_jdk = '1.8'
 
     // Dependencies
-    discord4j_store_version = 'd386e9e'
+    discord4j_store_version = '34526cf'
     reactor_test_version = '3.1.7.RELEASE'
     autoservice_version = '1.0-rc4'
     commons_codec_version = '1.10'
