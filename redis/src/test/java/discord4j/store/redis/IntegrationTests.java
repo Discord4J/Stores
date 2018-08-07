@@ -17,7 +17,7 @@
 
 package discord4j.store.redis;
 
-import discord4j.store.service.StoreService;
+import discord4j.store.api.service.StoreService;
 import discord4j.store.tck.StoreVerification;
 import org.junit.Before;
 import org.junit.BeforeClass;

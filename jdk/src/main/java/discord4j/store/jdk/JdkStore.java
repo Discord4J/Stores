@@ -1,7 +1,7 @@
 package discord4j.store.jdk;
 
-import discord4j.store.Store;
-import discord4j.store.util.WithinRangePredicate;
+import discord4j.store.api.Store;
+import discord4j.store.api.util.WithinRangePredicate;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

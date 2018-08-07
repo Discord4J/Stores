@@ -1,7 +1,7 @@
 package discord4j.store.chronicle;
 
-import discord4j.store.Store;
-import discord4j.store.util.WithinRangePredicate;
+import discord4j.store.api.Store;
+import discord4j.store.api.util.WithinRangePredicate;
 import net.openhft.chronicle.core.values.LongValue;
 import net.openhft.chronicle.map.ChronicleMap;
 import net.openhft.chronicle.map.ChronicleMapBuilder;

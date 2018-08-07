@@ -17,9 +17,9 @@
 
 package discord4j.store.redis;
 
-import discord4j.store.Store;
+import discord4j.store.api.Store;
 import discord4j.store.common.AES;
-import discord4j.store.util.WithinRangePredicate;
+import discord4j.store.api.util.WithinRangePredicate;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.reactive.RedisReactiveCommands;
 import io.lettuce.core.codec.RedisCodec;

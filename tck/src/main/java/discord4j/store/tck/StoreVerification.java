@@ -17,20 +17,12 @@
 
 package discord4j.store.tck;
 
-import discord4j.store.Store;
-import discord4j.store.primitive.LongObjStore;
-import discord4j.store.service.StoreService;
-import discord4j.store.util.LongObjTuple2;
+import discord4j.store.api.Store;
+import discord4j.store.api.primitive.LongObjStore;
+import discord4j.store.api.service.StoreService;
 import org.junit.Test;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
-import reactor.util.function.Tuple2;
-import reactor.util.function.Tuples;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public abstract class StoreVerification {
 

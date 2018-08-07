@@ -1,11 +1,11 @@
 package discord4j.store.jdk;
 
 import com.google.auto.service.AutoService;
-import discord4j.store.Store;
-import discord4j.store.primitive.ForwardingStore;
-import discord4j.store.primitive.LongObjStore;
-import discord4j.store.service.StoreService;
-import discord4j.store.util.StoreContext;
+import discord4j.store.api.Store;
+import discord4j.store.api.primitive.ForwardingStore;
+import discord4j.store.api.primitive.LongObjStore;
+import discord4j.store.api.service.StoreService;
+import discord4j.store.api.util.StoreContext;
 import reactor.core.publisher.Mono;
 
 import java.io.Serializable;

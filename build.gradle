@@ -15,10 +15,10 @@ ext {
     project_jdk = '1.8'
 
     // Dependencies
-    discord4j_store_version = 'v3-SNAPSHOT'
-    reactor_test_version = '3.2.0.M3'
+    reactor_bom_version = 'Californium-M1'
     autoservice_version = '1.0-rc4'
     commons_codec_version = '1.10'
+    jsr305_version = '3.0.2'
     junit_version = '4.12'
     logback_version = '1.3.0-alpha4'
 }
@@ -36,21 +36,16 @@ allprojects {
     sourceCompatibility = project_jdk
     targetCompatibility = project_jdk
 
-    repositories {
-        jcenter()
-        mavenCentral()
-        maven { url "https://repo.spring.io/snapshot" }
-        maven { url "https://repo.spring.io/milestone" }
-        maven { url 'https://jitpack.io' }
+    dependencyManagement {
+        imports {
+            mavenBom "io.projectreactor:reactor-bom:$reactor_bom_version"
+        }
     }
 
-    dependencies {
-        compile "com.discord4j.discord4j:discord4j-store:$discord4j_store_version"
-        compile "com.google.auto.service:auto-service:$autoservice_version"
-
-        testCompile "junit:junit:$junit_version"
-        testCompile "ch.qos.logback:logback-classic:$logback_version"
-        testCompile "io.projectreactor:reactor-test:$reactor_test_version"
+    repositories {
+        jcenter()
+        maven { url "https://repo.spring.io/milestone" }
+        maven { url 'https://jitpack.io' }
     }
 
     task downloadDependencies() {

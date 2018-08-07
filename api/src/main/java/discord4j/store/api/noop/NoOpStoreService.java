@@ -14,29 +14,28 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Discord4J. If not, see <http://www.gnu.org/licenses/>.
  */
+package discord4j.store.api.noop;
 
-package discord4j.store.redis;
-
-import com.google.auto.service.AutoService;
 import discord4j.store.api.Store;
-import discord4j.store.api.primitive.ForwardingStore;
 import discord4j.store.api.primitive.LongObjStore;
 import discord4j.store.api.service.StoreService;
+import discord4j.store.api.noop.primitive.NoOpLongObjStore;
 import discord4j.store.api.util.StoreContext;
-import io.lettuce.core.RedisClient;
 import reactor.core.publisher.Mono;
 
 import java.io.Serializable;
 
-@AutoService(StoreService.class)
-public class RedisStoreService implements StoreService {
+/**
+ * Service which provides stores that do nothing. This is automatically used if no valid save services are found.
+ *
+ * @see NoOpStore
+ * @see NoOpLongObjStore
+ */
+public class NoOpStoreService implements StoreService {
 
-    private RedisClient client;
-
-    public RedisStoreService() {
-        String url = System.getenv("D4J_REDIS_URL");
-        String redisUri = url != null ? url : "redis://localhost";
-        this.client = RedisClient.create(redisUri);
+    @Override
+    public int order() {
+        return Integer.MAX_VALUE;
     }
 
     @Override
@@ -46,8 +45,8 @@ public class RedisStoreService implements StoreService {
 
     @Override
     public <K extends Comparable<K>, V extends Serializable> Store<K, V> provideGenericStore(Class<K> keyClass,
-            Class<V> valueClass) {
-        return new RedisStore<>(client, valueClass.getSimpleName());
+                                                                                             Class<V> valueClass) {
+        return new NoOpStore<>();
     }
 
     @Override
@@ -57,7 +56,7 @@ public class RedisStoreService implements StoreService {
 
     @Override
     public <V extends Serializable> LongObjStore<V> provideLongObjStore(Class<V> valueClass) {
-        return new ForwardingStore<>(provideGenericStore(Long.class, valueClass));
+        return new NoOpLongObjStore<>();
     }
 
     @Override
@@ -67,6 +66,6 @@ public class RedisStoreService implements StoreService {
 
     @Override
     public Mono<Void> dispose() {
-        return Mono.defer(() -> Mono.fromFuture(client.shutdownAsync()));
+        return Mono.empty();
     }
 }

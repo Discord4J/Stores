@@ -17,10 +17,10 @@
 
 package discord4j.store.tck;
 
-import discord4j.store.Store;
-import discord4j.store.primitive.ForwardingStore;
-import discord4j.store.primitive.LongObjStore;
-import discord4j.store.service.StoreService;
+import discord4j.store.api.Store;
+import discord4j.store.api.primitive.ForwardingStore;
+import discord4j.store.api.primitive.LongObjStore;
+import discord4j.store.api.service.StoreService;
 import org.junit.Test;
 import reactor.util.Logger;
 import reactor.util.Loggers;
@@ -38,7 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static org.junit.Assert.*;
 
 /**
- * Extend this class and provide your {@link discord4j.store.service.StoreService} implementation.
+ * Extend this class and provide your {@link discord4j.store.api.service.StoreService} implementation.
  *
  * Running all the tests will ensure that your store implements all the operations expected.
  *
