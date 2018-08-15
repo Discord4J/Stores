@@ -48,14 +48,36 @@ allprojects {
         maven { url 'https://jitpack.io' }
     }
 
+    tasks.withType(Javadoc) {
+        options {
+            encoding = 'UTF-8'
+            tags = ["apiNote:a:API Note:",
+                    "implSpec:a:Implementation Requirements:",
+                    "implNote:a:Implementation Note:"]
+            addStringOption 'encoding', 'UTF-8'
+            // adding links to javadocs for filling specific classes when not existing inside current javadoc
+            links = [
+                "https://docs.oracle.com/javase/8/docs/api/",
+                "https://docs.oracle.com/javaee/7/api/",
+                "http://www.reactive-streams.org/reactive-streams-1.0.2-javadoc/",
+                "http://projectreactor.io/docs/core/milestone/api/",
+                "http://www.javadoc.io/doc/net.openhft/chronicle-map/3.14.5",
+                "https://lettuce.io/core/release/api/"
+            ]
+        }
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+        options.incremental = true
+    }
+
     task downloadDependencies() {
         description 'Download all dependencies to the Gradle cache'
         doLast {
             configurations.findAll { it.canBeResolved }.files
         }
     }
-
-    javadoc.options.encoding = 'UTF-8'
 
     task javadocJar(type: Jar, dependsOn: javadoc) {
         classifier = 'javadoc'
@@ -86,7 +108,7 @@ allprojects {
             issueTrackerUrl = 'https://github.com/Discord4J/Stores/issues'
             vcsUrl = 'https://github.com/Discord4J/Stores.git'
             licenses = ['LGPL-3.0']
-            labels = ['discord', 'discord4j', 'd4j', 'reactor', 'nebula']
+            labels = ['discord', 'discord4j', 'd4j', 'reactor']
             publicDownloadNumbers = true
             attributes = [:]
             version {
@@ -113,6 +135,11 @@ subprojects {
 
     archivesBaseName = 'stores-' + project.name
 
+    tasks.withType(Javadoc) {
+        title = "$archivesBaseName ${version} API"
+        options.windowTitle = "$archivesBaseName ($version)"
+    }
+
     publishing {
         publications {
             maven(MavenPublication) {
@@ -125,16 +152,46 @@ subprojects {
     }
 }
 
-publishing {
-    publications {
-        maven(MavenPublication) {
+bintrayUpload.dependsOn build
+
+task aggregateJavadoc(type: Javadoc,
+    description: "Generate javadocs from all child projects as if it was a single project",
+    group: JavaBasePlugin.DOCUMENTATION_GROUP
+) {
+    destinationDir file("${rootProject.buildDir}/docs/aggregateJavadoc")
+    failOnError false
+    title = "$project_name ${project_version} API"
+
+    options {
+        windowTitle = "$project_name $project_version"
+        addStringOption "Xdoclint:none", "-quiet"
+        author true
+    }
+
+    subprojects.each { project ->
+        project.tasks.withType(Javadoc.class).each { doc ->
+            source += doc.source
+            classpath += doc.classpath
+            excludes += doc.excludes
+            includes += doc.includes
         }
     }
 }
 
-bintrayUpload.dependsOn build
+task aggregateJavadocJar(type: Jar, dependsOn: aggregateJavadoc) {
+    classifier = 'javadoc'
+    from aggregateJavadoc.destinationDir
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifact aggregateJavadocJar
+        }
+    }
+}
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.7'
-    distributionUrl = 'https://services.gradle.org/distributions/gradle-4.7-all.zip'
+    gradleVersion = "4.10.1"
+    distributionType = Wrapper.DistributionType.ALL
 }
