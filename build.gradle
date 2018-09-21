@@ -60,9 +60,7 @@ allprojects {
                 "https://docs.oracle.com/javase/8/docs/api/",
                 "https://docs.oracle.com/javaee/7/api/",
                 "http://www.reactive-streams.org/reactive-streams-1.0.2-javadoc/",
-                "http://projectreactor.io/docs/core/milestone/api/",
-                "http://www.javadoc.io/doc/net.openhft/chronicle-map/3.14.5",
-                "https://lettuce.io/core/release/api/"
+                "http://projectreactor.io/docs/core/release/api/"
             ]
         }
     }
@@ -192,6 +190,6 @@ publishing {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = "4.8.1"
+    gradleVersion = "4.7"
     distributionType = Wrapper.DistributionType.ALL
 }
