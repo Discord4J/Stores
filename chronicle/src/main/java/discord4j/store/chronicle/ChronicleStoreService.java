@@ -1,6 +1,6 @@
 package discord4j.store.chronicle;
 
-import com.google.auto.service.AutoService;
+import com.austinv11.servicer.WireService;
 import discord4j.store.api.Store;
 import discord4j.store.api.primitive.LongObjStore;
 import discord4j.store.api.service.StoreService;
@@ -14,7 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-@AutoService(StoreService.class)
+@WireService(StoreService.class)
 public class ChronicleStoreService implements StoreService {
 
     final List<ChronicleStore<?, ?>> storeTracker = new CopyOnWriteArrayList<>();

@@ -3,6 +3,7 @@ plugins {
     id 'maven-publish'
     id 'com.jfrog.bintray' version '1.8.0'
     id 'io.spring.dependency-management' version '1.0.6.RELEASE' apply false
+    id "net.ltgt.apt" version "0.19"
 }
 
 ext {
@@ -16,7 +17,7 @@ ext {
 
     // Dependencies
     reactor_bom_version = 'Californium-RELEASE'
-    autoservice_version = '1.0-rc4'
+    servicer_version = '1.0.0'
     commons_codec_version = '1.10'
     jsr305_version = '3.0.2'
     junit_version = '4.12'

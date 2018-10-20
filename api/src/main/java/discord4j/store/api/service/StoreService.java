@@ -16,6 +16,7 @@
  */
 package discord4j.store.api.service;
 
+import com.austinv11.servicer.Service;
 import discord4j.store.api.Store;
 import discord4j.store.api.noop.NoOpStoreService;
 import discord4j.store.api.primitive.LongObjStore;
@@ -29,10 +30,11 @@ import java.io.Serializable;
  * {@link StoreServiceLoader} or it may be loaded manually.
  *
  * @see java.util.ServiceLoader
- * @see <a href="https://github.com/google/auto/tree/master/service">Google AutoService</a>
+ * @see <a href="https://github.com/austinv11/Servicer">Servicer</a>
  * @see StoreServiceLoader
  * @see NoOpStoreService
  */
+@Service
 public interface StoreService {
 
     /**

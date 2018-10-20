@@ -16,7 +16,7 @@
  */
 package discord4j.store.api.service;
 
-import com.google.auto.service.AutoService;
+import com.austinv11.servicer.WireService;
 import discord4j.store.api.Store;
 import discord4j.store.api.primitive.LongObjStore;
 import discord4j.store.api.util.StoreContext;
@@ -24,7 +24,7 @@ import reactor.core.publisher.Mono;
 
 import java.io.Serializable;
 
-@AutoService(StoreService.class)
+@WireService(StoreService.class)
 public class TestService implements StoreService {
 
     @Override

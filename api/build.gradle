@@ -1,7 +1,9 @@
 dependencies {
     compile "io.projectreactor:reactor-core"
     compile "com.google.code.findbugs:jsr305:$jsr305_version"
+    compileOnly "com.austinv11.servicer:Servicer:$servicer_version"
+    annotationProcessor "com.austinv11.servicer:Servicer:$servicer_version"
 
     testCompile "junit:junit:$junit_version"
-    testCompileOnly "com.google.auto.service:auto-service:$autoservice_version"
+    testCompileOnly "com.austinv11.servicer:Servicer:$servicer_version"
 }

@@ -1,6 +1,6 @@
 package discord4j.store.jdk;
 
-import com.google.auto.service.AutoService;
+import com.austinv11.servicer.WireService;
 import discord4j.store.api.Store;
 import discord4j.store.api.primitive.ForwardingStore;
 import discord4j.store.api.primitive.LongObjStore;
@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 
 import java.io.Serializable;
 
-@AutoService(StoreService.class)
+@WireService(StoreService.class)
 public class JdkStoreService implements StoreService {
 
     volatile Class<?> messageClass;
