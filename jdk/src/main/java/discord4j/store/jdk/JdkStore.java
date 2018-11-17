@@ -98,4 +98,11 @@ public class JdkStore<K extends Comparable<K>, V extends Serializable> implement
     public Mono<Void> invalidate() {
         return Mono.fromRunnable(map::clear);
     }
+
+    @Override
+    public String toString() {
+        return "JdkStore{" +
+            "map=" + map +
+            '}';
+    }
 }
