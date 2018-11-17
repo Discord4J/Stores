@@ -102,7 +102,7 @@ public class JdkStore<K extends Comparable<K>, V extends Serializable> implement
     @Override
     public String toString() {
         return "JdkStore{" +
-            "map=" + map +
+            "map=" + map.getClass() +
             '}';
     }
 }
