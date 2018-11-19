@@ -99,10 +99,14 @@ public class JdkStore<K extends Comparable<K>, V extends Serializable> implement
         return Mono.fromRunnable(map::clear);
     }
 
+    protected Map<K, V> getMap() {
+        return map;
+    }
+
     @Override
     public String toString() {
-        return "JdkStore{" +
-            "map=" + map.getClass() +
+        return "JdkStore@" + Integer.toHexString(hashCode()) + "{" +
+            "map=" + map.getClass().getCanonicalName() +
             '}';
     }
 }
