@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'maven-publish'
-    id 'com.jfrog.bintray' version '1.8.0'
+    id 'nebula.nebula-bintray' version '5.0.0'
     id 'io.spring.dependency-management' version '1.0.6.RELEASE' apply false
     id "net.ltgt.apt" version "0.19"
 }
@@ -11,7 +11,7 @@ ext {
     github_org = 'Discord4J'
     project_name = 'stores'
     artifact_group = 'com.discord4j'
-    project_version = '3.0.0-SNAPSHOT'
+    project_version = "$version"
     project_description = 'Java interface for the Discord API'
     project_jdk = '1.8'
 
@@ -28,7 +28,7 @@ allprojects {
     apply plugin: 'java'
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'maven-publish'
-    apply plugin: 'com.jfrog.bintray'
+    apply plugin: 'nebula.nebula-bintray'
 
     group = artifact_group
     version = project_version
@@ -100,7 +100,7 @@ allprojects {
         dryRun = false
         publish = true
         pkg {
-            userOrg = 'austinv11'
+            userOrg = 'discord4j'
             repo = 'maven'
             name = 'Stores'
             websiteUrl = 'https://discord4j.com'
@@ -190,7 +190,7 @@ publishing {
     }
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = "4.7"
+wrapper {
+    gradleVersion = "5.1"
     distributionType = Wrapper.DistributionType.ALL
 }
