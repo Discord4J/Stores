@@ -1,3 +1,4 @@
 dependencies {
     compile project(':common')
+    annotationProcessor "com.austinv11.servicer:Servicer:$servicer_version"
 }
