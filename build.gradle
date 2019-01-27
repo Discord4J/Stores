@@ -103,7 +103,7 @@ allprojects {
         pkg {
             userOrg = 'discord4j'
             repo = 'maven'
-            name = 'Stores'
+            name = 'Discord4J'
             websiteUrl = 'https://discord4j.com'
             issueTrackerUrl = 'https://github.com/Discord4J/Stores/issues'
             vcsUrl = 'https://github.com/Discord4J/Stores.git'
