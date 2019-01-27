@@ -1,5 +1,5 @@
 dependencies {
     compile project(':common')
-    compile 'net.openhft:chronicle-map:3.16.3'
+    compile 'net.openhft:chronicle-map:3.17.0'
     annotationProcessor "com.austinv11.servicer:Servicer:$servicer_version"
 }
