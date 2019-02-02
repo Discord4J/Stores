@@ -5,6 +5,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.6.RELEASE' apply false
     id 'net.ltgt.apt' version '0.20'
     id 'com.github.ben-manes.versions' version '0.20.0'
+    id 'net.researchgate.release' version '2.8.0'
 }
 
 ext {
@@ -103,7 +104,7 @@ allprojects {
         pkg {
             userOrg = 'discord4j'
             repo = 'maven'
-            name = 'Discord4J'
+            name = 'Stores'
             websiteUrl = 'https://discord4j.com'
             issueTrackerUrl = 'https://github.com/Discord4J/Stores/issues'
             vcsUrl = 'https://github.com/Discord4J/Stores.git'
@@ -190,6 +191,14 @@ publishing {
         }
     }
 }
+
+release {
+    preTagCommitMessage = 'Release version'
+    tagCommitMessage = 'Release version'
+    newVersionCommitMessage = 'Next development version'
+}
+
+afterReleaseBuild.dependsOn bintrayUpload
 
 wrapper {
     gradleVersion = "5.1.1"
