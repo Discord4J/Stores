@@ -24,13 +24,18 @@ ext {
     jsr305_version = '3.0.2'
     junit_version = '4.12'
     logback_version = '1.3.0-alpha4'
+
+    isJitpack = "true" == System.getenv("JITPACK")
+    isRelease = !version.toString().endsWith('-SNAPSHOT')
 }
 
 allprojects {
     apply plugin: 'java'
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'maven-publish'
-    apply plugin: 'signing'
+    if (!isJitpack && isRelease) {
+        apply plugin: 'signing'
+    }
 
     group = artifact_group
     version = project_version
@@ -95,8 +100,10 @@ allprojects {
         archives sourcesJar
     }
 
-    signing {
-        sign configurations.archives
+    if (!isJitpack && isRelease) {
+        signing {
+            sign configurations.archives
+        }
     }
 }
 
@@ -131,40 +138,50 @@ subprojects {
                 artifact sourcesJar
                 artifact javadocJar
 
-                project.tasks.signArchives.signatureFiles.each {
-                    artifact(it) {
-                        def matcher = it.file =~ /-(sources|javadoc)\.jar\.asc$/
-                        if (matcher.find()) {
-                            classifier = matcher.group(1)
-                        } else {
-                            classifier = null
+                if (!isJitpack && isRelease) {
+                    project.tasks.signArchives.signatureFiles.each {
+                        artifact(it) {
+                            def matcher = it.file =~ /-(sources|javadoc)\.jar\.asc$/
+                            if (matcher.find()) {
+                                classifier = matcher.group(1)
+                            } else {
+                                classifier = null
+                            }
+                            extension = 'jar.asc'
                         }
-                        extension = 'jar.asc'
                     }
                 }
             }
         }
 
-        repositories {
-            maven {
-                url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
-                credentials {
-                    username sonatypeUsername
-                    password sonatypePassword
+        if (!isJitpack) {
+            repositories {
+                maven {
+                    if (isRelease) {
+                        url 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+                    } else {
+                        url 'https://oss.sonatype.org/content/repositories/snapshots/'
+                    }
+                    credentials {
+                        username sonatypeUsername
+                        password sonatypePassword
+                    }
                 }
             }
         }
     }
 
-    model {
-        tasks.generatePomFileForMavenPublication {
-            destination = file("$buildDir/generated-pom.xml")
-        }
-        tasks.publishMavenPublicationToMavenLocal {
-            dependsOn project.tasks.signArchives
-        }
-        tasks.publishMavenPublicationToMavenRepository {
-            dependsOn project.tasks.signArchives
+    if (!isJitpack && isRelease) {
+        model {
+            tasks.generatePomFileForMavenPublication {
+                destination = file("$buildDir/generated-pom.xml")
+            }
+            tasks.publishMavenPublicationToMavenLocal {
+                dependsOn project.tasks.signArchives
+            }
+            tasks.publishMavenPublicationToMavenRepository {
+                dependsOn project.tasks.signArchives
+            }
         }
     }
 }
@@ -217,6 +234,8 @@ release {
     tagCommitMessage = 'Release version'
     newVersionCommitMessage = 'Next development version'
 }
+
+afterReleaseBuild.dependsOn publish
 
 wrapper {
     gradleVersion = "5.1.1"
