@@ -125,20 +125,20 @@ subprojects {
                 from components.java
                 artifactId archivesBaseName
 
-                pom.withXml {
-                    def pomFile = file("${project.buildDir}/generated-pom.xml")
-                    writeTo(pomFile)
-                    def pomAscFile = signing.sign(pomFile).signatureFiles[0]
-                    artifact(pomAscFile) {
-                        classifier = null
-                        extension = 'pom.asc'
-                    }
-                }
-
                 artifact sourcesJar
                 artifact javadocJar
 
                 if (!isJitpack && isRelease) {
+                    pom.withXml {
+                        def pomFile = file("${project.buildDir}/generated-pom.xml")
+                        writeTo(pomFile)
+                        def pomAscFile = signing.sign(pomFile).signatureFiles[0]
+                        artifact(pomAscFile) {
+                            classifier = null
+                            extension = 'pom.asc'
+                        }
+                    }
+
                     project.tasks.signArchives.signatureFiles.each {
                         artifact(it) {
                             def matcher = it.file =~ /-(sources|javadoc)\.jar\.asc$/
