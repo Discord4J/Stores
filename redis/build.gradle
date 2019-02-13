@@ -1,6 +1,6 @@
 dependencies {
     compile project(':common')
-    compile 'io.lettuce:lettuce-core:5.1.3.RELEASE'
+    compile 'io.lettuce:lettuce-core:5.1.4.RELEASE'
     annotationProcessor "com.austinv11.servicer:Servicer:$servicer_version"
 
     testCompile 'it.ozimov:embedded-redis:0.7.2'

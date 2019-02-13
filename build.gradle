@@ -3,8 +3,8 @@ plugins {
     id 'maven-publish'
     id 'signing'
     id 'io.spring.dependency-management' version '1.0.6.RELEASE' apply false
-    id 'net.ltgt.apt' version '0.20'
-    id 'com.github.ben-manes.versions' version '0.20.0'
+    id 'net.ltgt.apt' version '0.21'
+    id 'com.github.ben-manes.versions' version '0.17.0'
     id 'net.researchgate.release' version '2.8.0'
 }
 
@@ -18,7 +18,7 @@ ext {
     project_jdk = '1.8'
 
     // Dependencies
-    reactor_bom_version = 'Californium-SR4'
+    reactor_bom_version = 'Californium-SR5'
     servicer_version = '1.0.0'
     commons_codec_version = '1.11'
     jsr305_version = '3.0.2'
