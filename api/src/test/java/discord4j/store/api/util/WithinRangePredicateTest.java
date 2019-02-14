@@ -16,7 +16,6 @@
  */
 package discord4j.store.api.util;
 
-import discord4j.store.api.util.WithinRangePredicate;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
