@@ -17,8 +17,8 @@
 package discord4j.store.api.service;
 
 import discord4j.store.api.Store;
-import discord4j.store.api.primitive.ForwardingStoreService;
 import discord4j.store.api.noop.NoOpStoreService;
+import discord4j.store.api.primitive.ForwardingStoreService;
 import discord4j.store.api.primitive.LongObjStore;
 import discord4j.store.api.util.Lazy;
 import discord4j.store.api.util.StoreContext;

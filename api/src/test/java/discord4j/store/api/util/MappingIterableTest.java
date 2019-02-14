@@ -16,7 +16,6 @@
  */
 package discord4j.store.api.util;
 
-import discord4j.store.api.util.MappingIterable;
 import org.junit.Test;
 
 import java.util.Arrays;

@@ -16,7 +16,6 @@
  */
 package discord4j.store.api.util;
 
-import discord4j.store.api.util.LongObjTuple2;
 import org.junit.Test;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;

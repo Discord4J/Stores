@@ -16,9 +16,9 @@
  */
 package discord4j.store.api.noop.primitive;
 
+import discord4j.store.api.noop.NoOpStore;
 import discord4j.store.api.primitive.LongObjStore;
 import discord4j.store.api.util.LongObjTuple2;
-import discord4j.store.api.noop.NoOpStore;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

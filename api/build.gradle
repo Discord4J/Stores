@@ -1,6 +1,5 @@
 dependencies {
     compile "io.projectreactor:reactor-core"
-    compile "com.google.code.findbugs:jsr305:$jsr305_version"
     compile "com.austinv11.servicer:Servicer:$servicer_version"
     annotationProcessor "com.austinv11.servicer:Servicer:$servicer_version"
 

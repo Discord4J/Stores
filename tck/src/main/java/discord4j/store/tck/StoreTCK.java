@@ -24,8 +24,8 @@ import discord4j.store.api.service.StoreService;
 import org.junit.Test;
 import reactor.util.Logger;
 import reactor.util.Loggers;
+import reactor.util.annotation.Nullable;
 
-import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
