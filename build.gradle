@@ -247,7 +247,7 @@ wrapper {
 
 def buildDocsUrl(String project) {
     if (isJitpack) {
-        def docVersion = System.getenv('GIT_DESCRIBE')
+        def docVersion = System.getenv('GIT_BRANCH') + "-" + System.getenv('GIT_DESCRIBE')
         return "https://javadoc.jitpack.io/com/discord4j/discord4j/$project/$docVersion/javadoc/" as String
     } else {
         def docVersion = isRelease ? "$version" : "3.0"
