@@ -1,5 +1,15 @@
+def chronicleMapVersion = '3.17.0'
+
 dependencies {
     compile project(':common')
-    compile 'net.openhft:chronicle-map:3.17.0'
+    compile "net.openhft:chronicle-map:$chronicleMapVersion"
     annotationProcessor "com.austinv11.servicer:Servicer:$servicer_version"
+}
+
+javadoc {
+    dependsOn project(':api').javadoc
+    dependsOn project(':common').javadoc
+
+    options.linksOffline rootProject.buildDocsUrl('stores-api'), project(':api').javadoc.destinationDir.toURI() as String
+    options.linksOffline rootProject.buildDocsUrl('stores-common'), project(':common').javadoc.destinationDir.toURI() as String
 }

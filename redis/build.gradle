@@ -3,6 +3,14 @@ dependencies {
     compile 'io.lettuce:lettuce-core:5.1.4.RELEASE'
     annotationProcessor "com.austinv11.servicer:Servicer:$servicer_version"
 
-    testCompile 'it.ozimov:embedded-redis:0.7.2'
     testCompile project(':tck')
+    testCompile 'it.ozimov:embedded-redis:0.7.2'
+}
+
+javadoc {
+    dependsOn project(':api').javadoc
+    dependsOn project(':common').javadoc
+
+    options.linksOffline rootProject.buildDocsUrl('stores-api'), project(':api').javadoc.destinationDir.toURI() as String
+    options.linksOffline rootProject.buildDocsUrl('stores-common'), project(':common').javadoc.destinationDir.toURI() as String
 }

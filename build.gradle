@@ -62,13 +62,14 @@ allprojects {
             tags = ["apiNote:a:API Note:",
                     "implSpec:a:Implementation Requirements:",
                     "implNote:a:Implementation Note:"]
+            addStringOption 'Xdoclint:none', '-quiet'
             addStringOption 'encoding', 'UTF-8'
             // adding links to javadocs for filling specific classes when not existing inside current javadoc
             links = [
                 "https://docs.oracle.com/javase/8/docs/api/",
                 "https://docs.oracle.com/javaee/7/api/",
                 "http://www.reactive-streams.org/reactive-streams-1.0.2-javadoc/",
-                "http://projectreactor.io/docs/core/release/api/"
+                "https://projectreactor.io/docs/core/release/api/",
             ]
         }
     }
@@ -158,7 +159,7 @@ subprojects {
             repositories {
                 maven {
                     if (isRelease) {
-                        url 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+                        url 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
                     } else {
                         url 'https://oss.sonatype.org/content/repositories/snapshots/'
                     }
@@ -242,4 +243,14 @@ afterReleaseBuild.dependsOn publish
 wrapper {
     gradleVersion = "5.2.1"
     distributionType = Wrapper.DistributionType.ALL
+}
+
+def buildDocsUrl(String project) {
+    if (isJitpack) {
+        def docVersion = System.getenv('GIT_DESCRIBE')
+        return "https://javadoc.jitpack.io/com/discord4j/discord4j/$project/$docVersion/javadoc/" as String
+    } else {
+        def docVersion = isRelease ? "$version" : "3.0"
+        return "https://www.javadoc.io/page/com.discord4j/$project/$docVersion/" as String
+    }
 }

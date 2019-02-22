@@ -6,3 +6,9 @@ dependencies {
     testCompile "ch.qos.logback:logback-classic:$logback_version"
     testCompile "io.projectreactor:reactor-test"
 }
+
+javadoc {
+    dependsOn project(':api').javadoc
+
+    options.linksOffline rootProject.buildDocsUrl('stores-api'), project(':api').javadoc.destinationDir.toURI() as String
+}
