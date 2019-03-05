@@ -8,3 +8,10 @@ Current implementations:
 * [JDK](https://github.com/Discord4J/Stores/tree/master/jdk) (Consider this the "reference implementation")
 * [Redis](https://github.com/Discord4J/Stores/tree/master/redis)
 * [TCK](https://github.com/Discord4J/Stores/tree/master/tck)
+* [Caffeine](https://github.com/Discord4J/Stores/tree/master/caffeine)
+
+Please refer to each corresponding module to import it to your project.
+
+Support modules:
+* [API](https://github.com/Discord4J/Stores/tree/master/api)
+* [Common](https://github.com/Discord4J/Stores/tree/master/common)
