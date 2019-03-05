@@ -4,4 +4,4 @@ include 'redis'
 include 'chronicle'
 include 'tck'
 include 'jdk'
-
+include 'caffeine'

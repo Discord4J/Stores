@@ -1,0 +1,56 @@
+# Stores-Caffeine
+
+A store implementation backed by [Caffeine](https://github.com/ben-manes/caffeine), a high performance caching library for Java 8.
+
+## Installation
+### Gradle
+```groovy
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  implementation 'com.discord4j:stores-caffeine:3.0.0'
+}
+```
+### Maven
+```xml
+<dependencies>
+  <dependency>
+    <groupId>com.discord4j</groupId>
+    <artifactId>stores-caffeine</artifactId>
+    <version>3.0.0</version>
+  </dependency>
+</dependencies>
+```
+
+### SBT
+```scala
+libraryDependencies ++= Seq(
+  "com.discord4j" % "stores-caffeine" % "3.0.0"
+)
+```
+
+## Quick Example
+
+This module can be **auto-discovered** by Discord4J if it's on the classpath. Refer to this example for customization:
+
+```java
+final DiscordClient client = new DiscordClientBuilder("token")
+        .setStoreService(CaffeineStoreService.create(builder -> builder.maximumSize(10_000)
+                                                                        .expireAfterWrite(5, TimeUnit.MINUTES)
+                                                                        .refreshAfterWrite(1, TimeUnit.MINUTES)))
+        .build();
+
+client.getEventDispatcher().on(ReadyEvent.class)
+        .subscribe(ready -> System.out.println("Logged in as " + ready.getSelf().getUsername()));
+
+client.getEventDispatcher().on(MessageCreateEvent.class)
+        .map(MessageCreateEvent::getMessage)
+        .filter(msg -> msg.getContent().map("!ping"::equals).orElse(false))
+        .flatMap(Message::getChannel)
+        .flatMap(channel -> channel.createMessage("Pong!"))
+        .subscribe();
+
+client.login().block();
+```
