@@ -39,6 +39,10 @@ public class RedisStoreService implements StoreService {
         this.client = RedisClient.create(redisUri);
     }
 
+    public RedisStoreService(RedisClient redisClient) {
+        this.client = redisClient;
+    }
+
     @Override
     public boolean hasGenericStores() {
         return true;

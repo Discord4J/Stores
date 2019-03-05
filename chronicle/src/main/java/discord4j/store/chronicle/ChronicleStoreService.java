@@ -20,8 +20,16 @@ public class ChronicleStoreService implements StoreService {
     final List<ChronicleStore<?, ?>> storeTracker = new CopyOnWriteArrayList<>();
     final List<LongChronicleStore<?>> longStoreTracker = new CopyOnWriteArrayList<>();
 
-    boolean shouldPersist = Boolean.parseBoolean(System.getenv("Persist-Store"));
+    boolean shouldPersist;
     volatile Class<?> messageClass;
+
+    public ChronicleStoreService() {
+        this(Boolean.parseBoolean(System.getenv("Persist-Store")));
+    }
+
+    public ChronicleStoreService(boolean shouldPersist) {
+        this.shouldPersist = shouldPersist;
+    }
 
     @Override
     public boolean hasGenericStores() {
