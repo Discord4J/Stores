@@ -54,7 +54,7 @@ public class CaffeineStoreService implements StoreService {
     @Override
     public <K extends Comparable<K>, V extends Serializable> Store<K, V> provideGenericStore(Class<K> keyClass,
                                                                                              Class<V> valueClass) {
-        return new CaffeineStore<>(mapper.apply(Caffeine.newBuilder()).build());
+        return new CaffeineStore<K, V>(mapper.apply(Caffeine.newBuilder()).build());
     }
 
     @Override
