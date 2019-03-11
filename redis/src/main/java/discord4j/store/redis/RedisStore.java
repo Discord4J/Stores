@@ -18,49 +18,34 @@
 package discord4j.store.redis;
 
 import discord4j.store.api.Store;
+import discord4j.store.api.util.LongLongTuple2;
 import discord4j.store.api.util.WithinRangePredicate;
-import discord4j.store.common.AES;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.reactive.RedisReactiveCommands;
 import io.lettuce.core.codec.RedisCodec;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.util.Logger;
-import reactor.util.Loggers;
 import reactor.util.function.Tuple2;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
 
 public class RedisStore<K extends Comparable<K>, V extends Serializable> implements Store<K, V> {
 
-    private static final Logger log = Loggers.getLogger(RedisStore.class);
-
-    private final RedisReactiveCommands<Object, Object> commands;
+    private final RedisReactiveCommands<String, Object> commands;
     private final String storeName;
 
-    public RedisStore(RedisClient client, String storeName) {
-        String disableCrypto = System.getenv("D4J_CRYPTO_DISABLE");
-        RedisCodec<Object, Object> codec = new SerializedObjectCodec();
-        if (!Boolean.parseBoolean(disableCrypto)) {
-            String secretKeyPath = System.getenv("D4J_CRYPTO_SECRET_KEY_PATH");
-            if (secretKeyPath != null) {
-                try {
-                    codec = new SecureSerializedObjectCodec(AES.getSecretKey(secretKeyPath));
-                } catch (IOException e) {
-                    log.warn("Unable to instantiate secure keys", e);
-                }
-            } else {
-                log.warn("Set your secret key path using D4J_CRYPTO_SECRET_KEY_PATH environment variable.");
-            }
-        }
+    public RedisStore(RedisClient client, String storeName, RedisCodec<String, Object> codec) {
         this.commands = client.connect(codec).reactive();
         this.storeName = storeName;
     }
 
-    private Object createKey(K key) {
+    private String createKey(K key) {
+        if (key instanceof LongLongTuple2) {
+            LongLongTuple2 tuple = (LongLongTuple2) key;
+            return tuple.getT1() + ":" + tuple.getT2();
+        }
         return key.toString();
     }
 

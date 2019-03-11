@@ -77,8 +77,8 @@ public class ForwardingStoreService implements StoreService {
     }
 
     @Override
-    public Mono<Void> init(StoreContext context) {
-        return toForward.init(context);
+    public void init(StoreContext context) {
+        toForward.init(context);
     }
 
     @Override

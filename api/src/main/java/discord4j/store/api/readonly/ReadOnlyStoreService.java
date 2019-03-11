@@ -26,10 +26,18 @@ import reactor.core.publisher.Mono;
 
 import java.io.Serializable;
 
+/**
+ * {@link StoreService} decorator disabling all mutative operations, effectively working as a read-only store.
+ */
 public class ReadOnlyStoreService implements StoreService {
 
     private final StoreService delegate;
 
+    /**
+     * Create a new {@link ReadOnlyStoreService} for the given {@link StoreService}.
+     *
+     * @param delegate the delegate service
+     */
     public ReadOnlyStoreService(StoreService delegate) {
         this.delegate = delegate;
     }
@@ -56,8 +64,8 @@ public class ReadOnlyStoreService implements StoreService {
     }
 
     @Override
-    public Mono<Void> init(StoreContext context) {
-        return delegate.init(context);
+    public void init(StoreContext context) {
+        delegate.init(context);
     }
 
     @Override

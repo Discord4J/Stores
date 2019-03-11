@@ -49,8 +49,7 @@ public class TestService implements StoreService {
     }
 
     @Override
-    public Mono<Void> init(StoreContext context) {
-        return Mono.empty();
+    public void init(StoreContext context) {
     }
 
     @Override

@@ -20,11 +20,14 @@ public class LongChronicleStore<V extends Serializable> implements LongObjStore<
 
     final ChronicleMap<LongValue, V> map;
 
-    public LongChronicleStore(Class<V> valueClass, boolean persist) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, IOException {
-        this(valueClass, persist ? new File("./" + ChronicleStore.generateName(LongValue.class, valueClass) + ".mapdata") : null);
+    public LongChronicleStore(Class<V> valueClass, boolean persist) throws NoSuchMethodException,
+            IllegalAccessException, InvocationTargetException, InstantiationException, IOException {
+        this(valueClass, persist ? new File("./" + ChronicleStore.generateName(LongValue.class, valueClass) +
+                ".mapdata") : null);
     }
 
-    public LongChronicleStore(Class<V> valueClass, @Nullable File location) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, IOException {
+    public LongChronicleStore(Class<V> valueClass, @Nullable File location) throws NoSuchMethodException,
+            IllegalAccessException, InvocationTargetException, InstantiationException, IOException {
         this(ChronicleStore.makeMap(LongValue.class, valueClass, location));
     }
 

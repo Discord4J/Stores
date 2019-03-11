@@ -48,7 +48,7 @@ public class StoreServiceLoader {
      *
      * @param priorityOverrides Allows for manual overriding of {@link StoreService#order()}.
      */
-    @SuppressWarnings({"ComparatorCombinators", "Convert2Lambda"})
+    @SuppressWarnings({"Convert2Lambda"})
     public StoreServiceLoader(Map<Class<? extends StoreService>, Integer> priorityOverrides) {
         generalService = new Lazy<>(() -> {
             List<StoreService> services = new ArrayList<>();
@@ -151,8 +151,9 @@ public class StoreServiceLoader {
         }
 
         @Override
-        public Mono<Void> init(StoreContext context) {
-            return genericService.init(context).and(primitiveService.init(context));
+        public void init(StoreContext context) {
+            genericService.init(context);
+            primitiveService.init(context);
         }
 
         @Override

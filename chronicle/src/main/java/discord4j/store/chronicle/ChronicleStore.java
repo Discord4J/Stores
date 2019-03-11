@@ -20,8 +20,9 @@ public class ChronicleStore<K extends Comparable<K>, V extends Serializable> imp
 
     final ChronicleMap<K, V> map;
 
-    public ChronicleStore(Class<K> keyClass, Class<V> valueClass, boolean persist) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, IOException {
-       this(keyClass, valueClass, persist ? new File("./" + generateName(keyClass, valueClass) + ".mapdata") : null);
+    public ChronicleStore(Class<K> keyClass, Class<V> valueClass, boolean persist) throws NoSuchMethodException,
+            IllegalAccessException, InvocationTargetException, InstantiationException, IOException {
+        this(keyClass, valueClass, persist ? new File("./" + generateName(keyClass, valueClass) + ".mapdata") : null);
     }
 
     public ChronicleStore(Class<K> keyClass, Class<V> valueClass, @Nullable File location) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, IOException {
@@ -33,10 +34,12 @@ public class ChronicleStore<K extends Comparable<K>, V extends Serializable> imp
     }
 
     static <K, V> ChronicleMap<K, V> makeMap(Class<K> keyClass, Class<V> valueClass, @Nullable File persistLoc) throws
-            NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, IOException {
-        ChronicleMapBuilder<K, V> builder =  ChronicleMapBuilder.of(keyClass, valueClass)
+            NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException,
+            IOException {
+        ChronicleMapBuilder<K, V> builder = ChronicleMapBuilder.of(keyClass, valueClass)
                 .name(generateName(keyClass, valueClass))
-                .averageKey(keyClass.equals(LongValue.class) ? (K) (Long) 0L : keyClass.getDeclaredConstructor().newInstance())
+                .averageKey(keyClass.equals(LongValue.class) ? (K) (Long) 0L :
+                        keyClass.getDeclaredConstructor().newInstance())
                 .averageValue(valueClass.getDeclaredConstructor().newInstance())
                 .entries(200_000)
                 .maxBloatFactor(5.0);

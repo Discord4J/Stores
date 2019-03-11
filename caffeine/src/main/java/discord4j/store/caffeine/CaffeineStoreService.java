@@ -29,6 +29,9 @@ import reactor.core.publisher.Mono;
 import java.io.Serializable;
 import java.util.function.Function;
 
+/**
+ * {@link Store} factory that creates instances backed by {@link Caffeine} caches.
+ */
 @WireService(StoreService.class)
 public class CaffeineStoreService implements StoreService {
 
@@ -38,12 +41,8 @@ public class CaffeineStoreService implements StoreService {
         this(builder -> builder);
     }
 
-    private CaffeineStoreService(Function<Caffeine<Object, Object>, Caffeine<Object, Object>> mapper) {
+    public CaffeineStoreService(Function<Caffeine<Object, Object>, Caffeine<Object, Object>> mapper) {
         this.mapper = mapper;
-    }
-
-    public CaffeineStoreService create(Function<Caffeine<Object, Object>, Caffeine<Object, Object>> mapper) {
-        return new CaffeineStoreService(mapper);
     }
 
     @Override
@@ -68,8 +67,7 @@ public class CaffeineStoreService implements StoreService {
     }
 
     @Override
-    public Mono<Void> init(StoreContext context) {
-        return Mono.empty();
+    public void init(StoreContext context) {
     }
 
     @Override

@@ -37,9 +37,8 @@ public class JdkStoreService implements StoreService {
     }
 
     @Override
-    public Mono<Void> init(StoreContext context) {
+    public void init(StoreContext context) {
         messageClass = context.getMessageClass();
-        return Mono.empty();
     }
 
     @Override

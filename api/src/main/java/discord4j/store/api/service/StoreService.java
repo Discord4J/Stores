@@ -26,8 +26,7 @@ import reactor.core.publisher.Mono;
 import java.io.Serializable;
 
 /**
- * This represents a java service which provides stores. This can be loaded via
- * {@link StoreServiceLoader} or it may be loaded manually.
+ * Store abstract factory that can be manually created or loaded through a {@link StoreServiceLoader} as a Java service.
  *
  * @see java.util.ServiceLoader
  * @see <a href="https://github.com/austinv11/Servicer">Servicer</a>
@@ -68,7 +67,7 @@ public interface StoreService {
      * @return The instance of the store.
      */
     <K extends Comparable<K>, V extends Serializable> Store<K, V> provideGenericStore(Class<K> keyClass, Class<V>
-        valueClass);
+            valueClass);
 
     /**
      * This is used to check if this service can provide long-object stores.
@@ -92,9 +91,8 @@ public interface StoreService {
      * This is a lifecycle method called to signal that a store should allocate any necessary resources.
      *
      * @param context Some context about the environment which this service is being utilized in.
-     * @return A mono, whose completion signals that resources have been allocated successfully.
      */
-    Mono<Void> init(StoreContext context);
+    void init(StoreContext context);
 
     /**
      * This is a lifecycle method called to signal that a store should dispose of any resources due to

@@ -30,6 +30,11 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Allows you to delegate the store process to a different {@link StoreService} depending on the stored value class.
+ * <p>
+ * Can acquire an instance through {@link #create()} and configure it afterwards.
+ */
 public class MappingStoreService implements StoreService {
 
     private final Map<Class<?>, StoreService> serviceMap;
@@ -40,16 +45,36 @@ public class MappingStoreService implements StoreService {
         this.fallback = fallback == null ? new NoOpStoreService() : fallback;
     }
 
+    /**
+     * Obtain a new {@link MappingStoreService} instance that can be further configured using
+     * {@link #setMapping(Class, StoreService)} to set a new delegate {@link StoreService} and
+     * {@link #setFallback(StoreService)} to provide a fallback if the value class is not defined elsewhere.
+     *
+     * @return a new instance backed by {@link NoOpStoreService} as fallback for all types, can be configured.
+     */
     public static MappingStoreService create() {
         return new MappingStoreService(new ConcurrentHashMap<>(), null);
     }
 
-    public MappingStoreService addService(Class<?> valueClass, StoreService storeService) {
+    /**
+     * Set a new delegate {@link StoreService} for the given value class.
+     *
+     * @param valueClass the value to map
+     * @param storeService the service to use for the values
+     * @return a new {@link MappingStoreService} with updated properties
+     */
+    public MappingStoreService setMapping(Class<?> valueClass, StoreService storeService) {
         Map<Class<?>, StoreService> updatedMap = new ConcurrentHashMap<>(serviceMap);
         updatedMap.put(valueClass, storeService);
         return new MappingStoreService(updatedMap, fallback);
     }
 
+    /**
+     * Set the fallback {@link StoreService} to use if no mapping was previously defined for a given type.
+     *
+     * @param storeService the fallback service
+     * @return a new {@link MappingStoreService} with updated properties
+     */
     public MappingStoreService setFallback(@Nullable StoreService storeService) {
         return new MappingStoreService(serviceMap, storeService);
     }
@@ -86,11 +111,9 @@ public class MappingStoreService implements StoreService {
     }
 
     @Override
-    public Mono<Void> init(StoreContext context) {
-        return Flux.fromIterable(serviceMap.values())
-                .concatWithValues(fallback)
-                .flatMap(service -> service.init(context))
-                .then();
+    public void init(StoreContext context) {
+        serviceMap.values().forEach(service -> service.init(context));
+        fallback.init(context);
     }
 
     @Override

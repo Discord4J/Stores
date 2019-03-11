@@ -40,11 +40,12 @@ public class ChronicleStoreService implements StoreService {
     public <K extends Comparable<K>, V extends Serializable> Store<K, V> provideGenericStore(Class<K> keyClass,
                                                                                              Class<V> valueClass) {
         try {
-            ChronicleStore<K, V> store = new ChronicleStore<>(keyClass, valueClass, shouldPersist && !valueClass.equals(messageClass));
+            ChronicleStore<K, V> store = new ChronicleStore<>(keyClass, valueClass,
+                    shouldPersist && !valueClass.equals(messageClass));
             storeTracker.add(store);
             return store;
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException | IOException e) {
-           throw new RuntimeException(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -56,7 +57,8 @@ public class ChronicleStoreService implements StoreService {
     @Override
     public <V extends Serializable> LongObjStore<V> provideLongObjStore(Class<V> valueClass) {
         try {
-            LongChronicleStore<V> store = new LongChronicleStore<>(valueClass, shouldPersist && !valueClass.equals(messageClass));
+            LongChronicleStore<V> store = new LongChronicleStore<>(valueClass,
+                    shouldPersist && !valueClass.equals(messageClass));
             longStoreTracker.add(store);
             return store;
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException | IOException e) {
@@ -65,9 +67,8 @@ public class ChronicleStoreService implements StoreService {
     }
 
     @Override
-    public Mono<Void> init(StoreContext context) {
+    public void init(StoreContext context) {
         messageClass = context.getMessageClass();
-        return Mono.empty();
     }
 
     @Override
