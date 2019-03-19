@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-  implementation 'com.discord4j:stores-chronicle:1.0.0'
+  implementation 'com.discord4j:stores-chronicle:3.0.0'
 }
 ```
 ### Maven
@@ -19,7 +19,7 @@ dependencies {
   <dependency>
     <groupId>com.discord4j</groupId>
     <artifactId>stores-chronicle</artifactId>
-    <version>1.0.0</version>
+    <version>3.0.0</version>
   </dependency>
 </dependencies>
 ```
@@ -27,7 +27,7 @@ dependencies {
 ### SBT
 ```scala
 libraryDependencies ++= Seq(
-  "com.discord4j" % "stores-chronicle" % "1.0.0"
+  "com.discord4j" % "stores-chronicle" % "3.0.0"
 )
 ```
 
