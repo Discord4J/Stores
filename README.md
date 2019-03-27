@@ -3,6 +3,8 @@
 
 A set of pre-made store implementations for Discord4J v3.0 and higher
 
+* [Store API](https://github.com/Discord4J/Stores/tree/master/api)
+
 Current implementations:
 * [Chronicle](https://github.com/Discord4J/Stores/tree/master/chronicle)
 * [JDK](https://github.com/Discord4J/Stores/tree/master/jdk) (Consider this the "reference implementation")
@@ -11,7 +13,3 @@ Current implementations:
 * [Caffeine](https://github.com/Discord4J/Stores/tree/master/caffeine)
 
 Please refer to each corresponding module to import it to your project.
-
-Support modules:
-* [API](https://github.com/Discord4J/Stores/tree/master/api)
-* [Common](https://github.com/Discord4J/Stores/tree/master/common)

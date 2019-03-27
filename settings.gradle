@@ -1,5 +1,4 @@
 include 'api'
-include 'common'
 include 'redis'
 include 'chronicle'
 include 'tck'

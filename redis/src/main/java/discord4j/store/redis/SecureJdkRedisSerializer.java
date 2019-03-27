@@ -17,7 +17,7 @@
 
 package discord4j.store.redis;
 
-import discord4j.store.common.AES;
+import discord4j.store.crypto.AES;
 
 import javax.crypto.SecretKey;
 import java.io.*;

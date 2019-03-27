@@ -15,7 +15,7 @@
  * along with Discord4J. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package discord4j.store.common;
+package discord4j.store.crypto;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;

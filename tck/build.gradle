@@ -1,7 +1,7 @@
 def commonsLangVersion = '3.8.1'
 
 dependencies {
-    compile project(':common')
+    compile project(':api')
     compile "junit:junit:$junit_version"
     compile "io.projectreactor:reactor-test"
     compile "org.apache.commons:commons-lang3:$commonsLangVersion"
@@ -9,10 +9,8 @@ dependencies {
 
 javadoc {
     dependsOn project(':api').javadoc
-    dependsOn project(':common').javadoc
 
     options.linksOffline rootProject.buildDocsUrl('stores-api'), project(':api').javadoc.destinationDir.toURI() as String
-    options.linksOffline rootProject.buildDocsUrl('stores-common'), project(':common').javadoc.destinationDir.toURI() as String
 
     options.links "https://commons.apache.org/proper/commons-lang/javadocs/api-release/" as String
 }
