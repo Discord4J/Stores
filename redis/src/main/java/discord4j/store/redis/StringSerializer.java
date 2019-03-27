@@ -20,14 +20,25 @@ package discord4j.store.redis;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * A serializer that simply converts between {@code String} and {@code byte[]} using the specified {@link Charset}.
+ */
 public class StringSerializer implements RedisSerializer<String> {
 
     private final Charset charset;
 
+    /**
+     * Create a new serializer using the {@link StandardCharsets#UTF_8} charset.
+     */
     public StringSerializer() {
         this(StandardCharsets.UTF_8);
     }
 
+    /**
+     * Create a new serializer using the given {@link Charset}.
+     *
+     * @param charset charset used to convert objects
+     */
     public StringSerializer(Charset charset) {
         this.charset = charset;
     }

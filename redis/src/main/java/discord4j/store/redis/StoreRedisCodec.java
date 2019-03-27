@@ -23,11 +23,24 @@ import io.netty.buffer.Unpooled;
 
 import java.nio.ByteBuffer;
 
+/**
+ * A {@link RedisCodec} implementation tailored for {@link RedisStore} instances, allowing separate serialization
+ * strategies for keys and values.
+ *
+ * @param <K> key type
+ * @param <V> value type
+ */
 public class StoreRedisCodec<K, V> implements RedisCodec<K, V> {
 
     private final RedisSerializer<K> keySerializer;
     private final RedisSerializer<V> valueSerializer;
 
+    /**
+     * Create a new {@link StoreRedisCodec} using the given {@link RedisSerializer} instances for keys and values.
+     *
+     * @param keySerializer serializer for keys
+     * @param valueSerializer serializer for values
+     */
     public StoreRedisCodec(RedisSerializer<K> keySerializer, RedisSerializer<V> valueSerializer) {
         this.keySerializer = keySerializer;
         this.valueSerializer = valueSerializer;

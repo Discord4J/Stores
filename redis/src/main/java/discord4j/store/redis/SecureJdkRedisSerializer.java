@@ -18,15 +18,30 @@
 package discord4j.store.redis;
 
 import discord4j.store.crypto.AES;
+import discord4j.store.crypto.SecretKeyGenerator;
 
 import javax.crypto.SecretKey;
 import java.io.*;
 import java.security.GeneralSecurityException;
 
+/**
+ * A {@link RedisSerializer} that uses JDK serialization along with a {@link SecretKey} to encrypt and decrypt
+ * resulting objects while encoding/decoding them. This implementation currently uses AES cipher outlined by the
+ * {@link AES} class.
+ * <p>
+ * Simplest way to create a {@code SecretKey} object for usage in this serializer is to run the
+ * {@link SecretKeyGenerator} main method.
+ */
 public class SecureJdkRedisSerializer implements RedisSerializer<Object> {
 
     private final SecretKey secretKey;
 
+    /**
+     * Create a new serializer that also encrypts data using AES with the given {@link SecretKey}. You can generate
+     * one by running {@link SecretKeyGenerator} class.
+     *
+     * @param secretKey the key used to encrypt/decrypt objects
+     */
     public SecureJdkRedisSerializer(SecretKey secretKey) {
         this.secretKey = secretKey;
     }

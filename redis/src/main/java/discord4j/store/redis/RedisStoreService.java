@@ -28,25 +28,38 @@ import discord4j.store.api.primitive.LongObjStore;
 import discord4j.store.api.service.StoreService;
 import discord4j.store.api.util.StoreContext;
 import io.lettuce.core.RedisClient;
+import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.codec.RedisCodec;
 import reactor.core.publisher.Mono;
 
 import java.io.Serializable;
 
 /**
- * {@link StoreService} implementation that creates {@link RedisStore} instances capable of communicating to redis
- * servers through lettuce-core driver.
+ * A {@link StoreService} implementation that creates {@link RedisStore} instances capable of communicating to a
+ * Redis server through Lettuce Core driver using a single stateful connection.
+ * <p>
+ * This factory can be created under a number of configurations, particularly allowing customization of Lettuce
+ * {@link RedisClient}, the codec used to serializer and deserialize entities and the key prefix used when saving
+ * entities.
+ *
+ * @see <a href="https://lettuce.io/">Lettuce Core</a>
  */
 @WireService(StoreService.class)
 public class RedisStoreService implements StoreService {
 
+    public static final String DEFAULT_REDIS_URI = "redis://localhost";
+    public static final String DEFAULT_KEY_PREFIX = "discord4j:store:";
+
     private final RedisClient client;
-    private final RedisCodec<String, Object> codec;
     private final String keyPrefix;
+    private final StatefulRedisConnection<String, Object> connection;
 
     /**
      * Creates a new {@link RedisStoreService} with the default client that connects to a localhost server, a default
      * codec performing String key serialization and JSON value serialization using Jackson, and a default key prefix.
+     *
+     * @see #DEFAULT_REDIS_URI
+     * @see #DEFAULT_KEY_PREFIX
      */
     public RedisStoreService() {
         this(defaultClient(), defaultCodec(), defaultKeyPrefix());
@@ -57,6 +70,7 @@ public class RedisStoreService implements StoreService {
      * serialization using Jackson and a default key prefix.
      *
      * @param redisClient the underlying lettuce-core client
+     * @see #DEFAULT_KEY_PREFIX
      */
     public RedisStoreService(RedisClient redisClient) {
         this(redisClient, defaultCodec(), defaultKeyPrefix());
@@ -67,6 +81,7 @@ public class RedisStoreService implements StoreService {
      *
      * @param redisClient the underlying lettuce-core client
      * @param redisCodec the codec used to convert between redis and Java
+     * @see #DEFAULT_KEY_PREFIX
      */
     public RedisStoreService(RedisClient redisClient, RedisCodec<String, Object> redisCodec) {
         this(redisClient, redisCodec, defaultKeyPrefix());
@@ -81,8 +96,8 @@ public class RedisStoreService implements StoreService {
      */
     public RedisStoreService(RedisClient redisClient, RedisCodec<String, Object> redisCodec, String keyPrefix) {
         this.client = redisClient;
-        this.codec = redisCodec;
         this.keyPrefix = keyPrefix;
+        this.connection = client.connect(redisCodec);
     }
 
     /**
@@ -93,7 +108,7 @@ public class RedisStoreService implements StoreService {
      */
     public static RedisClient defaultClient() {
         String url = System.getenv("D4J_REDIS_URL");
-        String redisUri = url != null ? url : "redis://localhost";
+        String redisUri = url != null ? url : DEFAULT_REDIS_URI;
         return RedisClient.create(redisUri);
     }
 
@@ -110,12 +125,12 @@ public class RedisStoreService implements StoreService {
     }
 
     /**
-     * Get the default key prefix that is used when creating each store. Default prefix is "{@code discord4j:store:}"
+     * Get the default key prefix that is used when creating each store. See {@link #DEFAULT_KEY_PREFIX}.
      *
      * @return the default key prefix
      */
     public static String defaultKeyPrefix() {
-        return "discord4j:store:";
+        return DEFAULT_KEY_PREFIX;
     }
 
     @Override
@@ -126,7 +141,7 @@ public class RedisStoreService implements StoreService {
     @Override
     public <K extends Comparable<K>, V extends Serializable> Store<K, V> provideGenericStore(Class<K> keyClass,
                                                                                              Class<V> valueClass) {
-        return new RedisStore<>(client, keyPrefix + valueClass.getSimpleName(), codec);
+        return new RedisStore<>(connection, keyPrefix + valueClass.getSimpleName());
     }
 
     @Override

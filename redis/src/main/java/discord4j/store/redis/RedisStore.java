@@ -20,9 +20,8 @@ package discord4j.store.redis;
 import discord4j.store.api.Store;
 import discord4j.store.api.util.LongLongTuple2;
 import discord4j.store.api.util.WithinRangePredicate;
-import io.lettuce.core.RedisClient;
+import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.reactive.RedisReactiveCommands;
-import io.lettuce.core.codec.RedisCodec;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -36,8 +35,8 @@ public class RedisStore<K extends Comparable<K>, V extends Serializable> impleme
     private final RedisReactiveCommands<String, Object> commands;
     private final String storeName;
 
-    public RedisStore(RedisClient client, String storeName, RedisCodec<String, Object> codec) {
-        this.commands = client.connect(codec).reactive();
+    public RedisStore(StatefulRedisConnection<String, Object> connection, String storeName) {
+        this.commands = connection.reactive();
         this.storeName = storeName;
     }
 

@@ -19,6 +19,9 @@ package discord4j.store.redis;
 
 import java.io.*;
 
+/**
+ * A {@link RedisSerializer} that uses JDK serialization to encode/decode objects.
+ */
 public class JdkRedisSerializer implements RedisSerializer<Object> {
 
     @Override

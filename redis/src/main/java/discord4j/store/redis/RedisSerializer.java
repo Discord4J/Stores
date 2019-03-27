@@ -19,6 +19,11 @@ package discord4j.store.redis;
 
 import reactor.util.annotation.Nullable;
 
+/**
+ * A serialization strategy to help encoding/decoding Java objects to/from Redis.
+ *
+ * @param <T> Java object type
+ */
 public interface RedisSerializer<T> {
 
     /**

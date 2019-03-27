@@ -17,6 +17,9 @@
 
 package discord4j.store.redis;
 
+/**
+ * Thrown if a {@link RedisSerializer} is unable to perform serialization or deserialization of a given object.
+ */
 public class SerializationException extends RuntimeException {
 
     public SerializationException(String msg, Throwable cause) {

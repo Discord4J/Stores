@@ -17,14 +17,26 @@
 
 package discord4j.store.redis;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import reactor.util.annotation.Nullable;
 
+/**
+ * A {@link RedisSerializer} using Jackson to encode/decode objects using default typing. Relies on objects saving their
+ * class details given by {@link ObjectMapper#enableDefaultTyping(ObjectMapper.DefaultTyping, JsonTypeInfo.As)}.
+ */
 public class JacksonRedisSerializer implements RedisSerializer<Object> {
 
     private final ObjectMapper mapper;
 
+    /**
+     * Create a new serializer that uses the given {@link ObjectMapper}. You must be aware that this serializer
+     * relies on Jackson's default typing capability to perform generic deserialization, therefore the given {@code
+     * ObjectMapper} must be set up for this feature.
+     *
+     * @param mapper Jackson mapper used to encode/decode objects
+     */
     public JacksonRedisSerializer(ObjectMapper mapper) {
         this.mapper = mapper;
     }
