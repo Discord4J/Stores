@@ -27,7 +27,7 @@ import reactor.core.publisher.Mono;
 import java.io.Serializable;
 
 /**
- * {@link StoreService} decorator disabling all mutative operations, effectively working as a read-only store.
+ * {@link StoreService} decorator disabling all writing operations, effectively working as a read-only store.
  */
 public class ReadOnlyStoreService implements StoreService {
 

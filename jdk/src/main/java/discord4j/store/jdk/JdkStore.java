@@ -14,14 +14,31 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * {@link Store} backed by a JDK {@link Map}.
+ *
+ * @param <K> the store keys
+ * @param <V> the store values
+ */
 public class JdkStore<K extends Comparable<K>, V extends Serializable> implements Store<K, V> {
 
     private final Map<K, V> map;
 
+    /**
+     * Create a new {@link JdkStore} backed by the given {@link Map}. Operations on the map must be thread-safe.
+     *
+     * @param map the map to back this store
+     */
     public JdkStore(Map<K, V> map) {
         this.map = map;
     }
 
+    /**
+     * Create a new {@link JdkStore} using a default backing {@link Map}, like {@link ConcurrentHashMap}.
+     *
+     * @param persist whether this store is expected to hold onto the stored values indefinitely. Will use a
+     * {@link ConcurrentHashMap} as backing if {@code true}, and a thread-safe {@link WeakHashMap} otherwise.
+     */
     public JdkStore(boolean persist) {
         if (persist) {
             this.map = new ConcurrentHashMap<>();
@@ -43,8 +60,9 @@ public class JdkStore<K extends Comparable<K>, V extends Serializable> implement
     @Override
     public Mono<V> find(K id) {
         return Mono.defer(() -> {
-            if (map.containsKey(id))
+            if (map.containsKey(id)) {
                 return Mono.just(map.get(id));
+            }
             return Mono.empty();
         });
     }
@@ -106,7 +124,7 @@ public class JdkStore<K extends Comparable<K>, V extends Serializable> implement
     @Override
     public String toString() {
         return "JdkStore@" + Integer.toHexString(hashCode()) + "{" +
-            "map=" + map.getClass().getCanonicalName() +
-            '}';
+                "map=" + map.getClass().getCanonicalName() +
+                '}';
     }
 }

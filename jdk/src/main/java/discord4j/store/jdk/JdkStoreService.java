@@ -10,6 +10,9 @@ import reactor.core.publisher.Mono;
 
 import java.io.Serializable;
 
+/**
+ * Factory that creates {@link JdkStore} instances.
+ */
 @WireService(StoreService.class)
 public class JdkStoreService implements StoreService {
 

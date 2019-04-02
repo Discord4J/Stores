@@ -34,6 +34,15 @@ import java.util.concurrent.ConcurrentHashMap;
  * Allows you to delegate the store process to a different {@link StoreService} depending on the stored value class.
  * <p>
  * Can acquire an instance through {@link #create()} and configure it afterwards.
+ * <p>
+ * Can be used like this to suppress storing certain entities:
+ * <pre>
+ *     DiscordClient client = new DiscordClientBuilder(token)
+ * 	        .setStoreService(MappingStoreService.create()
+ * 		        .setMapping(MessageBean.class, new NoOpStoreService())
+ * 		        .setFallback(new JdkStoreService()))
+ * 	        .build();
+ * </pre>
  */
 public class MappingStoreService implements StoreService {
 

@@ -25,6 +25,12 @@ import reactor.util.function.Tuple2;
 
 import java.io.Serializable;
 
+/**
+ * {@link Store} implementation that returns {@link Mono#empty()} to every writing operation.
+ *
+ * @param <K> the store keys
+ * @param <V> the store values
+ */
 public class ReadOnlyStore<K extends Comparable<K>, V extends Serializable> implements Store<K, V> {
 
     private final Store<K, V> backing;

@@ -14,6 +14,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Discord4J. If not, see <http://www.gnu.org/licenses/>.
  */
+/**
+ * Factory that allows routing entities across many {@link discord4j.store.api.Store} implementations.
+ */
 @NonNullApi
 package discord4j.store.api.mapping;
 
