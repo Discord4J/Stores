@@ -3,13 +3,15 @@
 
 A set of pre-made store implementations for Discord4J v3.0 and higher
 
-* [Store API](https://github.com/Discord4J/Stores/tree/master/api)
+Support modules:
+
+* [API](https://github.com/Discord4J/Stores/tree/master/api)
+* [TCK](https://github.com/Discord4J/Stores/tree/master/tck)
 
 Current implementations:
 * [Chronicle](https://github.com/Discord4J/Stores/tree/master/chronicle)
-* [JDK](https://github.com/Discord4J/Stores/tree/master/jdk) (Consider this the "reference implementation")
+* [JDK](https://github.com/Discord4J/Stores/tree/master/jdk)
 * [Redis](https://github.com/Discord4J/Stores/tree/master/redis)
-* [TCK](https://github.com/Discord4J/Stores/tree/master/tck)
 * [Caffeine](https://github.com/Discord4J/Stores/tree/master/caffeine)
 
-Please refer to each corresponding module to import it to your project.
+Please refer to each corresponding module for instructions about importing it to your project.

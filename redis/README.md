@@ -4,11 +4,8 @@ A store implementation backed by [Lettuce](https://lettuce.io/), advanced Java R
 
 Work in progress!
 
-Roadmap:
-* Custom options
-* Split module into a JSON-based implementation
-
 ## Installation
+Replace VERSION with the following: [![Maven Central](https://img.shields.io/maven-central/v/com.discord4j/stores-redis.svg?style=flat-square)](https://search.maven.org/artifact/com.discord4j/stores-redis)
 ### Gradle
 ```groovy
 repositories {
@@ -16,7 +13,7 @@ repositories {
 }
 
 dependencies {
-  implementation 'com.discord4j:stores-redis:3.0.0'
+  implementation 'com.discord4j:stores-redis:VERSION'
 }
 ```
 ### Maven
@@ -25,7 +22,7 @@ dependencies {
   <dependency>
     <groupId>com.discord4j</groupId>
     <artifactId>stores-redis</artifactId>
-    <version>3.0.0</version>
+    <version>VERSION</version>
   </dependency>
 </dependencies>
 ```
@@ -33,7 +30,7 @@ dependencies {
 ### SBT
 ```scala
 libraryDependencies ++= Seq(
-  "com.discord4j" % "stores-redis" % "3.0.0"
+  "com.discord4j" % "stores-redis" % "VERSION"
 )
 ```
 

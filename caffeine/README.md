@@ -3,6 +3,7 @@
 A store implementation backed by [Caffeine](https://github.com/ben-manes/caffeine), a high performance caching library for Java 8.
 
 ## Installation
+Replace VERSION with the following: [![Maven Central](https://img.shields.io/maven-central/v/com.discord4j/stores-caffeine.svg?style=flat-square)](https://search.maven.org/artifact/com.discord4j/stores-caffeine)
 ### Gradle
 ```groovy
 repositories {
@@ -10,7 +11,7 @@ repositories {
 }
 
 dependencies {
-  implementation 'com.discord4j:stores-caffeine:3.0.0'
+  implementation 'com.discord4j:stores-caffeine:VERSION'
 }
 ```
 ### Maven
@@ -19,7 +20,7 @@ dependencies {
   <dependency>
     <groupId>com.discord4j</groupId>
     <artifactId>stores-caffeine</artifactId>
-    <version>3.0.0</version>
+    <version>VERSION</version>
   </dependency>
 </dependencies>
 ```
@@ -27,7 +28,7 @@ dependencies {
 ### SBT
 ```scala
 libraryDependencies ++= Seq(
-  "com.discord4j" % "stores-caffeine" % "3.0.0"
+  "com.discord4j" % "stores-caffeine" % "VERSION"
 )
 ```
 
@@ -37,7 +38,7 @@ This module can be **auto-discovered** by Discord4J if it's on the classpath. Re
 
 ```java
 final DiscordClient client = new DiscordClientBuilder("token")
-        .setStoreService(CaffeineStoreService.create(builder -> builder.maximumSize(10_000)
+        .setStoreService(new CaffeineStoreService(builder -> builder.maximumSize(10_000)
                                                                         .expireAfterWrite(5, TimeUnit.MINUTES)
                                                                         .refreshAfterWrite(1, TimeUnit.MINUTES)))
         .build();

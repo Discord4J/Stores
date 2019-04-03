@@ -3,6 +3,7 @@
 A store implementation backed by [Chronicle Map](https://github.com/OpenHFT/Chronicle-Map), replicate your Key Value Store across your network, with consistency, persistence and performance.
 
 ## Installation
+Replace VERSION with the following: [![Maven Central](https://img.shields.io/maven-central/v/com.discord4j/stores-chronicle.svg?style=flat-square)](https://search.maven.org/artifact/com.discord4j/stores-chronicle)
 ### Gradle
 ```groovy
 repositories {
@@ -10,7 +11,7 @@ repositories {
 }
 
 dependencies {
-  implementation 'com.discord4j:stores-chronicle:3.0.0'
+  implementation 'com.discord4j:stores-chronicle:VERSION'
 }
 ```
 ### Maven
@@ -19,7 +20,7 @@ dependencies {
   <dependency>
     <groupId>com.discord4j</groupId>
     <artifactId>stores-chronicle</artifactId>
-    <version>3.0.0</version>
+    <version>VERSION</version>
   </dependency>
 </dependencies>
 ```
@@ -27,7 +28,7 @@ dependencies {
 ### SBT
 ```scala
 libraryDependencies ++= Seq(
-  "com.discord4j" % "stores-chronicle" % "3.0.0"
+  "com.discord4j" % "stores-chronicle" % "VERSION"
 )
 ```
 
