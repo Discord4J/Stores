@@ -9,7 +9,6 @@ Support modules:
 * [TCK](https://github.com/Discord4J/Stores/tree/master/tck)
 
 Current implementations:
-* [Chronicle](https://github.com/Discord4J/Stores/tree/master/chronicle)
 * [JDK](https://github.com/Discord4J/Stores/tree/master/jdk)
 * [Redis](https://github.com/Discord4J/Stores/tree/master/redis)
 * [Caffeine](https://github.com/Discord4J/Stores/tree/master/caffeine)
