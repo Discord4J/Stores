@@ -39,7 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * <pre>
  *     DiscordClient client = new DiscordClientBuilder(token)
  * 	        .setStoreService(MappingStoreService.create()
- * 		        .setMapping(MessageBean.class, new NoOpStoreService())
+ * 		        .setMapping(new NoOpStoreService(), MessageBean.class)
  * 		        .setFallback(new JdkStoreService()))
  * 	        .build();
  * </pre>
@@ -56,7 +56,7 @@ public class MappingStoreService implements StoreService {
 
     /**
      * Obtain a new {@link MappingStoreService} instance that can be further configured using
-     * {@link #setMapping(Class, StoreService)} to set a new delegate {@link StoreService} and
+     * {@link #setMapping(StoreService, Class)} to set a new delegate {@link StoreService} and
      * {@link #setFallback(StoreService)} to provide a fallback if the value class is not defined elsewhere.
      *
      * @return a new instance backed by {@link NoOpStoreService} as fallback for all types, can be configured.
@@ -71,10 +71,40 @@ public class MappingStoreService implements StoreService {
      * @param valueClass the value to map
      * @param storeService the service to use for the values
      * @return a new {@link MappingStoreService} with updated properties
+     * @deprecated use {@link #setMapping(StoreService, Class)}
      */
+    @Deprecated
     public MappingStoreService setMapping(Class<?> valueClass, StoreService storeService) {
         Map<Class<?>, StoreService> updatedMap = new ConcurrentHashMap<>(serviceMap);
         updatedMap.put(valueClass, storeService);
+        return new MappingStoreService(updatedMap, fallback);
+    }
+
+    /**
+     * Set a new delegate {@link StoreService} for the given value class.
+     *
+     * @param storeService the service to use for the values
+     * @param valueClass the value class to map to the given service
+     * @return a new {@link MappingStoreService} with updated properties
+     */
+    public MappingStoreService setMapping(StoreService storeService, Class<?> valueClass) {
+        Map<Class<?>, StoreService> updatedMap = new ConcurrentHashMap<>(serviceMap);
+        updatedMap.put(valueClass, storeService);
+        return new MappingStoreService(updatedMap, fallback);
+    }
+
+    /**
+     * Set a new delegate {@link StoreService} for multiple given value classes.
+     *
+     * @param storeService the service to use for the values
+     * @param valueClasses the list of value classes to map to the given service
+     * @return a new {@link MappingStoreService} with updated properties
+     */
+    public MappingStoreService setMappings(StoreService storeService, Class<?>... valueClasses) {
+        Map<Class<?>, StoreService> updatedMap = new ConcurrentHashMap<>(serviceMap);
+        for (Class<?> valueClass : valueClasses) {
+            updatedMap.put(valueClass, storeService);
+        }
         return new MappingStoreService(updatedMap, fallback);
     }
 
