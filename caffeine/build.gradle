@@ -1,6 +1,6 @@
 dependencies {
     compile project(':api')
-    compile 'com.github.ben-manes.caffeine:caffeine:2.7.0'
+    compile "com.github.ben-manes.caffeine:caffeine:$caffeine_version"
     annotationProcessor "com.austinv11.servicer:Servicer:$servicer_version"
 }
 
