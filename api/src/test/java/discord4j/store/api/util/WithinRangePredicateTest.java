@@ -23,10 +23,10 @@ import static org.junit.Assert.assertTrue;
 
 public class WithinRangePredicateTest {
 
-    private final String strStart = "a", strEnd = "m";
-
     @Test
     public void test() {
+        String strStart = "a";
+        String strEnd = "m";
         WithinRangePredicate<String> predicate = new WithinRangePredicate<>(strStart, strEnd);
         assertTrue(predicate.test("a"));
         assertTrue(predicate.test("c"));

@@ -34,7 +34,6 @@ public class StoreTests {
 
     private final StoreServiceLoader provider = new StoreServiceLoader();
 
-    @SuppressWarnings("ConstantConditions")
     private Store<String, String> newStore() {
         return provider.newGenericStore(String.class, String.class);
     }
@@ -42,7 +41,8 @@ public class StoreTests {
     @Test
     public void testServiceDiscovery() {
         assertTrue(provider.getStoreService() instanceof ForwardingStoreService);
-        Assert.assertEquals(TestService.class, ((ForwardingStoreService) provider.getStoreService()).getOriginal().getClass());
+        Assert.assertEquals(TestService.class,
+                ((ForwardingStoreService) provider.getStoreService()).getOriginal().getClass());
     }
 
     @Test
@@ -54,13 +54,14 @@ public class StoreTests {
     }
 
     @Test
-    public void testorder() {
+    public void testOrder() {
         Map<Class<? extends StoreService>, Integer> override = new HashMap<>();
         override.put(TestService.class, Integer.MAX_VALUE);
         override.put(NoOpStoreService.class, Integer.MIN_VALUE);
-        StoreServiceLoader overriden = new StoreServiceLoader(override);
-        Assert.assertEquals(TestService.class, ((ForwardingStoreService) provider.getStoreService()).getOriginal().getClass());
-        assertEquals(NoOpStoreService.class, overriden.getStoreService().getClass());
+        StoreServiceLoader overridden = new StoreServiceLoader(override);
+        Assert.assertEquals(TestService.class,
+                ((ForwardingStoreService) provider.getStoreService()).getOriginal().getClass());
+        assertEquals(NoOpStoreService.class, overridden.getStoreService().getClass());
     }
 
     @Test

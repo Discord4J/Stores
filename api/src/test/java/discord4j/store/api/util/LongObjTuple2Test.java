@@ -36,7 +36,6 @@ public class LongObjTuple2Test {
         assertEquals(obj, tuple.getT2());
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Test(expected = NullPointerException.class)
     public void testNullObj() {
         LongObjTuple2.of(key, null);
