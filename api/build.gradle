@@ -4,4 +4,5 @@ dependencies {
     annotationProcessor "com.austinv11.servicer:Servicer:$servicer_version"
 
     testCompile "junit:junit:$junit_version"
+    testAnnotationProcessor "com.austinv11.servicer:Servicer:$servicer_version"
 }
