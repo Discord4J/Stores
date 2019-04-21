@@ -251,8 +251,6 @@ release {
     newVersionCommitMessage = 'Next development version'
 }
 
-afterReleaseBuild.dependsOn publish
-
 wrapper {
     distributionType = Wrapper.DistributionType.ALL
 }
