@@ -123,7 +123,7 @@ public class RedisStoreService implements StoreService {
         return new StoreRedisCodec<>(new StringSerializer(), new JacksonRedisSerializer(new ObjectMapper()
                 .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
                 .activateDefaultTyping(BasicPolymorphicTypeValidator.builder()
-                                .allowIfBaseType("discord4j.").build(),
+                                .allowIfSubType("discord4j.").build(),
                         ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)));
     }
 
