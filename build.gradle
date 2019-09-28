@@ -25,7 +25,7 @@ ext {
     logback_version = '1.3.0-alpha4'
 
     caffeine_version = '2.8.0'
-    lettuce_version = '5.1.8.RELEASE'
+    lettuce_version = '5.2.0.RELEASE'
     jackson_version = '2.10.0'
     commons_lang_version = '3.9'
 
