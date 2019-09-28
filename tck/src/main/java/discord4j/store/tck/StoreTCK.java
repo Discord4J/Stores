@@ -17,6 +17,7 @@
 
 package discord4j.store.tck;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import discord4j.store.api.Store;
 import discord4j.store.api.primitive.ForwardingStore;
 import discord4j.store.api.primitive.LongObjStore;
@@ -242,6 +243,7 @@ public abstract class StoreTCK {
 
     //Primitive store tests
 
+    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
     public static class TestBean implements Serializable {
 
         private static final long serialVersionUID = 629911716178802723L;
@@ -368,6 +370,7 @@ public abstract class StoreTCK {
         }
     }
 
+    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
     public static class AnotherBean implements Serializable {
 
         private static final long serialVersionUID = 2422061064093555299L;

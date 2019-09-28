@@ -3,6 +3,7 @@ dependencies {
     compile "junit:junit:$junit_version"
     compile "io.projectreactor:reactor-test"
     compile "org.apache.commons:commons-lang3:$commons_lang_version"
+    compile "com.fasterxml.jackson.core:jackson-databind:$jackson_version"
 }
 
 javadoc {
