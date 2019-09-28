@@ -18,7 +18,7 @@ ext {
     project_jdk = '1.8'
 
     // Dependencies
-    reactor_bom_version = 'Dysprosium-RC1'
+    reactor_bom_version = 'Dysprosium-RELEASE'
     servicer_version = '1.0.0'
     commons_codec_version = '1.12'
     junit_version = '4.12'
