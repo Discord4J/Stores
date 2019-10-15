@@ -18,23 +18,21 @@ package discord4j.store.api;
 
 import discord4j.store.api.primitive.LongObjStore;
 import org.reactivestreams.Publisher;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 
 import java.io.Serializable;
 
 /**
- * This provides an active data connection to a store's data source.
+ * This provides an active data connection to a store's data source, supporting read and write operations.
  *
  * @param <K> The key type which provides a 1:1 mapping to the value type. This type is also expected to be
  * {@link Comparable} in order to allow for range operations.
  * @param <V> The value type, these follow
  * <a href="https://en.wikipedia.org/wiki/JavaBeans#JavaBean_conventions">JavaBean</a> conventions.
- *
  * @see LongObjStore
  */
-public interface Store<K extends Comparable<K>, V extends Serializable> {
+public interface Store<K extends Comparable<K>, V extends Serializable> extends ReadOnlyStore<K, V> {
 
     /**
      * Stores a key value pair.
@@ -52,30 +50,6 @@ public interface Store<K extends Comparable<K>, V extends Serializable> {
      * @return A mono which signals the completion of the storage of the pairs.
      */
     Mono<Void> save(Publisher<Tuple2<K, V>> entryStream);
-
-    /**
-     * Attempts to find the value associated with the provided id.
-     *
-     * @param id The id to search with.
-     * @return A mono, which may or may not contain an associated object.
-     */
-    Mono<V> find(K id);
-
-    /**
-     * Retrieves all stored values with ids within a provided range.
-     *
-     * @param start The starting key (inclusive).
-     * @param end The ending key (exclusive).
-     * @return The stream of values with ids within the provided range.
-     */
-    Flux<V> findInRange(K start, K end);
-
-    /**
-     * Retrieves the amount of stored values in the data source currently.
-     *
-     * @return A mono which provides the amount of stored values.
-     */
-    Mono<Long> count();
 
     /**
      * Deletes a value associated with the provided id.
@@ -108,29 +82,6 @@ public interface Store<K extends Comparable<K>, V extends Serializable> {
      * @return A mono which signals the completion of the deletion of all values.
      */
     Mono<Void> deleteAll();
-
-    /**
-     * Gets a stream of all keys in the data source.
-     *
-     * @return The stream of keys stored.
-     */
-    Flux<K> keys();
-
-    /**
-     * Gets a stream of all values in the data source.
-     *
-     * @return The stream of values stored.
-     */
-    Flux<V> values();
-
-    /**
-     * Gets a stream of all entries in the data source.
-     *
-     * @return The stream of all entries stored.
-     */
-    default Flux<Tuple2<K, V>> entries() {
-        return keys().zipWith(values());
-    }
 
     /**
      * Invalidates the contents of the store. Once this is invoked, there is no longer a guarantee that the
