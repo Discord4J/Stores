@@ -23,8 +23,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 
-import java.io.Serializable;
-
 /**
  * This provides an active data connection to a store's data source.
  *
@@ -33,7 +31,7 @@ import java.io.Serializable;
  *
  * @see Store
  */
-public interface LongObjStore<V extends Serializable> extends Store<Long, V> {
+public interface LongObjStore<V> extends Store<Long, V> {
 
     @Override
     default Mono<Void> save(Long key, V value) {

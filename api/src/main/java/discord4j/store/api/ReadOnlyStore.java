@@ -21,8 +21,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 
-import java.io.Serializable;
-
 /**
  * A store that only supports read operations.
  *
@@ -32,7 +30,7 @@ import java.io.Serializable;
  * <a href="https://en.wikipedia.org/wiki/JavaBeans#JavaBean_conventions">JavaBean</a> conventions.
  * @see LongObjStore
  */
-public interface ReadOnlyStore<K extends Comparable<K>, V extends Serializable> {
+public interface ReadOnlyStore<K extends Comparable<K>, V> {
 
     /**
      * Attempts to find the value associated with the provided id.

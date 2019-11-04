@@ -8,7 +8,6 @@ import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -20,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @param <K> the store keys
  * @param <V> the store values
  */
-public class JdkStore<K extends Comparable<K>, V extends Serializable> implements Store<K, V> {
+public class JdkStore<K extends Comparable<K>, V> implements Store<K, V> {
 
     private final Map<K, V> map;
 

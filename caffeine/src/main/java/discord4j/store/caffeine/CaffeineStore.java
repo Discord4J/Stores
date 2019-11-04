@@ -25,9 +25,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 
-import java.io.Serializable;
-
-public class CaffeineStore<K extends Comparable<K>, V extends Serializable> implements Store<K,V> {
+public class CaffeineStore<K extends Comparable<K>, V> implements Store<K,V> {
 
     private final Cache<K, V> cache;
 

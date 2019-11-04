@@ -26,7 +26,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.annotation.Nullable;
 
-import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -124,8 +123,8 @@ public class MappingStoreService implements StoreService {
     }
 
     @Override
-    public <K extends Comparable<K>, V extends Serializable> Store<K, V> provideGenericStore(Class<K> keyClass,
-                                                                                             Class<V> valueClass) {
+    public <K extends Comparable<K>, V> Store<K, V> provideGenericStore(Class<K> keyClass,
+                                                                        Class<V> valueClass) {
         return getGenericStore(valueClass).provideGenericStore(keyClass, valueClass);
     }
 
@@ -140,7 +139,7 @@ public class MappingStoreService implements StoreService {
     }
 
     @Override
-    public <V extends Serializable> LongObjStore<V> provideLongObjStore(Class<V> valueClass) {
+    public <V> LongObjStore<V> provideLongObjStore(Class<V> valueClass) {
         return getLongObjStore(valueClass).provideLongObjStore(valueClass);
     }
 

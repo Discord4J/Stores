@@ -23,8 +23,6 @@ import discord4j.store.api.primitive.LongObjStore;
 import discord4j.store.api.util.StoreContext;
 import reactor.core.publisher.Mono;
 
-import java.io.Serializable;
-
 /**
  * Store abstract factory that can be manually created or loaded through a {@link StoreServiceLoader} as a Java service.
  *
@@ -66,8 +64,7 @@ public interface StoreService {
      * <a href="https://en.wikipedia.org/wiki/JavaBeans#JavaBean_conventions">JavaBean</a> conventions.
      * @return The instance of the store.
      */
-    <K extends Comparable<K>, V extends Serializable> Store<K, V> provideGenericStore(Class<K> keyClass, Class<V>
-            valueClass);
+    <K extends Comparable<K>, V> Store<K, V> provideGenericStore(Class<K> keyClass, Class<V> valueClass);
 
     /**
      * This is used to check if this service can provide long-object stores.
@@ -85,7 +82,7 @@ public interface StoreService {
      * <a href="https://en.wikipedia.org/wiki/JavaBeans#JavaBean_conventions">JavaBean</a> conventions.
      * @return The instance of the store.
      */
-    <V extends Serializable> LongObjStore<V> provideLongObjStore(Class<V> valueClass);
+    <V> LongObjStore<V> provideLongObjStore(Class<V> valueClass);
 
     /**
      * This is a lifecycle method called to signal that a store should allocate any necessary resources.

@@ -23,9 +23,7 @@ import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.io.Serializable;
-
-public class ReadOnlyLongObjStore<V extends Serializable> implements LongObjStore<V> {
+public class ReadOnlyLongObjStore<V> implements LongObjStore<V> {
 
     private final LongObjStore<V> backing;
 

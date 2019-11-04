@@ -26,7 +26,6 @@ import discord4j.store.api.service.StoreService;
 import discord4j.store.api.util.StoreContext;
 import reactor.core.publisher.Mono;
 
-import java.io.Serializable;
 import java.util.function.Function;
 
 /**
@@ -51,8 +50,8 @@ public class CaffeineStoreService implements StoreService {
     }
 
     @Override
-    public <K extends Comparable<K>, V extends Serializable> Store<K, V> provideGenericStore(Class<K> keyClass,
-                                                                                             Class<V> valueClass) {
+    public <K extends Comparable<K>, V> Store<K, V> provideGenericStore(Class<K> keyClass,
+                                                                        Class<V> valueClass) {
         return new CaffeineStore<K, V>(mapper.apply(Caffeine.newBuilder()).build());
     }
 
@@ -62,7 +61,7 @@ public class CaffeineStoreService implements StoreService {
     }
 
     @Override
-    public <V extends Serializable> LongObjStore<V> provideLongObjStore(Class<V> valueClass) {
+    public <V> LongObjStore<V> provideLongObjStore(Class<V> valueClass) {
         return new ForwardingStore<>(provideGenericStore(Long.class, valueClass));
     }
 

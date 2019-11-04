@@ -22,8 +22,6 @@ import discord4j.store.api.primitive.LongObjStore;
 import discord4j.store.api.util.StoreContext;
 import reactor.core.publisher.Mono;
 
-import java.io.Serializable;
-
 @WireService(StoreService.class)
 public class TestService implements StoreService {
 
@@ -33,8 +31,8 @@ public class TestService implements StoreService {
     }
 
     @Override
-    public <K extends Comparable<K>, V extends Serializable> Store<K, V> provideGenericStore(Class<K> keyClass,
-                                                                                             Class<V> valueClass) {
+    public <K extends Comparable<K>, V> Store<K, V> provideGenericStore(Class<K> keyClass,
+                                                                        Class<V> valueClass) {
         return new MapStore<>();
     }
 
@@ -44,7 +42,7 @@ public class TestService implements StoreService {
     }
 
     @Override
-    public <V extends Serializable> LongObjStore<V> provideLongObjStore(Class<V> valueClass) {
+    public <V> LongObjStore<V> provideLongObjStore(Class<V> valueClass) {
         throw new UnsupportedOperationException();
     }
 

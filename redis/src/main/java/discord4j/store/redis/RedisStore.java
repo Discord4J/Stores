@@ -27,10 +27,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 
-import java.io.Serializable;
 import java.util.Map;
 
-public class RedisStore<K extends Comparable<K>, V extends Serializable> implements Store<K, V> {
+public class RedisStore<K extends Comparable<K>, V> implements Store<K, V> {
 
     private final RedisReactiveCommands<String, Object> commands;
     private final String storeName;

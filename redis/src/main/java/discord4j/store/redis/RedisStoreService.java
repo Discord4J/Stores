@@ -33,8 +33,6 @@ import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.codec.RedisCodec;
 import reactor.core.publisher.Mono;
 
-import java.io.Serializable;
-
 /**
  * A {@link StoreService} implementation that creates {@link RedisStore} instances capable of communicating to a
  * Redis server through Lettuce Core driver using a single stateful connection.
@@ -142,8 +140,8 @@ public class RedisStoreService implements StoreService {
     }
 
     @Override
-    public <K extends Comparable<K>, V extends Serializable> Store<K, V> provideGenericStore(Class<K> keyClass,
-                                                                                             Class<V> valueClass) {
+    public <K extends Comparable<K>, V> Store<K, V> provideGenericStore(Class<K> keyClass,
+                                                                        Class<V> valueClass) {
         return new RedisStore<>(connection, keyPrefix + valueClass.getSimpleName());
     }
 
@@ -153,7 +151,7 @@ public class RedisStoreService implements StoreService {
     }
 
     @Override
-    public <V extends Serializable> LongObjStore<V> provideLongObjStore(Class<V> valueClass) {
+    public <V> LongObjStore<V> provideLongObjStore(Class<V> valueClass) {
         return new ForwardingStore<>(provideGenericStore(Long.class, valueClass));
     }
 

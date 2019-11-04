@@ -21,10 +21,9 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import reactor.util.annotation.Nullable;
 
-import java.io.Serializable;
 import java.util.Objects;
 
-public class SampleBean implements Serializable {
+public class SampleBean {
 
     private long id;
     private String fileName;

@@ -21,7 +21,6 @@ import reactor.util.annotation.Nullable;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
-import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -31,7 +30,7 @@ import java.util.*;
  * @see LongObjTuple2#of(long, Object)
  * @see Tuple2
  */
-public class LongObjTuple2<T> implements Iterable<Object>, Serializable, Comparable<LongObjTuple2<T>> { //Methods
+public class LongObjTuple2<T> implements Iterable<Object>, Comparable<LongObjTuple2<T>> { //Methods
     // copied from reactor.util.function.Tuple2, it would be extended instead but it has a private constructor
 
     /**
@@ -197,7 +196,6 @@ public class LongObjTuple2<T> implements Iterable<Object>, Serializable, Compara
      * @param values the values of the tuple to represent
      * @return a {@link StringBuilder} initialized with the string representation of the
      * values in the Tuple.
-     * @see Tuples#tupleStringRepresentation(Object...)
      */
     static StringBuilder tupleStringRepresentation(Object... values) {
         StringBuilder sb = new StringBuilder();

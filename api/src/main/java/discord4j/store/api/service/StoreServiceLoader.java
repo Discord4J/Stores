@@ -24,7 +24,6 @@ import discord4j.store.api.util.Lazy;
 import discord4j.store.api.util.StoreContext;
 import reactor.core.publisher.Mono;
 
-import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -98,7 +97,7 @@ public class StoreServiceLoader {
      * @param <V> The value type.
      * @return A mono which provides a store instance.
      */
-    public <K extends Comparable<K>, V extends Serializable> Store<K, V> newGenericStore(Class<K> keyClass,
+    public <K extends Comparable<K>, V> Store<K, V> newGenericStore(Class<K> keyClass,
                                                                                          Class<V> valueClass) {
         return getStoreService().provideGenericStore(keyClass, valueClass);
     }
@@ -110,7 +109,7 @@ public class StoreServiceLoader {
      * @param <V> The value type.
      * @return A mono which provides a store instance.
      */
-    public <V extends Serializable> LongObjStore<V> newLongObjStore(Class<V> valueClass) {
+    public <V> LongObjStore<V> newLongObjStore(Class<V> valueClass) {
         return getStoreService().provideLongObjStore(valueClass);
     }
 
@@ -126,7 +125,7 @@ public class StoreServiceLoader {
         @Override
         public int order() {
             int p1 = genericService.order(), p2 = primitiveService.order();
-            return p1 > p2 ? p1 : p2;
+            return Math.max(p1, p2);
         }
 
         @Override
@@ -135,7 +134,7 @@ public class StoreServiceLoader {
         }
 
         @Override
-        public <K extends Comparable<K>, V extends Serializable> Store<K, V> provideGenericStore(Class<K> keyClass,
+        public <K extends Comparable<K>, V> Store<K, V> provideGenericStore(Class<K> keyClass,
                                                                                                  Class<V> valueClass) {
             return genericService.provideGenericStore(keyClass, valueClass);
         }
@@ -146,7 +145,7 @@ public class StoreServiceLoader {
         }
 
         @Override
-        public <V extends Serializable> LongObjStore<V> provideLongObjStore(Class<V> valueClass) {
+        public <V> LongObjStore<V> provideLongObjStore(Class<V> valueClass) {
             return primitiveService.provideLongObjStore(valueClass);
         }
 

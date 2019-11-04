@@ -20,7 +20,6 @@ import reactor.util.annotation.Nullable;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -32,7 +31,7 @@ import java.util.List;
  * @see LongLongTuple2#of(long, long)
  * @see Tuple2
  */
-public class LongLongTuple2 implements Iterable<Long>, Serializable, Comparable<LongLongTuple2> { //Methods copied
+public class LongLongTuple2 implements Iterable<Long>, Comparable<LongLongTuple2> { //Methods copied
     // from reactor.util.function.Tuple2, it would be extended instead but it has a private constructor
 
     /**

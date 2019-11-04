@@ -24,8 +24,6 @@ import discord4j.store.api.service.StoreService;
 import discord4j.store.api.util.StoreContext;
 import reactor.core.publisher.Mono;
 
-import java.io.Serializable;
-
 /**
  * {@link StoreService} decorator disabling all writing operations, effectively working as a read-only store.
  */
@@ -48,8 +46,8 @@ public class ReadOnlyStoreService implements StoreService {
     }
 
     @Override
-    public <K extends Comparable<K>, V extends Serializable> Store<K, V> provideGenericStore(Class<K> keyClass,
-                                                                                             Class<V> valueClass) {
+    public <K extends Comparable<K>, V> Store<K, V> provideGenericStore(Class<K> keyClass,
+                                                                        Class<V> valueClass) {
         return new ReadOnlyStore<>(delegate.provideGenericStore(keyClass, valueClass));
     }
 
@@ -59,7 +57,7 @@ public class ReadOnlyStoreService implements StoreService {
     }
 
     @Override
-    public <V extends Serializable> LongObjStore<V> provideLongObjStore(Class<V> valueClass) {
+    public <V> LongObjStore<V> provideLongObjStore(Class<V> valueClass) {
         return new ReadOnlyLongObjStore<>(delegate.provideLongObjStore(valueClass));
     }
 

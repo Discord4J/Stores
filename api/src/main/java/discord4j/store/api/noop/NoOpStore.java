@@ -23,15 +23,13 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 
-import java.io.Serializable;
-
 /**
  * Data connection implementation which does nothing.
  *
  * @see NoOpStore
  * @see NoOpLongObjStore
  */
-public class NoOpStore<K extends Comparable<K>, V extends Serializable> implements Store<K, V> {
+public class NoOpStore<K extends Comparable<K>, V> implements Store<K, V> {
 
     @Override
     public Mono<Void> save(K key, V value) {

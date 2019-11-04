@@ -21,8 +21,6 @@ import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 
-import java.io.Serializable;
-
 /**
  * This provides an active data connection to a store's data source, supporting read and write operations.
  *
@@ -32,7 +30,7 @@ import java.io.Serializable;
  * <a href="https://en.wikipedia.org/wiki/JavaBeans#JavaBean_conventions">JavaBean</a> conventions.
  * @see LongObjStore
  */
-public interface Store<K extends Comparable<K>, V extends Serializable> extends ReadOnlyStore<K, V> {
+public interface Store<K extends Comparable<K>, V> extends ReadOnlyStore<K, V> {
 
     /**
      * Stores a key value pair.

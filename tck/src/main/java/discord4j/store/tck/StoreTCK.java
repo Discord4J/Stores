@@ -26,7 +26,6 @@ import reactor.util.Logger;
 import reactor.util.Loggers;
 import reactor.util.annotation.Nullable;
 
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -64,18 +63,18 @@ public abstract class StoreTCK {
     /**
      * Gets a generic store.
      */
-    public <K extends Comparable<K>, V extends Serializable> Store<K, V> getObjObjStore(Class<K> keyClass, Class<V> valueClass) {
+    public <K extends Comparable<K>, V> Store<K, V> getObjObjStore(Class<K> keyClass, Class<V> valueClass) {
         return getStoreService().provideGenericStore(keyClass, valueClass);
     }
 
     /**
      * Gets a long store.
      */
-    public <V extends Serializable> LongObjStore<V> getLongObjStore(Class<V> valueClass) {
+    public <V> LongObjStore<V> getLongObjStore(Class<V> valueClass) {
         return getStoreService().provideLongObjStore(valueClass);
     }
 
-    public final <K extends Comparable<K>, V extends Serializable> Map<K, V> map() {
+    public final <K extends Comparable<K>, V> Map<K, V> map() {
         return new ConcurrentHashMap<>();
     }
 
@@ -90,7 +89,7 @@ public abstract class StoreTCK {
         return new String(bytes);
     }
 
-    final <T extends Serializable> T randomizeObject(T obj) {
+    final <T> T randomizeObject(T obj) {
         try {
             for (Field field : obj.getClass().getDeclaredFields()) {
                 if (field.isSynthetic()
@@ -122,8 +121,8 @@ public abstract class StoreTCK {
                     field.setBoolean(obj, rng.nextBoolean());
                 } else if (field.getType().equals(String.class)) {
                     field.set(obj, randString());
-                } else if (Serializable.class.isAssignableFrom(field.getType())) {
-                    field.set(obj, randomizeObject((Serializable) field.getType().newInstance()));
+//                } else if (Serializable.class.isAssignableFrom(field.getType())) {
+//                    field.set(obj, randomizeObject((Serializable) field.getType().newInstance()));
                 } else {
                     throw new RuntimeException("Unsupported field type " + field.getType());
                 }
@@ -242,7 +241,7 @@ public abstract class StoreTCK {
 
     //Primitive store tests
 
-    public static class TestBean implements Serializable {
+    public static class TestBean {
 
         private static final long serialVersionUID = 629911716178802723L;
 
@@ -368,7 +367,7 @@ public abstract class StoreTCK {
         }
     }
 
-    public static class AnotherBean implements Serializable {
+    public static class AnotherBean {
 
         private static final long serialVersionUID = 2422061064093555299L;
 
