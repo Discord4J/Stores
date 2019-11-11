@@ -1,5 +1,5 @@
 plugins {
-    id 'java'
+    id 'java-library'
     id 'maven-publish'
     id 'signing'
     id 'io.spring.dependency-management' version '1.0.8.RELEASE' apply false
@@ -13,9 +13,14 @@ ext {
     github_org = 'Discord4J'
     project_name = 'stores'
     artifact_group = 'com.discord4j'
-    project_version = "$version"
+    project_version = "$version".toString()
     project_description = 'Java interface for the Discord API'
     project_jdk = '1.8'
+    jdk = JavaVersion.current().majorVersion
+    jdk_javadoc = "https://docs.oracle.com/javase/$jdk/docs/api/".toString()
+    if (JavaVersion.current().isJava11Compatible()) {
+        jdk_javadoc = "https://docs.oracle.com/en/java/javase/$jdk/docs/api/".toString()
+    }
 
     // Dependencies
     reactor_bom_version = 'Californium-SR13'
@@ -35,7 +40,7 @@ ext {
 }
 
 allprojects {
-    apply plugin: 'java'
+    apply plugin: 'java-library'
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'com.github.ben-manes.versions'
     apply plugin: 'maven-publish'
@@ -70,12 +75,10 @@ allprojects {
                     "implNote:a:Implementation Note:"]
             addStringOption 'Xdoclint:none', '-quiet'
             addStringOption 'encoding', 'UTF-8'
-            // adding links to javadocs for filling specific classes when not existing inside current javadoc
             links = [
-                "https://docs.oracle.com/javase/8/docs/api/",
-                "https://docs.oracle.com/javaee/7/api/",
-                "http://www.reactive-streams.org/reactive-streams-1.0.2-javadoc/",
-                "https://projectreactor.io/docs/core/release/api/",
+                    jdk_javadoc,
+                    "http://www.reactive-streams.org/reactive-streams-1.0.3-javadoc/",
+                    "https://projectreactor.io/docs/core/release/api/",
             ]
         }
     }

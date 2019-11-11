@@ -1,5 +1,5 @@
 dependencies {
-    compile project(':api')
+    api project(':api')
     annotationProcessor "com.austinv11.servicer:Servicer:$servicer_version"
 }
 
