@@ -1,11 +1,11 @@
 dependencies {
-    compile project(':api')
-    compile "io.lettuce:lettuce-core:$lettuce_version"
-    compile "com.fasterxml.jackson.core:jackson-databind:$jackson_version"
+    api project(':api')
+    api "io.lettuce:lettuce-core:$lettuce_version"
+    api "com.fasterxml.jackson.core:jackson-databind:$jackson_version"
     annotationProcessor "com.austinv11.servicer:Servicer:$servicer_version"
 
-    testCompile project(':tck')
-    testCompile 'it.ozimov:embedded-redis:0.7.2'
+    testImplementation project(':tck')
+    testImplementation 'it.ozimov:embedded-redis:0.7.2'
 }
 
 javadoc {

@@ -1,8 +1,8 @@
 dependencies {
-    compile "io.projectreactor:reactor-core"
-    compile "com.austinv11.servicer:Servicer:$servicer_version"
+    api "io.projectreactor:reactor-core"
+    api "com.austinv11.servicer:Servicer:$servicer_version"
     annotationProcessor "com.austinv11.servicer:Servicer:$servicer_version"
 
-    testCompile "junit:junit:$junit_version"
+    testImplementation "junit:junit:$junit_version"
     testAnnotationProcessor "com.austinv11.servicer:Servicer:$servicer_version"
 }
