@@ -67,7 +67,7 @@ allprojects {
         maven { url 'https://jitpack.io' }
     }
 
-    tasks.withType(Javadoc) {
+    javadoc {
         options {
             encoding = 'UTF-8'
             tags = ["apiNote:a:API Note:",
@@ -80,6 +80,9 @@ allprojects {
                     "http://www.reactive-streams.org/reactive-streams-1.0.3-javadoc/",
                     "https://projectreactor.io/docs/core/release/api/",
             ]
+        }
+        if (JavaVersion.current().isJava9Compatible()) {
+            options.addBooleanOption('html5', true)
         }
     }
 
@@ -95,30 +98,9 @@ allprojects {
         }
     }
 
-    task javadocJar(type: Jar, dependsOn: javadoc) {
-        classifier = 'javadoc'
-        from 'build/docs/javadoc'
-    }
-
-    task sourcesJar(type: Jar) {
-        classifier = 'sources'
-        from sourceSets.main.allSource
-    }
-
-    artifacts {
-        archives javadocJar
-        archives sourcesJar
-    }
-
-    if (!isJitpack && isRelease) {
-        signing {
-            def signingKey = findProperty("signingKey")
-            def signingPassword = findProperty("signingPassword")
-            if (signingKey != null && signingPassword != null) {
-                useInMemoryPgpKeys(new String(signingKey.decodeBase64()), signingPassword as String)
-            }
-            sign configurations.archives
-        }
+    java {
+        withJavadocJar()
+        withSourcesJar()
     }
 }
 
@@ -127,42 +109,53 @@ subprojects {
 
     archivesBaseName = 'stores-' + project.name
 
-    tasks.withType(Javadoc) {
+    javadoc {
         title = "$archivesBaseName ${version} API"
         options.windowTitle = "$archivesBaseName ($version)"
     }
 
     publishing {
         publications {
-            maven(MavenPublication) {
-                customizePom(pom)
-
+            mavenJava(MavenPublication) {
                 from components.java
                 artifactId archivesBaseName
 
-                artifact sourcesJar
-                artifact javadocJar
+                versionMapping {
+                    usage('java-api') {
+                        fromResolutionOf('runtimeClasspath')
+                    }
+                    usage('java-runtime') {
+                        fromResolutionResult()
+                    }
+                }
 
-                if (!isJitpack && isRelease) {
-                    pom.withXml {
-                        def pomFile = file("${project.buildDir}/generated-pom.xml")
-                        writeTo(pomFile)
-                        def pomAscFile = signing.sign(pomFile).signatureFiles[0]
-                        artifact(pomAscFile) {
-                            classifier = null
-                            extension = 'pom.asc'
+                pom {
+                    name = 'Stores'
+                    description = 'A set of pre-made store implementations for Discord4J'
+                    url = 'https://github.com/Discord4J/Stores'
+                    organization {
+                        name = 'Discord4J'
+                        url = 'https://discord4j.com'
+                    }
+                    issueManagement {
+                        system = 'GitHub'
+                        url = 'https://github.com/Discord4J/Stores/issues'
+                    }
+                    licenses {
+                        license {
+                            name = 'LGPL-3.0'
+                            url = 'https://github.com/Discord4J/Stores/LICENSE.txt'
+                            distribution = 'repo'
                         }
                     }
-
-                    project.tasks.signArchives.signatureFiles.each {
-                        artifact(it) {
-                            def matcher = it.file =~ /-(sources|javadoc)\.jar\.asc$/
-                            if (matcher.find()) {
-                                classifier = matcher.group(1)
-                            } else {
-                                classifier = null
-                            }
-                            extension = 'jar.asc'
+                    scm {
+                        url = 'https://github.com/Discord4J/Stores'
+                        connection = 'scm:git:git://github.com/Discord4J/Stores.git'
+                        developerConnection = 'scm:git:ssh://git@github.com:Discord4J/Stores.git'
+                    }
+                    developers {
+                        developer {
+                            name = 'The Discord4J Team'
                         }
                     }
                 }
@@ -191,59 +184,13 @@ subprojects {
     }
 
     if (!isJitpack && isRelease) {
-        model {
-            tasks.generatePomFileForMavenPublication {
-                destination = file("$buildDir/generated-pom.xml")
+        signing {
+            def signingKey = findProperty("signingKey")
+            def signingPassword = findProperty("signingPassword")
+            if (signingKey != null && signingPassword != null) {
+                useInMemoryPgpKeys(new String(signingKey.decodeBase64()), signingPassword as String)
             }
-            tasks.publishMavenPublicationToMavenLocal {
-                dependsOn project.tasks.signArchives
-            }
-            tasks.publishMavenPublicationToMavenRepository {
-                dependsOn project.tasks.signArchives
-            }
-        }
-    }
-}
-
-def customizePom(pom) {
-    pom.withXml {
-        def root = asNode()
-
-        root.dependencies.removeAll { dep ->
-            dep.scope == "test"
-        }
-
-        root.children().last() + {
-            resolveStrategy = DELEGATE_FIRST
-
-            description 'A set of pre-made store implementations for Discord4J'
-            name 'Stores'
-            url 'https://github.com/Discord4J/Stores'
-            organization {
-                name 'Discord4J'
-                url 'https://discord4j.com'
-            }
-            issueManagement {
-                system 'GitHub'
-                url 'https://github.com/Discord4J/Stores/issues'
-            }
-            licenses {
-                license {
-                    name 'LGPL-3.0'
-                    url 'https://github.com/Discord4J/Stores/LICENSE.txt'
-                    distribution 'repo'
-                }
-            }
-            scm {
-                url 'https://github.com/Discord4J/Stores'
-                connection 'scm:git:git://github.com/Discord4J/Stores.git'
-                developerConnection 'scm:git:ssh://git@github.com:Discord4J/Stores.git'
-            }
-            developers {
-                developer {
-                    name 'The Discord4J Team'
-                }
-            }
+            sign publishing.publications.mavenJava
         }
     }
 }
