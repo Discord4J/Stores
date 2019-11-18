@@ -2,7 +2,6 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'signing'
-    id 'io.spring.dependency-management' version '1.0.8.RELEASE' apply false
     id 'net.ltgt.apt' version '0.21'
     id 'com.github.ben-manes.versions' version '0.27.0'
     id 'net.researchgate.release' version '2.8.1'
@@ -41,7 +40,6 @@ ext {
 
 allprojects {
     apply plugin: 'java-library'
-    apply plugin: 'io.spring.dependency-management'
     apply plugin: 'com.github.ben-manes.versions'
     apply plugin: 'maven-publish'
     if (!isJitpack && isRelease) {
@@ -55,10 +53,8 @@ allprojects {
     sourceCompatibility = project_jdk
     targetCompatibility = project_jdk
 
-    dependencyManagement {
-        imports {
-            mavenBom "io.projectreactor:reactor-bom:$reactor_bom_version"
-        }
+    dependencies {
+        api platform("io.projectreactor:reactor-bom:$reactor_bom_version")
     }
 
     repositories {
@@ -105,8 +101,6 @@ allprojects {
 }
 
 subprojects {
-    apply plugin: 'io.spring.dependency-management'
-
     archivesBaseName = 'stores-' + project.name
 
     javadoc {
