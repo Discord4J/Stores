@@ -22,7 +22,7 @@ ext {
     }
 
     // Dependencies
-    reactor_bom_version = 'Californium-SR13'
+    reactor_bom_version = 'Californium-SR14'
     servicer_version = '1.0.0'
     commons_codec_version = '1.12'
     junit_version = '4.12'
