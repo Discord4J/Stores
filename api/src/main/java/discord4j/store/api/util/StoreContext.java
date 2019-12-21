@@ -16,27 +16,61 @@
  */
 package discord4j.store.api.util;
 
+import discord4j.store.api.service.StoreService;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * This is a simple context object, containing various information about the environment the store is being
  * invoked in.
  */
 public class StoreContext {
 
-    private final int shard;
-    private final Class<?> messageClass;
+    private final Map<String, Object> hints;
 
+    @Deprecated
     public StoreContext(int shard, Class<?> messageClass) {
-        this.shard = shard;
-        this.messageClass = messageClass;
+        this(hintsFrom(shard, messageClass));
+    }
+
+    private static Map<String, Object> hintsFrom(int shard, Class<?> messageClass) {
+        Map<String, Object> hints = new LinkedHashMap<>(2);
+        hints.put("shard", shard);
+        hints.put("messageClass", messageClass);
+        return hints;
+    }
+
+    public StoreContext(Map<String, Object> hints) {
+        this.hints = hints;
+    }
+
+    /**
+     * Return the map of hints provided as context so {@link StoreService} implementations can use it in their
+     * {@link StoreService#init(StoreContext)} method.
+     *
+     * @return a map for context
+     */
+    public Map<String, Object> getHints() {
+        return hints;
     }
 
     /**
      * This gets the shard index which the client is currently operating on.
      *
      * @return The shard id.
+     * @deprecated use {@link #getHints()} instead.
      */
+    @Deprecated
     public int getShard() {
-        return shard;
+        Object shard = hints.get("shard");
+        if (shard instanceof Integer) {
+            return (int) shard;
+        } else if (shard instanceof CharSequence) {
+            return Integer.parseInt(String.valueOf(shard));
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -46,7 +80,13 @@ public class StoreContext {
      *
      * @return The class which represents a message.
      */
+    @Deprecated
     public Class<?> getMessageClass() {
-        return messageClass;
+        Object messageClass = hints.get("messageClass");
+        if (messageClass instanceof Class) {
+            return (Class<?>) messageClass;
+        } else {
+            return Void.class;
+        }
     }
 }
