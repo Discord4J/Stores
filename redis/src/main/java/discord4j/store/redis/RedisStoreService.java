@@ -33,6 +33,9 @@ import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.codec.RedisCodec;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * A {@link StoreService} implementation that creates {@link RedisStore} instances capable of communicating to a
  * Redis server through Lettuce Core driver using a single stateful connection.
@@ -121,7 +124,12 @@ public class RedisStoreService implements StoreService {
         return new StoreRedisCodec<>(new StringSerializer(), new JacksonRedisSerializer(new ObjectMapper()
                 .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
                 .activateDefaultTyping(BasicPolymorphicTypeValidator.builder()
-                                .allowIfSubType("discord4j.").build(),
+                                .allowIfSubType("discord4j.")
+                                .allowIfSubType(Map.class)
+                                .allowIfSubType(List.class)
+                                .allowIfSubType(CharSequence.class)
+                                .allowIfSubType(Number.class)
+                                .build(),
                         ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)));
     }
 
