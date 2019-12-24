@@ -21,6 +21,7 @@ import com.austinv11.servicer.WireService;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import discord4j.store.api.Store;
@@ -122,6 +123,7 @@ public class RedisStoreService implements StoreService {
      */
     public static RedisCodec<String, Object> defaultCodec() {
         return new StoreRedisCodec<>(new StringSerializer(), new JacksonRedisSerializer(new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
                 .activateDefaultTyping(BasicPolymorphicTypeValidator.builder()
                                 .allowIfSubType("discord4j.")
