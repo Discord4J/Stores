@@ -17,14 +17,14 @@
 
 package discord4j.store.redis;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import reactor.util.annotation.Nullable;
 
 /**
  * A {@link RedisSerializer} using Jackson to encode/decode objects using default typing. Relies on objects saving their
- * class details given by {@link ObjectMapper#enableDefaultTyping(ObjectMapper.DefaultTyping, JsonTypeInfo.As)}.
+ * class details given by {@link ObjectMapper#activateDefaultTyping(PolymorphicTypeValidator)}.
  */
 public class JacksonRedisSerializer implements RedisSerializer<Object> {
 
