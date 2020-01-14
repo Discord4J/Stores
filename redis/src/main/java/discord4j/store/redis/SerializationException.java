@@ -15,7 +15,7 @@
  * along with Discord4J. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package discord4j.store.redis.util;
+package discord4j.store.redis;
 
 /**
  * Thrown if a {@link RedisSerializer} is unable to perform serialization or deserialization of a given object.
