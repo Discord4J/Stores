@@ -15,33 +15,22 @@
  * along with Discord4J. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package discord4j.store.redis.cluster;
+package discord4j.store.redis;
 
 import com.austinv11.servicer.WireService;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import discord4j.store.api.Store;
 import discord4j.store.api.primitive.ForwardingStore;
 import discord4j.store.api.primitive.LongObjStore;
 import discord4j.store.api.service.StoreService;
 import discord4j.store.api.util.StoreContext;
-import discord4j.store.redis.util.JacksonRedisSerializer;
-import discord4j.store.redis.util.StoreRedisCodec;
-import discord4j.store.redis.util.StringSerializer;
 import io.lettuce.core.cluster.RedisClusterClient;
 import io.lettuce.core.cluster.api.StatefulRedisClusterConnection;
 import io.lettuce.core.codec.RedisCodec;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.Map;
-
 /**
- * A {@link discord4j.store.api.service.StoreService} implementation that creates {@link RedisClusterStore} instances
+ * A {@link discord4j.store.api.service.StoreService} implementation that creates
+ * {@link discord4j.store.redis.RedisStore} instances
  * capable of communicating to a
  * Redis server through Lettuce Core driver using a single stateful connection.
  * <p>
@@ -149,7 +138,7 @@ public class RedisClusterStoreService implements StoreService {
     @Override
     public <K extends Comparable<K>, V> Store<K, V> provideGenericStore(Class<K> keyClass,
                                                                         Class<V> valueClass) {
-        return new RedisClusterStore<>(connection, keyPrefix + valueClass.getSimpleName());
+        return new RedisStore<>(connection, keyPrefix + valueClass.getSimpleName());
     }
 
     @Override

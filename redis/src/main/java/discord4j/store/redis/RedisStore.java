@@ -21,7 +21,8 @@ import discord4j.store.api.Store;
 import discord4j.store.api.util.LongLongTuple2;
 import discord4j.store.api.util.WithinRangePredicate;
 import io.lettuce.core.api.StatefulRedisConnection;
-import io.lettuce.core.api.reactive.RedisReactiveCommands;
+import io.lettuce.core.cluster.api.StatefulRedisClusterConnection;
+import io.lettuce.core.cluster.api.reactive.RedisClusterReactiveCommands;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -31,10 +32,15 @@ import java.util.Map;
 
 public class RedisStore<K extends Comparable<K>, V> implements Store<K, V> {
 
-    private final RedisReactiveCommands<String, Object> commands;
+    private final RedisClusterReactiveCommands<String, Object> commands;
     private final String storeName;
 
     public RedisStore(StatefulRedisConnection<String, Object> connection, String storeName) {
+        this.commands = connection.reactive();
+        this.storeName = storeName;
+    }
+
+    public RedisStore(StatefulRedisClusterConnection<String, Object> connection, String storeName) {
         this.commands = connection.reactive();
         this.storeName = storeName;
     }
