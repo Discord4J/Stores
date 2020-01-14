@@ -15,7 +15,7 @@
  * along with Discord4J. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package discord4j.store.redis;
+package discord4j.store.redis.util;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
