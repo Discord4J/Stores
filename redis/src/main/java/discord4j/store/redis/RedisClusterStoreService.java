@@ -41,7 +41,7 @@ import reactor.core.publisher.Mono;
  *
  * @see <a href="https://lettuce.io/">Lettuce Core</a>
  */
-@WireService(StoreService.class)
+//@WireService(StoreService.class)
 public class RedisClusterStoreService implements StoreService {
 
     public static final String DEFAULT_REDIS_URI = "redis://localhost";
