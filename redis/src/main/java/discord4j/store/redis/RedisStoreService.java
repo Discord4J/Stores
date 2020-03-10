@@ -65,7 +65,9 @@ public class RedisStoreService implements StoreService {
      *
      * @param redisClient the underlying lettuce-core client
      * @see #DEFAULT_KEY_PREFIX
+     * @deprecated for removal, use {@link #builder()}
      */
+    @Deprecated
     public RedisStoreService(RedisClient redisClient) {
         this(redisClient, defaultCodec(), defaultKeyPrefix());
     }
@@ -76,7 +78,9 @@ public class RedisStoreService implements StoreService {
      * @param redisClient the underlying lettuce-core client
      * @param redisCodec the codec used to convert between redis and Java
      * @see #DEFAULT_KEY_PREFIX
+     * @deprecated for removal, use {@link #builder()}
      */
+    @Deprecated
     public RedisStoreService(RedisClient redisClient, RedisCodec<String, Object> redisCodec) {
         this(redisClient, redisCodec, defaultKeyPrefix());
     }
@@ -92,6 +96,15 @@ public class RedisStoreService implements StoreService {
         this.client = redisClient;
         this.keyPrefix = keyPrefix;
         this.connection = client.connect(redisCodec);
+    }
+
+    /**
+     * Create a builder to create {@link RedisStoreService} instances.
+     *
+     * @return a new builder
+     */
+    public static Builder builder() {
+        return new Builder();
     }
 
     /**
@@ -153,5 +166,57 @@ public class RedisStoreService implements StoreService {
     @Override
     public Mono<Void> dispose() {
         return Mono.defer(() -> Mono.fromFuture(client.shutdownAsync()));
+    }
+
+    /**
+     * Builder for {@link RedisStoreService}.
+     */
+    public static class Builder {
+
+        private RedisClient redisClient = defaultClient();
+        private RedisCodec<String, Object> redisCodec = defaultCodec();
+        private String keyPrefix = defaultKeyPrefix();
+
+        /**
+         * Set the {@link RedisClient} instance the resulting service should connect to.
+         *
+         * @param redisClient a io.lettuce {@link RedisClient} instance
+         * @return this builder
+         */
+        public Builder redisClient(RedisClient redisClient) {
+            this.redisClient = redisClient;
+            return this;
+        }
+
+        /**
+         * Set the {@link RedisCodec} used to convert between Java objects and Redis protocol.
+         *
+         * @param redisCodec an io.lettuce {@link RedisCodec} with String keys and Object (polymorphic) values
+         * @return this builder
+         */
+        public Builder redisCodec(RedisCodec<String, Object> redisCodec) {
+            this.redisCodec = redisCodec;
+            return this;
+        }
+
+        /**
+         * Set the String prefix used to create Redis keys when creating {@link Store} instances.
+         *
+         * @param keyPrefix the prefix to use under this service
+         * @return this builder
+         */
+        public Builder keyPrefix(String keyPrefix) {
+            this.keyPrefix = keyPrefix;
+            return this;
+        }
+
+        /**
+         * Create the {@link RedisStoreService}.
+         *
+         * @return a {@link RedisStoreService} configured with the parameters in this builder
+         */
+        public RedisStoreService build() {
+            return new RedisStoreService(redisClient, redisCodec, keyPrefix);
+        }
     }
 }

@@ -22,23 +22,23 @@ import discord4j.store.api.primitive.ForwardingStore;
 import discord4j.store.api.primitive.LongObjStore;
 import discord4j.store.api.service.StoreService;
 import discord4j.store.api.util.StoreContext;
-import io.lettuce.core.RedisClient;
-import io.lettuce.core.api.StatefulRedisConnection;
+import io.lettuce.core.cluster.RedisClusterClient;
+import io.lettuce.core.cluster.api.StatefulRedisClusterConnection;
 import io.lettuce.core.codec.RedisCodec;
 import reactor.core.publisher.Mono;
 
-public class ByteArrayRedisStoreService implements StoreService {
+public class ByteArrayRedisClusterStoreService implements StoreService {
 
     public static final String DEFAULT_REDIS_URI = "redis://localhost";
     public static final String DEFAULT_KEY_PREFIX = "discord4j:store:";
 
-    private final RedisClient client;
-    private final StatefulRedisConnection<String, byte[]> connection;
+    private final RedisClusterClient client;
+    private final StatefulRedisClusterConnection<String, byte[]> connection;
     private final RedisSerializerFactory valueSerializerFactory;
     private final String keyPrefix;
 
-    public ByteArrayRedisStoreService(RedisClient redisClient, RedisCodec<String, byte[]> redisCodec,
-                                      RedisSerializerFactory valueSerializerFactory, String keyPrefix) {
+    public ByteArrayRedisClusterStoreService(RedisClusterClient redisClient, RedisCodec<String, byte[]> redisCodec,
+                                             RedisSerializerFactory valueSerializerFactory, String keyPrefix) {
         this.client = redisClient;
         this.connection = client.connect(redisCodec);
         this.valueSerializerFactory = valueSerializerFactory;
@@ -55,10 +55,10 @@ public class ByteArrayRedisStoreService implements StoreService {
      *
      * @return the default lettuce-core client
      */
-    public static RedisClient defaultClient() {
+    public static RedisClusterClient defaultClient() {
         String url = System.getenv("D4J_REDIS_URL");
         String redisUri = url != null ? url : DEFAULT_REDIS_URI;
-        return RedisClient.create(redisUri);
+        return RedisClusterClient.create(redisUri);
     }
 
     /**
@@ -112,7 +112,7 @@ public class ByteArrayRedisStoreService implements StoreService {
 
     public static class Builder {
 
-        private RedisClient redisClient = defaultClient();
+        private RedisClusterClient redisClient = defaultClient();
         private RedisCodec<String, byte[]> redisCodec = defaultCodec();
         private RedisSerializerFactory valueSerializerFactory;
         private String keyPrefix = defaultKeyPrefix();
@@ -121,7 +121,7 @@ public class ByteArrayRedisStoreService implements StoreService {
             this.valueSerializerFactory = valueSerializerFactory;
         }
 
-        public Builder redisClient(RedisClient redisClient) {
+        public Builder redisClient(RedisClusterClient redisClient) {
             this.redisClient = redisClient;
             return this;
         }
@@ -141,8 +141,8 @@ public class ByteArrayRedisStoreService implements StoreService {
             return this;
         }
 
-        public ByteArrayRedisStoreService build() {
-            return new ByteArrayRedisStoreService(redisClient, redisCodec, valueSerializerFactory, keyPrefix);
+        public ByteArrayRedisClusterStoreService build() {
+            return new ByteArrayRedisClusterStoreService(redisClient, redisCodec, valueSerializerFactory, keyPrefix);
         }
     }
 }

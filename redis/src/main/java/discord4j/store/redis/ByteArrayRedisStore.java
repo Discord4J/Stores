@@ -21,6 +21,7 @@ import discord4j.store.api.Store;
 import discord4j.store.api.util.LongLongTuple2;
 import discord4j.store.api.util.WithinRangePredicate;
 import io.lettuce.core.api.StatefulRedisConnection;
+import io.lettuce.core.cluster.api.StatefulRedisClusterConnection;
 import io.lettuce.core.cluster.api.reactive.RedisClusterReactiveCommands;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
@@ -28,23 +29,25 @@ import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 
 import java.util.Map;
-import java.util.function.Function;
 
 public class ByteArrayRedisStore<K extends Comparable<K>, V> implements Store<K, V> {
 
     private final RedisClusterReactiveCommands<String, byte[]> commands;
+    private final RedisSerializer<V> valueSerializer;
     private final String storeName;
-    private final Function<V, byte[]> serializer;
-    private final Function<byte[], V> deserializer;
 
     public ByteArrayRedisStore(StatefulRedisConnection<String, byte[]> connection,
-                               Function<V, byte[]> serializer,
-                               Function<byte[], V> deserializer,
-                               String storeName) {
+                               RedisSerializer<V> valueSerializer, String storeName) {
         this.commands = connection.reactive();
+        this.valueSerializer = valueSerializer;
         this.storeName = storeName;
-        this.serializer = serializer;
-        this.deserializer = deserializer;
+    }
+
+    public ByteArrayRedisStore(StatefulRedisClusterConnection<String, byte[]> connection,
+                               RedisSerializer<V> valueSerializer, String storeName) {
+        this.commands = connection.reactive();
+        this.valueSerializer = valueSerializer;
+        this.storeName = storeName;
     }
 
     private String createKey(K key) {
@@ -57,7 +60,7 @@ public class ByteArrayRedisStore<K extends Comparable<K>, V> implements Store<K,
 
     @Override
     public Mono<Void> save(K key, V value) {
-        return Mono.defer(() -> commands.hset(storeName, createKey(key), serializer.apply(value)).then());
+        return Mono.defer(() -> commands.hset(storeName, createKey(key), valueSerializer.serialize(value)).then());
     }
 
     @Override
@@ -67,7 +70,7 @@ public class ByteArrayRedisStore<K extends Comparable<K>, V> implements Store<K,
 
     @Override
     public Mono<V> find(K id) {
-        return Mono.defer(() -> commands.hget(storeName, createKey(id)).map(deserializer));
+        return Mono.defer(() -> commands.hget(storeName, createKey(id)).map(valueSerializer::deserialize));
     }
 
     @Override
@@ -78,7 +81,7 @@ public class ByteArrayRedisStore<K extends Comparable<K>, V> implements Store<K,
                 .flatMap(map -> Flux.fromIterable(map.entrySet()))
                 .filter(entry -> predicate.test((K) entry.getKey()))
                 .map(Map.Entry::getValue)
-                .map(deserializer);
+                .map(valueSerializer::deserialize);
     }
 
     @Override
@@ -118,7 +121,7 @@ public class ByteArrayRedisStore<K extends Comparable<K>, V> implements Store<K,
 
     @Override
     public Flux<V> values() {
-        return Flux.defer(() -> commands.hvals(storeName)).map(deserializer);
+        return Flux.defer(() -> commands.hvals(storeName)).map(valueSerializer::deserialize);
     }
 
     @Override

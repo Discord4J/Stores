@@ -45,11 +45,11 @@ public class StringSerializer implements RedisSerializer<String> {
 
     @Override
     public byte[] serialize(String string) throws SerializationException {
-        return (string == null ? null : string.getBytes(charset));
+        return string.getBytes(charset);
     }
 
     @Override
     public String deserialize(byte[] bytes) throws SerializationException {
-        return (bytes == null ? null : new String(bytes, charset));
+        return new String(bytes, charset);
     }
 }

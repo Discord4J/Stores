@@ -17,26 +17,19 @@
 
 package discord4j.store.redis;
 
+import discord4j.store.api.Store;
+
 /**
- * A serialization strategy to help encoding/decoding Java objects to/from Redis.
- *
- * @param <T> Java object type
+ * Factory to create {@link RedisSerializer} instances from a given {@link Store} value.
  */
-public interface RedisSerializer<T> {
+public interface RedisSerializerFactory {
 
     /**
-     * Serialize the given object to binary data.
+     * Create a {@link RedisSerializer} capable of handling serialization and deserialization for the given type.
      *
-     * @param t object to serialize
-     * @return the equivalent binary data
+     * @param valueClass the type the {@link RedisSerializer} must handle
+     * @param <V> value type
+     * @return a {@link RedisSerializer} with the given {@code valueClass} type support
      */
-    byte[] serialize(T t) throws SerializationException;
-
-    /**
-     * Deserialize an object from the given binary data.
-     *
-     * @param bytes object binary representation
-     * @return the equivalent object instance
-     */
-    T deserialize(byte[] bytes) throws SerializationException;
+    <V> RedisSerializer<V> create(Class<V> valueClass);
 }

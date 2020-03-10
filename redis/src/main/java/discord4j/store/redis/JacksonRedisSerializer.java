@@ -20,7 +20,6 @@ package discord4j.store.redis;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
-import reactor.util.annotation.Nullable;
 
 /**
  * A {@link RedisSerializer} using Jackson to encode/decode objects using default typing. Relies on objects saving their
@@ -43,9 +42,6 @@ public class JacksonRedisSerializer implements RedisSerializer<Object> {
 
     @Override
     public byte[] serialize(Object source) throws SerializationException {
-        if (source == null) {
-            return new byte[0];
-        }
         try {
             return mapper.writeValueAsBytes(source);
         } catch (JsonProcessingException e) {
@@ -58,19 +54,11 @@ public class JacksonRedisSerializer implements RedisSerializer<Object> {
         return deserialize(source, Object.class);
     }
 
-    @Nullable
-    public <T> T deserialize(@Nullable byte[] source, Class<T> type) throws SerializationException {
-        if (isEmpty(source)) {
-            return null;
-        }
+    public <T> T deserialize(byte[] source, Class<T> type) throws SerializationException {
         try {
             return mapper.readValue(source, type);
         } catch (Exception e) {
             throw new SerializationException("Could not read JSON: " + e.getMessage(), e);
         }
-    }
-
-    private static boolean isEmpty(@Nullable byte[] data) {
-        return (data == null || data.length == 0);
     }
 }

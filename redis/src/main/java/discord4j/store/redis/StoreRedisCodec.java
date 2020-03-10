@@ -83,12 +83,10 @@ public class StoreRedisCodec<K, V> implements RedisCodec<K, V> {
     }
 
     private ByteBuffer encodeBuffer(byte[] array) {
-        if (array == null) {
-            return ByteBuffer.wrap(new byte[0]);
-        }
         return Unpooled.wrappedBuffer(array).nioBuffer();
     }
 
+    @Deprecated
     public static RedisCodec<String, Object> defaultCodec() {
         return new StoreRedisCodec<>(new StringSerializer(), new JacksonRedisSerializer(new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)

@@ -17,32 +17,18 @@
 
 package discord4j.store.redis;
 
-import discord4j.store.api.service.StoreService;
-import discord4j.store.tck.StoreVerification;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import redis.embedded.RedisServer;
+/**
+ * A {@link RedisSerializer} that passes through byte array objects.
+ */
+public class ByteArraySerializer implements RedisSerializer<byte[]> {
 
-import java.io.IOException;
-
-public class IntegrationTests extends StoreVerification {
-
-    private RedisStoreService service;
-
-    @BeforeClass
-    public static void setUpTests() throws IOException {
-        RedisServer redisServer = new RedisServer(6379);
-        redisServer.start();
-        Runtime.getRuntime().addShutdownHook(new Thread(redisServer::stop));
-    }
-
-    @Before
-    public void setUp() {
-        service = RedisStoreService.builder().build();
+    @Override
+    public byte[] serialize(byte[] bytes) throws SerializationException {
+        return bytes;
     }
 
     @Override
-    public StoreService getStoreService() {
-        return service;
+    public byte[] deserialize(byte[] bytes) throws SerializationException {
+        return bytes;
     }
 }

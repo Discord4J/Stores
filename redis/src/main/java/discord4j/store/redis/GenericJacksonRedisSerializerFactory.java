@@ -17,18 +17,18 @@
 
 package discord4j.store.redis;
 
-/**
- * A {@link RedisSerializer} that passes through byte array objects.
- */
-public class ByteArrayRedisSerializer implements RedisSerializer<byte[]> {
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-    @Override
-    public byte[] serialize(byte[] bytes) throws SerializationException {
-        return bytes;
+public class GenericJacksonRedisSerializerFactory implements RedisSerializerFactory {
+
+    private final ObjectMapper mapper;
+
+    public GenericJacksonRedisSerializerFactory(ObjectMapper mapper) {
+        this.mapper = mapper;
     }
 
     @Override
-    public byte[] deserialize(byte[] bytes) throws SerializationException {
-        return bytes;
+    public <V> RedisSerializer<V> create(Class<V> valueClass) {
+        return new GenericJacksonRedisSerializer<>(mapper, valueClass);
     }
 }

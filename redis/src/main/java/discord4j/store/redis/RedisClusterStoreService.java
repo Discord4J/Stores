@@ -17,7 +17,6 @@
 
 package discord4j.store.redis;
 
-import com.austinv11.servicer.WireService;
 import discord4j.store.api.Store;
 import discord4j.store.api.primitive.ForwardingStore;
 import discord4j.store.api.primitive.LongObjStore;
@@ -41,7 +40,6 @@ import reactor.core.publisher.Mono;
  *
  * @see <a href="https://lettuce.io/">Lettuce Core</a>
  */
-//@WireService(StoreService.class)
 public class RedisClusterStoreService implements StoreService {
 
     public static final String DEFAULT_REDIS_URI = "redis://localhost";
@@ -50,40 +48,6 @@ public class RedisClusterStoreService implements StoreService {
     private final RedisClusterClient client;
     private final String keyPrefix;
     private final StatefulRedisClusterConnection<String, Object> connection;
-
-    /**
-     * Creates a new {@link RedisClusterStoreService} with the default client that connects to a localhost server, a
-     * default
-     * codec performing String key serialization and JSON value serialization using Jackson, and a default key prefix.
-     *
-     * @see #DEFAULT_REDIS_URI
-     * @see #DEFAULT_KEY_PREFIX
-     */
-    public RedisClusterStoreService() {
-        this(defaultClient(), defaultCodec(), defaultKeyPrefix());
-    }
-
-    /**
-     * Creates a new {@link RedisClusterStoreService} with the given client, and using the default codec performing JSON
-     * serialization using Jackson and a default key prefix.
-     *
-     * @param redisClient the underlying lettuce-core client
-     * @see #DEFAULT_KEY_PREFIX
-     */
-    public RedisClusterStoreService(RedisClusterClient redisClient) {
-        this(redisClient, defaultCodec(), defaultKeyPrefix());
-    }
-
-    /**
-     * Creates a new {@link RedisClusterStoreService} with the given client and codec, and a default key prefix.
-     *
-     * @param redisClient the underlying lettuce-core client
-     * @param redisCodec the codec used to convert between redis and Java
-     * @see #DEFAULT_KEY_PREFIX
-     */
-    public RedisClusterStoreService(RedisClusterClient redisClient, RedisCodec<String, Object> redisCodec) {
-        this(redisClient, redisCodec, defaultKeyPrefix());
-    }
 
     /**
      * Creates a new {@link RedisClusterStoreService} with the given client, codec and key prefix.
