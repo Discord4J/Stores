@@ -32,16 +32,21 @@ import java.util.Map;
 
 public class RedisStore<K extends Comparable<K>, V> implements Store<K, V> {
 
-    private final RedisClusterReactiveCommands<String, Object> commands;
+    private final RedisClusterReactiveCommands<String, byte[]> commands;
+    private final RedisSerializer<V> valueSerializer;
     private final String storeName;
 
-    public RedisStore(StatefulRedisConnection<String, Object> connection, String storeName) {
+    public RedisStore(StatefulRedisConnection<String, byte[]> connection,
+                      RedisSerializer<V> valueSerializer, String storeName) {
         this.commands = connection.reactive();
+        this.valueSerializer = valueSerializer;
         this.storeName = storeName;
     }
 
-    public RedisStore(StatefulRedisClusterConnection<String, Object> connection, String storeName) {
+    public RedisStore(StatefulRedisClusterConnection<String, byte[]> connection,
+                      RedisSerializer<V> valueSerializer, String storeName) {
         this.commands = connection.reactive();
+        this.valueSerializer = valueSerializer;
         this.storeName = storeName;
     }
 
@@ -53,14 +58,9 @@ public class RedisStore<K extends Comparable<K>, V> implements Store<K, V> {
         return key.toString();
     }
 
-    @SuppressWarnings("unchecked")
-    private static <V> V cast(Object o) {
-        return (V) o;
-    }
-
     @Override
     public Mono<Void> save(K key, V value) {
-        return Mono.defer(() -> commands.hset(storeName, createKey(key), value).then());
+        return Mono.defer(() -> commands.hset(storeName, createKey(key), valueSerializer.serialize(value)).then());
     }
 
     @Override
@@ -70,7 +70,7 @@ public class RedisStore<K extends Comparable<K>, V> implements Store<K, V> {
 
     @Override
     public Mono<V> find(K id) {
-        return Mono.defer(() -> commands.hget(storeName, createKey(id)).map(RedisStore::cast));
+        return Mono.defer(() -> commands.hget(storeName, createKey(id)).map(valueSerializer::deserialize));
     }
 
     @Override
@@ -81,7 +81,7 @@ public class RedisStore<K extends Comparable<K>, V> implements Store<K, V> {
                 .flatMap(map -> Flux.fromIterable(map.entrySet()))
                 .filter(entry -> predicate.test((K) entry.getKey()))
                 .map(Map.Entry::getValue)
-                .map(RedisStore::cast);
+                .map(valueSerializer::deserialize);
     }
 
     @Override
@@ -121,11 +121,16 @@ public class RedisStore<K extends Comparable<K>, V> implements Store<K, V> {
 
     @Override
     public Flux<V> values() {
-        return Flux.defer(() -> commands.hvals(storeName)).map(RedisStore::cast);
+        return Flux.defer(() -> commands.hvals(storeName)).map(valueSerializer::deserialize);
     }
 
     @Override
     public Mono<Void> invalidate() {
         return deleteAll();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <V> V cast(Object o) {
+        return (V) o;
     }
 }

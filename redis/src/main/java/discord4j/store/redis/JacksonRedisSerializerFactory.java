@@ -19,16 +19,19 @@ package discord4j.store.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class GenericJacksonRedisSerializerFactory implements RedisSerializerFactory {
+/**
+ * Factory that creates {@link JacksonRedisSerializer} instances for a given value type.
+ */
+public class JacksonRedisSerializerFactory implements RedisSerializerFactory {
 
     private final ObjectMapper mapper;
 
-    public GenericJacksonRedisSerializerFactory(ObjectMapper mapper) {
+    public JacksonRedisSerializerFactory(ObjectMapper mapper) {
         this.mapper = mapper;
     }
 
     @Override
     public <V> RedisSerializer<V> create(Class<V> valueClass) {
-        return new GenericJacksonRedisSerializer<>(mapper, valueClass);
+        return new JacksonRedisSerializer<>(mapper, valueClass);
     }
 }

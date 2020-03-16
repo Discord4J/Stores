@@ -32,7 +32,7 @@ ext {
     lettuce_version = '5.2.2.RELEASE'
     jackson_version = '2.10.2'
     commons_lang_version = '3.9'
-
+    discordjson_version = '1.0.0-SNAPSHOT'
 
     isJitpack = "true" == System.getenv("JITPACK")
     isRelease = !version.toString().endsWith('-SNAPSHOT')
@@ -58,6 +58,7 @@ allprojects {
     }
 
     repositories {
+        mavenLocal()
         mavenCentral()
         maven { url 'https://repo.spring.io/milestone' }
         maven { url 'https://repo.spring.io/release' }

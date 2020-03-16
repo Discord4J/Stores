@@ -17,23 +17,14 @@
 
 package discord4j.store.redis;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import io.lettuce.core.codec.RedisCodec;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
 import java.nio.ByteBuffer;
-import java.util.List;
-import java.util.Map;
 
 /**
- * A {@link RedisCodec} implementation tailored for {@link discord4j.store.redis.RedisStore} instances, allowing
- * separate serialization
+ * A {@link RedisCodec} implementation tailored for {@link RedisStore} instances, allowing separate serialization
  * strategies for keys and values.
  *
  * @param <K> key type
@@ -84,20 +75,5 @@ public class StoreRedisCodec<K, V> implements RedisCodec<K, V> {
 
     private ByteBuffer encodeBuffer(byte[] array) {
         return Unpooled.wrappedBuffer(array).nioBuffer();
-    }
-
-    @Deprecated
-    public static RedisCodec<String, Object> defaultCodec() {
-        return new StoreRedisCodec<>(new StringSerializer(), new JacksonRedisSerializer(new ObjectMapper()
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
-                .activateDefaultTyping(BasicPolymorphicTypeValidator.builder()
-                                .allowIfSubType("discord4j.")
-                                .allowIfSubType(Map.class)
-                                .allowIfSubType(List.class)
-                                .allowIfSubType(CharSequence.class)
-                                .allowIfSubType(Number.class)
-                                .build(),
-                        ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)));
     }
 }

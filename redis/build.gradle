@@ -2,6 +2,8 @@ dependencies {
     api project(':api')
     api "io.lettuce:lettuce-core:$lettuce_version"
     api "com.fasterxml.jackson.core:jackson-databind:$jackson_version"
+    implementation "com.discord4j:discord-json:$discordjson_version"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jackson_version"
     annotationProcessor "com.austinv11.servicer:Servicer:$servicer_version"
 
     testImplementation project(':tck')

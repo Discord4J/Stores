@@ -27,40 +27,26 @@ import io.lettuce.core.cluster.api.StatefulRedisClusterConnection;
 import io.lettuce.core.codec.RedisCodec;
 import reactor.core.publisher.Mono;
 
-/**
- * A {@link discord4j.store.api.service.StoreService} implementation that creates
- * {@link discord4j.store.redis.RedisStore} instances
- * capable of communicating to a
- * Redis server through Lettuce Core driver using a single stateful connection.
- * <p>
- * This factory can be created under a number of configurations, particularly allowing customization of Lettuce
- * {@link io.lettuce.core.RedisClient}, the codec used to serializer and deserialize entities and the key prefix used
- * when saving
- * entities.
- *
- * @see <a href="https://lettuce.io/">Lettuce Core</a>
- */
 public class RedisClusterStoreService implements StoreService {
 
     public static final String DEFAULT_REDIS_URI = "redis://localhost";
     public static final String DEFAULT_KEY_PREFIX = "discord4j:store:";
 
     private final RedisClusterClient client;
+    private final StatefulRedisClusterConnection<String, byte[]> connection;
+    private final RedisSerializerFactory valueSerializerFactory;
     private final String keyPrefix;
-    private final StatefulRedisClusterConnection<String, Object> connection;
 
-    /**
-     * Creates a new {@link RedisClusterStoreService} with the given client, codec and key prefix.
-     *
-     * @param redisClient the underlying lettuce-core client
-     * @param redisCodec the codec used to convert between redis and Java
-     * @param keyPrefix the key prefix used for creating redis keys, appended with the concrete value class simple name.
-     */
-    public RedisClusterStoreService(RedisClusterClient redisClient, RedisCodec<String, Object> redisCodec,
-                                    String keyPrefix) {
+    public RedisClusterStoreService(RedisClusterClient redisClient, RedisCodec<String, byte[]> redisCodec,
+                                    RedisSerializerFactory valueSerializerFactory, String keyPrefix) {
         this.client = redisClient;
-        this.keyPrefix = keyPrefix;
         this.connection = client.connect(redisCodec);
+        this.valueSerializerFactory = valueSerializerFactory;
+        this.keyPrefix = keyPrefix;
+    }
+
+    public static Builder builder(RedisSerializerFactory valueSerializerFactory) {
+        return new Builder(valueSerializerFactory);
     }
 
     /**
@@ -81,8 +67,8 @@ public class RedisClusterStoreService implements StoreService {
      *
      * @return the default redis codec
      */
-    public static RedisCodec<String, Object> defaultCodec() {
-        return StoreRedisCodec.defaultCodec();
+    public static RedisCodec<String, byte[]> defaultCodec() {
+        return new StoreRedisCodec<>(new StringSerializer(), new ByteArraySerializer());
     }
 
     /**
@@ -100,9 +86,9 @@ public class RedisClusterStoreService implements StoreService {
     }
 
     @Override
-    public <K extends Comparable<K>, V> Store<K, V> provideGenericStore(Class<K> keyClass,
-                                                                        Class<V> valueClass) {
-        return new RedisStore<>(connection, keyPrefix + valueClass.getSimpleName());
+    public <K extends Comparable<K>, V> Store<K, V> provideGenericStore(Class<K> keyClass, Class<V> valueClass) {
+        return new RedisStore<>(connection, valueSerializerFactory.create(valueClass),
+                keyPrefix + valueClass.getSimpleName());
     }
 
     @Override
@@ -122,5 +108,41 @@ public class RedisClusterStoreService implements StoreService {
     @Override
     public Mono<Void> dispose() {
         return Mono.defer(() -> Mono.fromFuture(client.shutdownAsync()));
+    }
+
+    public static class Builder {
+
+        private RedisClusterClient redisClient = defaultClient();
+        private RedisCodec<String, byte[]> redisCodec = defaultCodec();
+        private RedisSerializerFactory valueSerializerFactory;
+        private String keyPrefix = defaultKeyPrefix();
+
+        public Builder(RedisSerializerFactory valueSerializerFactory) {
+            this.valueSerializerFactory = valueSerializerFactory;
+        }
+
+        public Builder redisClient(RedisClusterClient redisClient) {
+            this.redisClient = redisClient;
+            return this;
+        }
+
+        public Builder redisCodec(RedisCodec<String, byte[]> redisCodec) {
+            this.redisCodec = redisCodec;
+            return this;
+        }
+
+        public Builder valueSerializerFactory(RedisSerializerFactory valueSerializerFactory) {
+            this.valueSerializerFactory = valueSerializerFactory;
+            return this;
+        }
+
+        public Builder keyPrefix(String keyPrefix) {
+            this.keyPrefix = keyPrefix;
+            return this;
+        }
+
+        public RedisClusterStoreService build() {
+            return new RedisClusterStoreService(redisClient, redisCodec, valueSerializerFactory, keyPrefix);
+        }
     }
 }

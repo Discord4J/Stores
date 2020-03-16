@@ -19,46 +19,40 @@ package discord4j.store.redis;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
- * A {@link RedisSerializer} using Jackson to encode/decode objects using default typing. Relies on objects saving their
- * class details given by {@link ObjectMapper#activateDefaultTyping(PolymorphicTypeValidator)}.
+ * A {@link RedisSerializer} that uses Jackson to encode/decode values for a particular type.
+ *
+ * @param <V> the value type
  */
-public class JacksonRedisSerializer implements RedisSerializer<Object> {
+public class JacksonRedisSerializer<V> implements RedisSerializer<V> {
 
     private final ObjectMapper mapper;
+    private final Class<V> valueClass;
 
-    /**
-     * Create a new serializer that uses the given {@link ObjectMapper}. You must be aware that this serializer
-     * relies on Jackson's default typing capability to perform generic deserialization, therefore the given {@code
-     * ObjectMapper} must be set up for this feature.
-     *
-     * @param mapper Jackson mapper used to encode/decode objects
-     */
-    public JacksonRedisSerializer(ObjectMapper mapper) {
+    public JacksonRedisSerializer(ObjectMapper mapper, Class<V> valueClass) {
         this.mapper = mapper;
+        this.valueClass = valueClass;
     }
 
     @Override
-    public byte[] serialize(Object source) throws SerializationException {
+    public byte[] serialize(V v) throws SerializationException {
         try {
-            return mapper.writeValueAsBytes(source);
+            return mapper.writeValueAsBytes(v);
         } catch (JsonProcessingException e) {
-            throw new SerializationException("Could not write JSON: " + e.getMessage(), e);
+            throw new SerializationException("Unable to write JSON: " + v.toString(), e);
         }
     }
 
     @Override
-    public Object deserialize(byte[] source) throws SerializationException {
-        return deserialize(source, Object.class);
-    }
-
-    public <T> T deserialize(byte[] source, Class<T> type) throws SerializationException {
+    public V deserialize(byte[] bytes) throws SerializationException {
         try {
-            return mapper.readValue(source, type);
-        } catch (Exception e) {
-            throw new SerializationException("Could not read JSON: " + e.getMessage(), e);
+            return mapper.readValue(bytes, valueClass);
+        } catch (IOException e) {
+            throw new SerializationException("Unable to read JSON: " + new String(bytes, StandardCharsets.UTF_8), e);
         }
     }
 }

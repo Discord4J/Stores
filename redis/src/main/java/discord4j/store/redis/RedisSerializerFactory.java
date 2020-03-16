@@ -20,7 +20,7 @@ package discord4j.store.redis;
 import discord4j.store.api.Store;
 
 /**
- * Factory to create {@link RedisSerializer} instances from a given {@link Store} value.
+ * Factory to create {@link RedisSerializer} instances from a given {@link Store} value type.
  */
 public interface RedisSerializerFactory {
 
