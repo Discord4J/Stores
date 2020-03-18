@@ -27,57 +27,43 @@ import io.lettuce.core.cluster.api.StatefulRedisClusterConnection;
 import io.lettuce.core.codec.RedisCodec;
 import reactor.core.publisher.Mono;
 
+import static discord4j.store.redis.RedisStoreDefaults.*;
+
+/**
+ * A {@link StoreService} implementation that creates {@link RedisStore} instances capable of communicating to a
+ * Redis server through Lettuce Core driver using a single stateful connection.
+ * <p>
+ * This factory can be created under a number of configurations, particularly allowing customization of Lettuce
+ * {@link RedisClusterClient}, the codec used to serializer and deserialize entities and the key prefix used when saving
+ * entities.
+ *
+ * @see <a href="https://lettuce.io/">Lettuce Core</a>
+ */
 public class RedisClusterStoreService implements StoreService {
 
-    public static final String DEFAULT_REDIS_URI = "redis://localhost";
-    public static final String DEFAULT_KEY_PREFIX = "discord4j:store:";
-
     private final RedisClusterClient client;
-    private final StatefulRedisClusterConnection<String, byte[]> connection;
+    private final StatefulRedisClusterConnection<byte[], byte[]> connection;
+    private final RedisSerializerFactory keySerializerFactory;
     private final RedisSerializerFactory valueSerializerFactory;
     private final String keyPrefix;
 
-    public RedisClusterStoreService(RedisClusterClient redisClient, RedisCodec<String, byte[]> redisCodec,
-                                    RedisSerializerFactory valueSerializerFactory, String keyPrefix) {
+    public RedisClusterStoreService() {
+        this(defaultClusterClient(), byteArrayCodec(), keyPrefix(),
+                stringKeySerializerFactory(), jacksonValueSerializerFactory());
+    }
+
+    public RedisClusterStoreService(RedisClusterClient redisClient, RedisCodec<byte[], byte[]> redisCodec, String keyPrefix,
+                                    RedisSerializerFactory keySerializerFactory,
+                                    RedisSerializerFactory valueSerializerFactory) {
         this.client = redisClient;
         this.connection = client.connect(redisCodec);
+        this.keySerializerFactory = keySerializerFactory;
         this.valueSerializerFactory = valueSerializerFactory;
         this.keyPrefix = keyPrefix;
     }
 
-    public static Builder builder(RedisSerializerFactory valueSerializerFactory) {
-        return new Builder(valueSerializerFactory);
-    }
-
-    /**
-     * Get the default client, connecting to localhost, or to a custom server given by the {@code D4J_REDIS_URL}
-     * environment variable.
-     *
-     * @return the default lettuce-core client
-     */
-    public static RedisClusterClient defaultClient() {
-        String url = System.getenv("D4J_REDIS_URL");
-        String redisUri = url != null ? url : DEFAULT_REDIS_URI;
-        return RedisClusterClient.create(redisUri);
-    }
-
-    /**
-     * Get the default codec capable of converting between Java and redis using String serialization of keys and JSON
-     * serialization of values.
-     *
-     * @return the default redis codec
-     */
-    public static RedisCodec<String, byte[]> defaultCodec() {
-        return new StoreRedisCodec<>(new StringSerializer(), new ByteArraySerializer());
-    }
-
-    /**
-     * Get the default key prefix that is used when creating each store. See {@link #DEFAULT_KEY_PREFIX}.
-     *
-     * @return the default key prefix
-     */
-    public static String defaultKeyPrefix() {
-        return DEFAULT_KEY_PREFIX;
+    public static Builder builder() {
+        return new Builder();
     }
 
     @Override
@@ -87,8 +73,8 @@ public class RedisClusterStoreService implements StoreService {
 
     @Override
     public <K extends Comparable<K>, V> Store<K, V> provideGenericStore(Class<K> keyClass, Class<V> valueClass) {
-        return new RedisStore<>(connection, valueSerializerFactory.create(valueClass),
-                keyPrefix + valueClass.getSimpleName());
+        return new RedisStore<>(connection, keyPrefix + valueClass.getSimpleName(),
+                keySerializerFactory.create(keyClass), valueSerializerFactory.create(valueClass));
     }
 
     @Override
@@ -112,13 +98,13 @@ public class RedisClusterStoreService implements StoreService {
 
     public static class Builder {
 
-        private RedisClusterClient redisClient = defaultClient();
-        private RedisCodec<String, byte[]> redisCodec = defaultCodec();
-        private RedisSerializerFactory valueSerializerFactory;
-        private String keyPrefix = defaultKeyPrefix();
+        private RedisClusterClient redisClient = defaultClusterClient();
+        private RedisCodec<byte[], byte[]> redisCodec = byteArrayCodec();
+        private RedisSerializerFactory keySerializerFactory = jacksonValueSerializerFactory();
+        private RedisSerializerFactory valueSerializerFactory = jacksonValueSerializerFactory();
+        private String keyPrefix = RedisStoreDefaults.keyPrefix();
 
-        public Builder(RedisSerializerFactory valueSerializerFactory) {
-            this.valueSerializerFactory = valueSerializerFactory;
+        public Builder() {
         }
 
         public Builder redisClient(RedisClusterClient redisClient) {
@@ -126,8 +112,13 @@ public class RedisClusterStoreService implements StoreService {
             return this;
         }
 
-        public Builder redisCodec(RedisCodec<String, byte[]> redisCodec) {
+        public Builder redisCodec(RedisCodec<byte[], byte[]> redisCodec) {
             this.redisCodec = redisCodec;
+            return this;
+        }
+
+        public Builder keySerializerFactory(RedisSerializerFactory keySerializerFactory) {
+            this.keySerializerFactory = keySerializerFactory;
             return this;
         }
 
@@ -142,7 +133,8 @@ public class RedisClusterStoreService implements StoreService {
         }
 
         public RedisClusterStoreService build() {
-            return new RedisClusterStoreService(redisClient, redisCodec, valueSerializerFactory, keyPrefix);
+            return new RedisClusterStoreService(redisClient, redisCodec, keyPrefix,
+                    keySerializerFactory, valueSerializerFactory);
         }
     }
 }

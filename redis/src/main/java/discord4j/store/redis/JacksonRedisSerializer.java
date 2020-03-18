@@ -26,29 +26,29 @@ import java.nio.charset.StandardCharsets;
 /**
  * A {@link RedisSerializer} that uses Jackson to encode/decode values for a particular type.
  *
- * @param <V> the value type
+ * @param <T> the serializer type
  */
-public class JacksonRedisSerializer<V> implements RedisSerializer<V> {
+public class JacksonRedisSerializer<T> implements RedisSerializer<T> {
 
     private final ObjectMapper mapper;
-    private final Class<V> valueClass;
+    private final Class<T> valueClass;
 
-    public JacksonRedisSerializer(ObjectMapper mapper, Class<V> valueClass) {
+    public JacksonRedisSerializer(ObjectMapper mapper, Class<T> valueClass) {
         this.mapper = mapper;
         this.valueClass = valueClass;
     }
 
     @Override
-    public byte[] serialize(V v) throws SerializationException {
+    public byte[] serialize(T t) throws SerializationException {
         try {
-            return mapper.writeValueAsBytes(v);
+            return mapper.writeValueAsBytes(t);
         } catch (JsonProcessingException e) {
-            throw new SerializationException("Unable to write JSON: " + v.toString(), e);
+            throw new SerializationException("Unable to write JSON: " + t.toString(), e);
         }
     }
 
     @Override
-    public V deserialize(byte[] bytes) throws SerializationException {
+    public T deserialize(byte[] bytes) throws SerializationException {
         try {
             return mapper.readValue(bytes, valueClass);
         } catch (IOException e) {

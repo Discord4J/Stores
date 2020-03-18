@@ -18,7 +18,6 @@
 package discord4j.store.redis;
 
 import discord4j.store.api.Store;
-import discord4j.store.api.util.LongLongTuple2;
 import discord4j.store.api.util.WithinRangePredicate;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.cluster.api.StatefulRedisClusterConnection;
@@ -28,39 +27,35 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class RedisStore<K extends Comparable<K>, V> implements Store<K, V> {
 
-    private final RedisClusterReactiveCommands<String, byte[]> commands;
+    private final RedisClusterReactiveCommands<byte[], byte[]> commands;
+    private final RedisSerializer<K> keySerializer;
     private final RedisSerializer<V> valueSerializer;
-    private final String storeName;
+    private final byte[] storeName;
 
-    public RedisStore(StatefulRedisConnection<String, byte[]> connection,
-                      RedisSerializer<V> valueSerializer, String storeName) {
+    public RedisStore(StatefulRedisConnection<byte[], byte[]> connection, String storeName,
+                      RedisSerializer<K> keySerializer, RedisSerializer<V> valueSerializer) {
         this.commands = connection.reactive();
+        this.keySerializer = keySerializer;
         this.valueSerializer = valueSerializer;
-        this.storeName = storeName;
+        this.storeName = storeName.getBytes(StandardCharsets.UTF_8);
     }
 
-    public RedisStore(StatefulRedisClusterConnection<String, byte[]> connection,
-                      RedisSerializer<V> valueSerializer, String storeName) {
+    public RedisStore(StatefulRedisClusterConnection<byte[], byte[]> connection, String storeName,
+                      RedisSerializer<K> keySerializer, RedisSerializer<V> valueSerializer) {
         this.commands = connection.reactive();
+        this.keySerializer = keySerializer;
         this.valueSerializer = valueSerializer;
-        this.storeName = storeName;
-    }
-
-    private String createKey(K key) {
-        if (key instanceof LongLongTuple2) {
-            LongLongTuple2 tuple = (LongLongTuple2) key;
-            return tuple.getT1() + ":" + tuple.getT2();
-        }
-        return key.toString();
+        this.storeName = storeName.getBytes(StandardCharsets.UTF_8);
     }
 
     @Override
     public Mono<Void> save(K key, V value) {
-        return Mono.defer(() -> commands.hset(storeName, createKey(key), valueSerializer.serialize(value)).then());
+        return Mono.defer(() -> commands.hset(storeName, keySerializer.serialize(key), valueSerializer.serialize(value)).then());
     }
 
     @Override
@@ -70,16 +65,15 @@ public class RedisStore<K extends Comparable<K>, V> implements Store<K, V> {
 
     @Override
     public Mono<V> find(K id) {
-        return Mono.defer(() -> commands.hget(storeName, createKey(id)).map(valueSerializer::deserialize));
+        return Mono.defer(() -> commands.hget(storeName, keySerializer.serialize(id)).map(valueSerializer::deserialize));
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Flux<V> findInRange(K start, K end) {
         WithinRangePredicate<K> predicate = new WithinRangePredicate<>(start, end);
         return Flux.defer(() -> commands.hgetall(storeName))
                 .flatMap(map -> Flux.fromIterable(map.entrySet()))
-                .filter(entry -> predicate.test((K) entry.getKey()))
+                .filter(entry -> predicate.test(keySerializer.deserialize(entry.getKey())))
                 .map(Map.Entry::getValue)
                 .map(valueSerializer::deserialize);
     }
@@ -91,7 +85,7 @@ public class RedisStore<K extends Comparable<K>, V> implements Store<K, V> {
 
     @Override
     public Mono<Void> delete(K id) {
-        return Mono.defer(() -> commands.hdel(storeName, createKey(id)).then());
+        return Mono.defer(() -> commands.hdel(storeName, keySerializer.serialize(id)).then());
     }
 
     @Override
@@ -100,11 +94,10 @@ public class RedisStore<K extends Comparable<K>, V> implements Store<K, V> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Mono<Void> deleteInRange(K start, K end) {
         WithinRangePredicate<K> predicate = new WithinRangePredicate<>(start, end);
         return Flux.defer(() -> commands.hkeys(storeName))
-                .filter(key -> predicate.test((K) key))
+                .filter(key -> predicate.test(keySerializer.deserialize(key)))
                 .flatMap(key -> Mono.defer(() -> commands.hdel(storeName, key).then()))
                 .then();
     }
@@ -116,7 +109,7 @@ public class RedisStore<K extends Comparable<K>, V> implements Store<K, V> {
 
     @Override
     public Flux<K> keys() {
-        return Flux.defer(() -> commands.hkeys(storeName)).map(RedisStore::cast);
+        return Flux.defer(() -> commands.hkeys(storeName)).map(keySerializer::deserialize);
     }
 
     @Override
@@ -127,10 +120,5 @@ public class RedisStore<K extends Comparable<K>, V> implements Store<K, V> {
     @Override
     public Mono<Void> invalidate() {
         return deleteAll();
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <V> V cast(Object o) {
-        return (V) o;
     }
 }

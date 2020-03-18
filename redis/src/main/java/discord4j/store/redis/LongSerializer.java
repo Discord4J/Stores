@@ -18,17 +18,34 @@
 package discord4j.store.redis;
 
 /**
- * A {@link RedisSerializer} that passes through byte array objects.
+ * A serializer that converts between {@code Long} and {@code byte[]}.
  */
-public class ByteArraySerializer implements RedisSerializer<byte[]> {
+public class LongSerializer implements RedisSerializer<Long> {
 
-    @Override
-    public byte[] serialize(byte[] bytes) throws SerializationException {
-        return bytes;
+    /**
+     * Create a new serializer.
+     */
+    public LongSerializer() {
     }
 
     @Override
-    public byte[] deserialize(byte[] bytes) throws SerializationException {
-        return bytes;
+    public byte[] serialize(Long value) throws SerializationException {
+        byte[] result = new byte[8];
+        long l = value;
+        for (int i = 7; i >= 0; i--) {
+            result[i] = (byte) (l & 0xFF);
+            l >>= 8;
+        }
+        return result;
+    }
+
+    @Override
+    public Long deserialize(byte[] bytes) throws SerializationException {
+        long result = 0;
+        for (int i = 0; i < Long.BYTES; i++) {
+            result <<= Long.BYTES;
+            result |= (bytes[i] & 0xFF);
+        }
+        return result;
     }
 }

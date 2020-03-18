@@ -20,16 +20,16 @@ package discord4j.store.redis;
 import discord4j.store.api.Store;
 
 /**
- * Factory to create {@link RedisSerializer} instances from a given {@link Store} value type.
+ * Factory to create {@link RedisSerializer} instances from a given {@link Store} key or value type.
  */
 public interface RedisSerializerFactory {
 
     /**
      * Create a {@link RedisSerializer} capable of handling serialization and deserialization for the given type.
      *
-     * @param valueClass the type the {@link RedisSerializer} must handle
-     * @param <V> value type
-     * @return a {@link RedisSerializer} with the given {@code valueClass} type support
+     * @param type the type the {@link RedisSerializer} must handle
+     * @param <T> serializer type
+     * @return a {@link RedisSerializer} with the given {@code type} support
      */
-    <V> RedisSerializer<V> create(Class<V> valueClass);
+    <T> RedisSerializer<T> create(Class<T> type);
 }
