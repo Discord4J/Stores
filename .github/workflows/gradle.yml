@@ -24,11 +24,11 @@ jobs:
       - name: Build and publish with Gradle
         run: ./gradlew build
       - uses: actions/cache@v1
-      with:
-       path: ~/.gradle/caches
-       key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-       restore-keys: |
-         ${{ runner.os }}-gradle-
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
   release:
     name: Publish artifacts
     runs-on: ubuntu-latest
