@@ -17,32 +17,21 @@
 
 package discord4j.store.redis;
 
-import discord4j.store.api.service.StoreService;
-import discord4j.store.tck.StoreVerification;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import redis.embedded.RedisServer;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
+/**
+ * Factory that creates {@link JacksonRedisSerializer} instances for a given value type.
+ */
+public class JacksonRedisSerializerFactory implements RedisSerializerFactory {
 
-public class IntegrationTests extends StoreVerification {
+    private final ObjectMapper mapper;
 
-    private RedisStoreService service;
-
-    @BeforeClass
-    public static void setUpTests() throws IOException {
-        RedisServer redisServer = new RedisServer(6379);
-        redisServer.start();
-        Runtime.getRuntime().addShutdownHook(new Thread(redisServer::stop));
-    }
-
-    @Before
-    public void setUp() {
-        service = RedisStoreService.builder().build();
+    public JacksonRedisSerializerFactory(ObjectMapper mapper) {
+        this.mapper = mapper;
     }
 
     @Override
-    public StoreService getStoreService() {
-        return service;
+    public <V> RedisSerializer<V> create(Class<V> valueClass) {
+        return new JacksonRedisSerializer<>(mapper, valueClass);
     }
 }

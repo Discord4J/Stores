@@ -1,6 +1,6 @@
 # Stores-Redis
 
-A store implementation backed by [Lettuce](https://lettuce.io/), advanced Java Redis client for thread-safe sync, async, and reactive usage. Supports Cluster, Sentinel, Pipelining, and codecs.
+A store implementation backed by [Lettuce](https://lettuce.io/), advanced Java Redis client for thread-safe sync, async, and reactive usage.
 
 Work in progress!
 
@@ -39,19 +39,20 @@ libraryDependencies ++= Seq(
 This module can be **auto-discovered** by Discord4J if it's on the classpath. Refer to this example for customization:
 
 ```java
-final DiscordClient client = new DiscordClientBuilder("token")
-        .setStoreService(new RedisStoreService(RedisClient.create("redis://localhost")))
-        .build();
+DiscordClientBuilder.create(System.getenv("token"))
+        .build()
+        .withGateway(client -> {
+            client.getEventDispatcher().on(ReadyEvent.class)
+                    .subscribe(ready -> System.out.println("Logged in as " + ready.getSelf().getUsername()));
 
-client.getEventDispatcher().on(ReadyEvent.class)
-        .subscribe(ready -> System.out.println("Logged in as " + ready.getSelf().getUsername()));
+            client.getEventDispatcher().on(MessageCreateEvent.class)
+                    .map(MessageCreateEvent::getMessage)
+                    .filter(msg -> msg.getContent().equals("!ping"))
+                    .flatMap(Message::getChannel)
+                    .flatMap(channel -> channel.createMessage("Pong!"))
+                    .subscribe();
 
-client.getEventDispatcher().on(MessageCreateEvent.class)
-        .map(MessageCreateEvent::getMessage)
-        .filter(msg -> msg.getContent().map("!ping"::equals).orElse(false))
-        .flatMap(Message::getChannel)
-        .flatMap(channel -> channel.createMessage("Pong!"))
-        .subscribe();
-
-client.login().block();
+            return client.onDisconnect();
+        })
+        .block();
 ```

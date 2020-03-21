@@ -17,32 +17,35 @@
 
 package discord4j.store.redis;
 
-import discord4j.store.api.service.StoreService;
-import discord4j.store.tck.StoreVerification;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import redis.embedded.RedisServer;
+/**
+ * A serializer that converts between {@code Long} and {@code byte[]}.
+ */
+public class LongSerializer implements RedisSerializer<Long> {
 
-import java.io.IOException;
-
-public class IntegrationTests extends StoreVerification {
-
-    private RedisStoreService service;
-
-    @BeforeClass
-    public static void setUpTests() throws IOException {
-        RedisServer redisServer = new RedisServer(6379);
-        redisServer.start();
-        Runtime.getRuntime().addShutdownHook(new Thread(redisServer::stop));
-    }
-
-    @Before
-    public void setUp() {
-        service = RedisStoreService.builder().build();
+    /**
+     * Create a new serializer.
+     */
+    public LongSerializer() {
     }
 
     @Override
-    public StoreService getStoreService() {
-        return service;
+    public byte[] serialize(Long value) throws SerializationException {
+        byte[] result = new byte[8];
+        long l = value;
+        for (int i = 7; i >= 0; i--) {
+            result[i] = (byte) (l & 0xFF);
+            l >>= 8;
+        }
+        return result;
+    }
+
+    @Override
+    public Long deserialize(byte[] bytes) throws SerializationException {
+        long result = 0;
+        for (int i = 0; i < Long.BYTES; i++) {
+            result <<= Long.BYTES;
+            result |= (bytes[i] & 0xFF);
+        }
+        return result;
     }
 }

@@ -21,16 +21,17 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**
- * A serializer that simply converts between {@code String} and {@code byte[]} using the specified {@link Charset}.
+ * A serializer that converts between {@code Long} and {@code byte[]} through a "string" representation using the
+ * specified {@link Charset}.
  */
-public class StringSerializer implements RedisSerializer<String> {
+public class LongStringSerializer implements RedisSerializer<Long> {
 
     private final Charset charset;
 
     /**
      * Create a new serializer using the {@link StandardCharsets#UTF_8} charset.
      */
-    public StringSerializer() {
+    public LongStringSerializer() {
         this(StandardCharsets.UTF_8);
     }
 
@@ -39,17 +40,17 @@ public class StringSerializer implements RedisSerializer<String> {
      *
      * @param charset charset used to convert objects
      */
-    public StringSerializer(Charset charset) {
+    public LongStringSerializer(Charset charset) {
         this.charset = charset;
     }
 
     @Override
-    public byte[] serialize(String string) throws SerializationException {
-        return string.getBytes(charset);
+    public byte[] serialize(Long value) throws SerializationException {
+        return value.toString().getBytes(charset);
     }
 
     @Override
-    public String deserialize(byte[] bytes) throws SerializationException {
-        return new String(bytes, charset);
+    public Long deserialize(byte[] bytes) throws SerializationException {
+        return Long.parseUnsignedLong(new String(bytes, charset));
     }
 }

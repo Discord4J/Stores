@@ -17,20 +17,23 @@
 
 package discord4j.store.redis;
 
+import discord4j.store.api.util.LongLongTuple2;
+
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**
- * A serializer that simply converts between {@code String} and {@code byte[]} using the specified {@link Charset}.
+ * A serializer that converts between {@code String} and {@code byte[]} through a "string" representation using the
+ * specified {@link Charset}.
  */
-public class StringSerializer implements RedisSerializer<String> {
+public class LongLongTuple2StringSerializer implements RedisSerializer<LongLongTuple2> {
 
     private final Charset charset;
 
     /**
      * Create a new serializer using the {@link StandardCharsets#UTF_8} charset.
      */
-    public StringSerializer() {
+    public LongLongTuple2StringSerializer() {
         this(StandardCharsets.UTF_8);
     }
 
@@ -39,17 +42,18 @@ public class StringSerializer implements RedisSerializer<String> {
      *
      * @param charset charset used to convert objects
      */
-    public StringSerializer(Charset charset) {
+    public LongLongTuple2StringSerializer(Charset charset) {
         this.charset = charset;
     }
 
     @Override
-    public byte[] serialize(String string) throws SerializationException {
-        return string.getBytes(charset);
+    public byte[] serialize(LongLongTuple2 t2) throws SerializationException {
+        return (t2.getT1() + ":" + t2.getT2()).getBytes(charset);
     }
 
     @Override
-    public String deserialize(byte[] bytes) throws SerializationException {
-        return new String(bytes, charset);
+    public LongLongTuple2 deserialize(byte[] bytes) throws SerializationException {
+        String[] t = new String(bytes, charset).split(":");
+        return LongLongTuple2.of(Long.parseUnsignedLong(t[0]), Long.parseUnsignedLong(t[1]));
     }
 }
