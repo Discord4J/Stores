@@ -2,7 +2,9 @@
 
 A store implementation backed by [Lettuce](https://lettuce.io/), advanced Java Redis client for thread-safe sync, async, and reactive usage.
 
-Work in progress!
+Dependencies:
+
+* [discord-json](https://github.com/Discord4J/discord-json)
 
 ## Installation
 Replace VERSION with the following: [![Maven Central](https://img.shields.io/maven-central/v/com.discord4j/stores-redis.svg?style=flat-square)](https://search.maven.org/artifact/com.discord4j/stores-redis)
