@@ -15,7 +15,7 @@
  * along with Discord4J. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package discord4j.store.api.readonly.primitive;
+package discord4j.store.api.readonly;
 
 import discord4j.store.api.primitive.LongObjStore;
 import discord4j.store.api.util.LongObjTuple2;

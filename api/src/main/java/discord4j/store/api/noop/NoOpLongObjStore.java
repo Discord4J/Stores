@@ -14,9 +14,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Discord4J. If not, see <http://www.gnu.org/licenses/>.
  */
-package discord4j.store.api.noop.primitive;
+package discord4j.store.api.noop;
 
-import discord4j.store.api.noop.NoOpStore;
 import discord4j.store.api.primitive.LongObjStore;
 import discord4j.store.api.util.LongObjTuple2;
 import org.reactivestreams.Publisher;

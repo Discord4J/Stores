@@ -19,7 +19,6 @@ package discord4j.store.api.readonly;
 
 import discord4j.store.api.Store;
 import discord4j.store.api.primitive.LongObjStore;
-import discord4j.store.api.readonly.primitive.ReadOnlyLongObjStore;
 import discord4j.store.api.service.StoreService;
 import discord4j.store.api.util.StoreContext;
 import reactor.core.publisher.Mono;
