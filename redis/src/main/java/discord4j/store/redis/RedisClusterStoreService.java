@@ -22,6 +22,7 @@ import discord4j.store.api.primitive.ForwardingStore;
 import discord4j.store.api.primitive.LongObjStore;
 import discord4j.store.api.service.StoreService;
 import discord4j.store.api.util.StoreContext;
+import io.lettuce.core.RedisClient;
 import io.lettuce.core.cluster.RedisClusterClient;
 import io.lettuce.core.cluster.api.StatefulRedisClusterConnection;
 import io.lettuce.core.codec.RedisCodec;
@@ -36,6 +37,8 @@ import static discord4j.store.redis.RedisStoreDefaults.*;
  * This factory can be created under a number of configurations, particularly allowing customization of Lettuce
  * {@link RedisClusterClient}, the codec used to serializer and deserialize entities and the key prefix used when saving
  * entities.
+ * <p>
+ * For a standalone redis connection, use {@link RedisStoreService}.
  *
  * @see <a href="https://lettuce.io/">Lettuce Core</a>
  */
@@ -47,12 +50,26 @@ public class RedisClusterStoreService implements StoreService {
     private final RedisSerializerFactory valueSerializerFactory;
     private final String keyPrefix;
 
+    /**
+     * Create a {@link RedisClusterStoreService} with all defaults for usage with Discord4J data entities.
+     */
     public RedisClusterStoreService() {
         this(defaultClusterClient(), byteArrayCodec(), keyPrefix(),
                 stringKeySerializerFactory(), jacksonValueSerializerFactory());
     }
 
-    public RedisClusterStoreService(RedisClusterClient redisClient, RedisCodec<byte[], byte[]> redisCodec, String keyPrefix,
+    /**
+     * Create a {@link RedisClusterStoreService} with the given parameters. To use defaults and individually change
+     * parameters, use {@link #builder()}.
+     *
+     * @param redisClient the backing Lettuce's {@link RedisClusterClient}
+     * @param redisCodec a raw byte array {@link RedisCodec} to encode and decode redis commands
+     * @param keyPrefix a prefix used for each structure created by this store
+     * @param keySerializerFactory a factory to derive serializers depending on the store key type
+     * @param valueSerializerFactory a factory to derive serializers depending on the stored value type
+     */
+    public RedisClusterStoreService(RedisClusterClient redisClient, RedisCodec<byte[], byte[]> redisCodec,
+                                    String keyPrefix,
                                     RedisSerializerFactory keySerializerFactory,
                                     RedisSerializerFactory valueSerializerFactory) {
         this.client = redisClient;
@@ -62,6 +79,11 @@ public class RedisClusterStoreService implements StoreService {
         this.keyPrefix = keyPrefix;
     }
 
+    /**
+     * Get a builder to construct {@link RedisStore} instances.
+     *
+     * @return a builder
+     */
     public static Builder builder() {
         return new Builder();
     }
@@ -96,42 +118,85 @@ public class RedisClusterStoreService implements StoreService {
         return Mono.defer(() -> Mono.fromFuture(client.shutdownAsync()));
     }
 
+    /**
+     * Builder for {@link RedisClient}
+     */
     public static class Builder {
 
         private RedisClusterClient redisClient = defaultClusterClient();
         private RedisCodec<byte[], byte[]> redisCodec = byteArrayCodec();
+        private String keyPrefix = RedisStoreDefaults.keyPrefix();
         private RedisSerializerFactory keySerializerFactory = jacksonValueSerializerFactory();
         private RedisSerializerFactory valueSerializerFactory = jacksonValueSerializerFactory();
-        private String keyPrefix = RedisStoreDefaults.keyPrefix();
 
         public Builder() {
         }
 
+        /**
+         * Set the backing Lettuce's {@link RedisClusterClient}. Defaults to
+         * {@link RedisStoreDefaults#defaultClusterClient()}.
+         *
+         * @param redisClient the backing redis client
+         * @return this builder
+         */
         public Builder redisClient(RedisClusterClient redisClient) {
             this.redisClient = redisClient;
             return this;
         }
 
+        /**
+         * Set the raw byte array {@link RedisCodec} to encode and decode redis commands. Defaults to
+         * {@link RedisStoreDefaults#byteArrayCodec()}.
+         *
+         * @param redisCodec the codec used by the client to encode and decode commands
+         * @return this builder
+         */
         public Builder redisCodec(RedisCodec<byte[], byte[]> redisCodec) {
             this.redisCodec = redisCodec;
             return this;
         }
 
-        public Builder keySerializerFactory(RedisSerializerFactory keySerializerFactory) {
-            this.keySerializerFactory = keySerializerFactory;
-            return this;
-        }
-
-        public Builder valueSerializerFactory(RedisSerializerFactory valueSerializerFactory) {
-            this.valueSerializerFactory = valueSerializerFactory;
-            return this;
-        }
-
+        /**
+         * Set a prefix used for each structure created by this store. Defaults to
+         * {@link RedisStoreDefaults#keyPrefix()}.
+         *
+         * @param keyPrefix the key prefix to use with the store
+         * @return this builder
+         */
         public Builder keyPrefix(String keyPrefix) {
             this.keyPrefix = keyPrefix;
             return this;
         }
 
+        /**
+         * Set a factory to derive serializers depending on the store key type. Defaults to
+         * {@link RedisStoreDefaults#stringKeySerializerFactory()} that converts keys into a String representation.
+         *
+         * @param keySerializerFactory a serializer factory for keys
+         * @return this builder
+         */
+        public Builder keySerializerFactory(RedisSerializerFactory keySerializerFactory) {
+            this.keySerializerFactory = keySerializerFactory;
+            return this;
+        }
+
+        /**
+         * Set a factory to derive serializers depending on the stored value type. Defaults to
+         * {@link RedisStoreDefaults#jacksonValueSerializerFactory()} that converts values using Jackson mapper.
+         *
+         * @param valueSerializerFactory a serializer factory for values
+         * @return this builder
+         */
+        public Builder valueSerializerFactory(RedisSerializerFactory valueSerializerFactory) {
+            this.valueSerializerFactory = valueSerializerFactory;
+            return this;
+        }
+
+        /**
+         * Create the resulting object with the properties of this builder.
+         *
+         * @return a {@link RedisClusterStoreService}
+         */
         public RedisClusterStoreService build() {
             return new RedisClusterStoreService(redisClient, redisCodec, keyPrefix,
                     keySerializerFactory, valueSerializerFactory);
