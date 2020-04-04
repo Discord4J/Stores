@@ -92,4 +92,11 @@ public class CaffeineStore<K extends Comparable<K>, V> implements Store<K,V> {
     public Mono<Void> invalidate() {
         return Mono.fromRunnable(cache::invalidateAll);
     }
+
+    @Override
+    public String toString() {
+        return "CaffeineStore{" +
+                "cache=" + cache.getClass() +
+                '}';
+    }
 }

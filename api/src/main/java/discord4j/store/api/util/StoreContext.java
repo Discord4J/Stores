@@ -18,7 +18,6 @@ package discord4j.store.api.util;
 
 import discord4j.store.api.service.StoreService;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -28,18 +27,6 @@ import java.util.Map;
 public class StoreContext {
 
     private final Map<String, Object> hints;
-
-    @Deprecated
-    public StoreContext(int shard, Class<?> messageClass) {
-        this(hintsFrom(shard, messageClass));
-    }
-
-    private static Map<String, Object> hintsFrom(int shard, Class<?> messageClass) {
-        Map<String, Object> hints = new LinkedHashMap<>(2);
-        hints.put("shard", shard);
-        hints.put("messageClass", messageClass);
-        return hints;
-    }
 
     public StoreContext(Map<String, Object> hints) {
         this.hints = hints;
@@ -53,40 +40,5 @@ public class StoreContext {
      */
     public Map<String, Object> getHints() {
         return hints;
-    }
-
-    /**
-     * This gets the shard index which the client is currently operating on.
-     *
-     * @return The shard id.
-     * @deprecated use {@link #getHints()} instead.
-     */
-    @Deprecated
-    public int getShard() {
-        Object shard = hints.get("shard");
-        if (shard instanceof Integer) {
-            return (int) shard;
-        } else if (shard instanceof CharSequence) {
-            return Integer.parseInt(String.valueOf(shard));
-        } else {
-            return 0;
-        }
-    }
-
-    /**
-     * This gets the message class used by the client. It may be useful to occasionally evict objects of
-     * this type from their respective stores due to the high likelihood of unbounded memory usage leading
-     * to eventual {@link OutOfMemoryError}s.
-     *
-     * @return The class which represents a message.
-     */
-    @Deprecated
-    public Class<?> getMessageClass() {
-        Object messageClass = hints.get("messageClass");
-        if (messageClass instanceof Class) {
-            return (Class<?>) messageClass;
-        } else {
-            return Void.class;
-        }
     }
 }

@@ -90,4 +90,11 @@ public class DelegatingLongObjStore<V> implements LongObjStore<V> {
     public Flux<V> values() {
         return delegate.values();
     }
+
+    @Override
+    public String toString() {
+        return "DelegatingLongObjStore{" +
+                "delegate=" + delegate +
+                '}';
+    }
 }

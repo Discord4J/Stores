@@ -28,6 +28,7 @@ import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Map;
 
 public class RedisStore<K extends Comparable<K>, V> implements Store<K, V> {
@@ -120,5 +121,12 @@ public class RedisStore<K extends Comparable<K>, V> implements Store<K, V> {
     @Override
     public Mono<Void> invalidate() {
         return deleteAll();
+    }
+
+    @Override
+    public String toString() {
+        return "RedisStore{" +
+                "storeName=" + Arrays.toString(storeName) +
+                '}';
     }
 }

@@ -67,21 +67,6 @@ public class MappingStoreService implements StoreService {
     /**
      * Set a new delegate {@link StoreService} for the given value class.
      *
-     * @param valueClass the value to map
-     * @param storeService the service to use for the values
-     * @return a new {@link MappingStoreService} with updated properties
-     * @deprecated use {@link #setMapping(StoreService, Class)}
-     */
-    @Deprecated
-    public MappingStoreService setMapping(Class<?> valueClass, StoreService storeService) {
-        Map<Class<?>, StoreService> updatedMap = new ConcurrentHashMap<>(serviceMap);
-        updatedMap.put(valueClass, storeService);
-        return new MappingStoreService(updatedMap, fallback);
-    }
-
-    /**
-     * Set a new delegate {@link StoreService} for the given value class.
-     *
      * @param storeService the service to use for the values
      * @param valueClass the value class to map to the given service
      * @return a new {@link MappingStoreService} with updated properties

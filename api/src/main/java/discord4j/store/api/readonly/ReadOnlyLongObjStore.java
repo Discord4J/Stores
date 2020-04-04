@@ -90,4 +90,11 @@ public class ReadOnlyLongObjStore<V> implements LongObjStore<V> {
     public Mono<Void> deleteInRange(long start, long end) {
         return Mono.empty();
     }
+
+    @Override
+    public String toString() {
+        return "ReadOnlyLongObjStore{" +
+                "backing=" + backing +
+                '}';
+    }
 }

@@ -39,7 +39,12 @@ public class JdkStoreService implements StoreService {
 
     @Override
     public void init(StoreContext context) {
-        messageClass = context.getMessageClass();
+        Object messageClass = context.getHints().get("messageClass");
+        if (messageClass instanceof Class) {
+            this.messageClass = (Class<?>) messageClass;
+        } else {
+            this.messageClass = Void.class;
+        }
     }
 
     @Override

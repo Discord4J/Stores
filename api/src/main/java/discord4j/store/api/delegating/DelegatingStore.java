@@ -90,4 +90,11 @@ public class DelegatingStore<K extends Comparable<K>, V> implements Store<K, V> 
     public Flux<V> values() {
         return delegate.values();
     }
+
+    @Override
+    public String toString() {
+        return "DelegatingStore{" +
+                "delegate=" + delegate +
+                '}';
+    }
 }

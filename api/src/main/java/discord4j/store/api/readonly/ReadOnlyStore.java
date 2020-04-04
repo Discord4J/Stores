@@ -96,4 +96,11 @@ public class ReadOnlyStore<K extends Comparable<K>, V> implements Store<K, V> {
     public Mono<Void> invalidate() {
         return Mono.empty();
     }
+
+    @Override
+    public String toString() {
+        return "ReadOnlyStore{" +
+                "backing=" + backing +
+                '}';
+    }
 }
