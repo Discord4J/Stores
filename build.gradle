@@ -22,7 +22,7 @@ ext {
     }
 
     // Dependencies
-    reactor_bom_version = 'Californium-SR16'
+    reactor_bom_version = 'Californium-SR17'
     servicer_version = '1.0.0'
     commons_codec_version = '1.12'
     junit_version = '4.13'
@@ -31,7 +31,7 @@ ext {
     caffeine_version = '2.8.1'
     lettuce_version = '5.1.8.RELEASE'
     jackson_version = '2.10.3'
-    commons_lang_version = '3.9'
+    commons_lang_version = '3.10'
 
 
     isJitpack = "true" == System.getenv("JITPACK")
