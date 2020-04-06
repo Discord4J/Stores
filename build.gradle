@@ -31,7 +31,7 @@ ext {
     caffeine_version = '2.8.1'
     lettuce_version = '5.2.2.RELEASE'
     jackson_version = '2.10.3'
-    commons_lang_version = '3.9'
+    commons_lang_version = '3.10'
 
     isJitpack = "true" == System.getenv("JITPACK")
     isRelease = !version.toString().endsWith('-SNAPSHOT')
