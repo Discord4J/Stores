@@ -50,33 +50,43 @@ public class RedisStoreService implements StoreService {
     private final RedisSerializerFactory keySerializerFactory;
     private final RedisSerializerFactory valueSerializerFactory;
     private final String keyPrefix;
+    private final boolean sharedConnection;
+    private final RedisCodec<byte[], byte[]> redisCodec;
 
     /**
      * Create a {@link RedisStoreService} with all defaults for usage with Discord4J data entities.
      */
     public RedisStoreService() {
         this(defaultClient(), byteArrayCodec(), keyPrefix(),
-                stringKeySerializerFactory(), jacksonValueSerializerFactory());
+            stringKeySerializerFactory(), jacksonValueSerializerFactory(), true);
     }
 
     /**
      * Create a {@link RedisStoreService} with the given parameters. To use defaults and individually change
      * parameters, use {@link #builder()}.
      *
-     * @param redisClient the backing Lettuce's {@link RedisClient}
-     * @param redisCodec a raw byte array {@link RedisCodec} to encode and decode redis commands
-     * @param keyPrefix a prefix used for each structure created by this store
-     * @param keySerializerFactory a factory to derive serializers depending on the store key type
+     * @param redisClient            the backing Lettuce's {@link RedisClient}
+     * @param redisCodec             a raw byte array {@link RedisCodec} to encode and decode redis commands
+     * @param keyPrefix              a prefix used for each structure created by this store
+     * @param keySerializerFactory   a factory to derive serializers depending on the store key type
      * @param valueSerializerFactory a factory to derive serializers depending on the stored value type
      */
     public RedisStoreService(RedisClient redisClient, RedisCodec<byte[], byte[]> redisCodec, String keyPrefix,
                              RedisSerializerFactory keySerializerFactory,
-                             RedisSerializerFactory valueSerializerFactory) {
+                             RedisSerializerFactory valueSerializerFactory,
+                             boolean sharedConnection) {
         this.client = redisClient;
-        this.connection = client.connect(redisCodec);
         this.keySerializerFactory = keySerializerFactory;
         this.valueSerializerFactory = valueSerializerFactory;
         this.keyPrefix = keyPrefix;
+        this.sharedConnection = sharedConnection;
+        if (sharedConnection) {
+            this.redisCodec = null;
+            this.connection = client.connect(redisCodec);
+        } else {
+            this.redisCodec = redisCodec;
+            this.connection = null;
+        }
     }
 
     /**
@@ -95,8 +105,9 @@ public class RedisStoreService implements StoreService {
 
     @Override
     public <K extends Comparable<K>, V> Store<K, V> provideGenericStore(Class<K> keyClass, Class<V> valueClass) {
-        return new RedisStore<>(connection, keyPrefix + valueClass.getSimpleName(),
-                keySerializerFactory.create(keyClass), valueSerializerFactory.create(valueClass));
+        return new RedisStore<>(sharedConnection ? connection : client.connect(redisCodec),
+            keyPrefix + valueClass.getSimpleName(),
+            keySerializerFactory.create(keyClass), valueSerializerFactory.create(valueClass));
     }
 
     @Override
@@ -128,6 +139,7 @@ public class RedisStoreService implements StoreService {
         private String keyPrefix = RedisStoreDefaults.keyPrefix();
         private RedisSerializerFactory keySerializerFactory = jacksonValueSerializerFactory();
         private RedisSerializerFactory valueSerializerFactory = jacksonValueSerializerFactory();
+        private boolean sharedConnection = true;
 
         public Builder() {
         }
@@ -191,6 +203,11 @@ public class RedisStoreService implements StoreService {
             return this;
         }
 
+        public Builder useSharedConnection(final boolean sharedConnection) {
+            this.sharedConnection = sharedConnection;
+            return this;
+        }
+
         /**
          * Create the resulting object with the properties of this builder.
          *
@@ -198,7 +215,7 @@ public class RedisStoreService implements StoreService {
          */
         public RedisStoreService build() {
             return new RedisStoreService(redisClient, redisCodec, keyPrefix,
-                    keySerializerFactory, valueSerializerFactory);
+                keySerializerFactory, valueSerializerFactory, sharedConnection);
         }
     }
 }
