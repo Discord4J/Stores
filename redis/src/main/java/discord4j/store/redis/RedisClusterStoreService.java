@@ -137,7 +137,7 @@ public class RedisClusterStoreService implements StoreService {
         private RedisClusterClient redisClient = defaultClusterClient();
         private RedisCodec<byte[], byte[]> redisCodec = byteArrayCodec();
         private String keyPrefix = RedisStoreDefaults.keyPrefix();
-        private RedisSerializerFactory keySerializerFactory = jacksonValueSerializerFactory();
+        private RedisSerializerFactory keySerializerFactory = stringKeySerializerFactory();
         private RedisSerializerFactory valueSerializerFactory = jacksonValueSerializerFactory();
         private boolean sharedConnection = true;
 

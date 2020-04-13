@@ -16,6 +16,8 @@
  */
 package discord4j.store.api.util;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import reactor.util.annotation.Nullable;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
@@ -70,8 +72,8 @@ public class LongLongTuple2 implements Iterable<Long>, Comparable<LongLongTuple2
     final long t1;
     final long t2;
 
-
-    LongLongTuple2(long t1, long t2) {
+    @JsonCreator
+    LongLongTuple2(@JsonProperty("t1") long t1, @JsonProperty("t2") long t2) {
         this.t1 = t1;
         this.t2 = t2;
     }
@@ -196,7 +198,6 @@ public class LongLongTuple2 implements Iterable<Long>, Comparable<LongLongTuple2
      * @param values the values of the tuple to represent
      * @return a {@link StringBuilder} initialized with the string representation of the
      * values in the Tuple.
-     * @see Tuples#tupleStringRepresentation(Object...)
      */
     static StringBuilder tupleStringRepresentation(Object... values) {
         StringBuilder sb = new StringBuilder();

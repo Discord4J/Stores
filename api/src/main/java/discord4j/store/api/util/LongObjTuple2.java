@@ -16,6 +16,8 @@
  */
 package discord4j.store.api.util;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import reactor.util.annotation.NonNull;
 import reactor.util.annotation.Nullable;
 import reactor.util.function.Tuple2;
@@ -73,8 +75,8 @@ public class LongObjTuple2<T> implements Iterable<Object>, Comparable<LongObjTup
     @NonNull
     final T t2;
 
-
-    LongObjTuple2(long t1, T t2) {
+    @JsonCreator
+    LongObjTuple2(@JsonProperty("t1") long t1, @JsonProperty("t2") T t2) {
         this.t1 = t1;
         this.t2 = Objects.requireNonNull(t2, "t2");
     }
