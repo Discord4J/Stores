@@ -22,14 +22,14 @@ ext {
     }
 
     // Dependencies
-    reactor_bom_version = 'Dysprosium-SR6'
+    reactor_bom_version = 'Dysprosium-SR7'
     servicer_version = '1.0.0'
     commons_codec_version = '1.12'
     junit_version = '4.13'
     logback_version = '1.3.0-alpha4'
 
     caffeine_version = '2.8.1'
-    lettuce_version = '5.2.2.RELEASE'
+    lettuce_version = '5.3.0.RELEASE'
     jackson_version = '2.11.0'
     commons_lang_version = '3.10'
 
