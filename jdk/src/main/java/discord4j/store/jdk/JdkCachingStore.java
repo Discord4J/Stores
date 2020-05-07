@@ -47,10 +47,10 @@ public class JdkCachingStore<K extends Comparable<K>, V> implements Store<K, V> 
 
     @Override
     public Mono<V> find(K id) {
-        return caches.computeIfAbsent(id, k -> {
+        return Mono.defer(() -> caches.computeIfAbsent(id, k -> {
             Duration ttl = ttlFactory.apply(id);
             return delegate.find(id).cache(v -> ttl, t -> Duration.ZERO, () -> Duration.ZERO);
-        });
+        }));
     }
 
     @Override
