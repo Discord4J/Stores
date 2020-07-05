@@ -17,7 +17,9 @@
 
 package discord4j.store.redis;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
@@ -145,6 +147,10 @@ public class RedisStoreDefaults {
         ObjectMapper mapper = new ObjectMapper()
                 .registerModule(new PossibleModule())
                 .registerModule(new Jdk8Module())
+                .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE)
+                .setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.PUBLIC_ONLY)
+                .setDefaultPropertyInclusion(JsonInclude.Value.construct(JsonInclude.Include.CUSTOM,
+                        JsonInclude.Include.ALWAYS, PossibleFilter.class, null))
                 .addHandler(new DeserializationProblemHandler() {
                     @Override
                     public boolean handleUnknownProperty(DeserializationContext ctxt, JsonParser p,
@@ -154,9 +160,7 @@ public class RedisStoreDefaults {
                         p.skipChildren();
                         return true;
                     }
-                })
-                .setDefaultPropertyInclusion(JsonInclude.Value.construct(JsonInclude.Include.CUSTOM,
-                        JsonInclude.Include.ALWAYS, PossibleFilter.class, null));
+                });
         return new JacksonRedisSerializerFactory(mapper);
     }
 }
