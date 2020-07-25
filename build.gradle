@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
     id 'signing'
     id 'net.ltgt.apt' version '0.21'
-    id 'com.github.ben-manes.versions' version '0.28.0'
+    id 'com.github.ben-manes.versions' version '0.29.0'
     id 'net.researchgate.release' version '2.8.1'
 }
 
@@ -22,16 +22,16 @@ ext {
     }
 
     // Dependencies
-    reactor_bom_version = 'Dysprosium-SR9'
+    reactor_bom_version = 'Dysprosium-SR10'
     servicer_version = '1.0.3'
     commons_codec_version = '1.12'
     junit_version = '4.13'
     logback_version = '1.3.0-alpha4'
 
-    caffeine_version = '2.8.4'
-    lettuce_version = '5.3.0.RELEASE'
+    caffeine_version = '2.8.5'
+    lettuce_version = '5.3.2.RELEASE'
     jackson_version = '2.11.1'
-    commons_lang_version = '3.10'
+    commons_lang_version = '3.11'
 
     isJitpack = "true" == System.getenv("JITPACK")
     isRelease = !version.toString().endsWith('-SNAPSHOT')
