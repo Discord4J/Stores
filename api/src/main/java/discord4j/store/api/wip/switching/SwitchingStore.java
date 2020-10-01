@@ -29,18 +29,19 @@ public class SwitchingStore implements Store {
         return new Builder();
     }
 
-    public static class Builder {
+    public static final class Builder {
 
         private final List<ConditionStore> conditionStores = new ArrayList<>();
 
-        public Builder useIfActionMatches(Store store, Predicate<StoreAction<?>> condition) {
+        public final Builder useIfActionMatches(Store store, Predicate<StoreAction<?>> condition) {
             Objects.requireNonNull(store);
             Objects.requireNonNull(condition);
             conditionStores.add(new ConditionStore(store, condition));
             return this;
         }
 
-        public Builder useIfActionOfType(Store store, Class<? extends StoreAction<?>> actionType,
+        @SafeVarargs
+        public final Builder useIfActionOfType(Store store, Class<? extends StoreAction<?>> actionType,
                                          Class<? extends StoreAction<?>>... moreTypes) {
             Objects.requireNonNull(store);
             Objects.requireNonNull(actionType);
@@ -50,13 +51,13 @@ public class SwitchingStore implements Store {
             return this;
         }
 
-        public Builder useForAllActions(Store store) {
+        public final Builder useForAllActions(Store store) {
             Objects.requireNonNull(store);
             conditionStores.add(new ConditionStore(store, action -> true));
             return this;
         }
 
-        public SwitchingStore build() {
+        public final SwitchingStore build() {
             return new SwitchingStore(conditionStores);
         }
     }

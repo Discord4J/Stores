@@ -3,9 +3,9 @@ package discord4j.store.api.wip.action.write.gateway;
 import discord4j.discordjson.json.MessageData;
 import discord4j.discordjson.json.gateway.MessageDeleteBulk;
 
-import java.util.List;
+import java.util.Set;
 
-public class MessageDeleteBulkAction extends AbstractGatewayWriteAction<List<MessageData>> {
+public class MessageDeleteBulkAction extends AbstractGatewayWriteAction<Set<MessageData>> {
 
     private final MessageDeleteBulk messageDeleteBulk;
 

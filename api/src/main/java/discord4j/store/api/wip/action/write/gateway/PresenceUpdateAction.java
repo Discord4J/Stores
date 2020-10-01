@@ -1,9 +1,9 @@
 package discord4j.store.api.wip.action.write.gateway;
 
-import discord4j.discordjson.json.PresenceData;
 import discord4j.discordjson.json.gateway.PresenceUpdate;
+import discord4j.store.api.wip.util.PresenceAndUserData;
 
-public class PresenceUpdateAction extends AbstractGatewayWriteAction<PresenceData> {
+public class PresenceUpdateAction extends AbstractGatewayWriteAction<PresenceAndUserData> {
 
     private final PresenceUpdate presenceUpdate;
 
