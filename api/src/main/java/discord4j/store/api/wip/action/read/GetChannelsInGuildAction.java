@@ -1,19 +1,18 @@
 package discord4j.store.api.wip.action.read;
 
-import discord4j.common.util.Snowflake;
 import discord4j.discordjson.json.ChannelData;
 
 import java.util.List;
 
 public class GetChannelsInGuildAction implements ReadAction<List<ChannelData>> {
 
-    private final Snowflake guildId;
+    private final long guildId;
 
-    public GetChannelsInGuildAction(Snowflake guildId) {
+    public GetChannelsInGuildAction(long guildId) {
         this.guildId = guildId;
     }
 
-    public Snowflake getGuildId() {
+    public long getGuildId() {
         return guildId;
     }
 }
