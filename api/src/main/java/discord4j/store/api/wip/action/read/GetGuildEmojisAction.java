@@ -1,10 +1,9 @@
 package discord4j.store.api.wip.action.read;
 
 import discord4j.discordjson.json.EmojiData;
+import discord4j.store.api.wip.util.PossiblyIncompleteList;
 
-import java.util.List;
-
-public class GetGuildEmojisAction implements ReadAction<List<EmojiData>> {
+public class GetGuildEmojisAction implements ReadAction<PossiblyIncompleteList<EmojiData>> {
 
     private final long guildId;
 

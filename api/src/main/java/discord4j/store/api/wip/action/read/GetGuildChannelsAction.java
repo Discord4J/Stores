@@ -1,10 +1,9 @@
 package discord4j.store.api.wip.action.read;
 
 import discord4j.discordjson.json.ChannelData;
+import discord4j.store.api.wip.util.PossiblyIncompleteList;
 
-import java.util.List;
-
-public class GetGuildChannelsAction implements ReadAction<List<ChannelData>> {
+public class GetGuildChannelsAction implements ReadAction<PossiblyIncompleteList<ChannelData>> {
 
     private final long guildId;
 
