@@ -4,11 +4,11 @@ import discord4j.discordjson.json.ChannelData;
 
 import java.util.List;
 
-public class GetChannelsInGuildAction implements ReadAction<List<ChannelData>> {
+public class GetGuildChannelsAction implements ReadAction<List<ChannelData>> {
 
     private final long guildId;
 
-    public GetChannelsInGuildAction(long guildId) {
+    public GetGuildChannelsAction(long guildId) {
         this.guildId = guildId;
     }
 

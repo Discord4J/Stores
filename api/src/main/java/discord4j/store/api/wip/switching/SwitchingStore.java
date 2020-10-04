@@ -2,8 +2,10 @@ package discord4j.store.api.wip.switching;
 
 import discord4j.store.api.wip.Store;
 import discord4j.store.api.wip.action.StoreAction;
+import discord4j.store.api.wip.noop.NoOpStore;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.annotation.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -11,18 +13,21 @@ import java.util.function.Predicate;
 public class SwitchingStore implements Store {
 
     private final List<ConditionStore> conditionStores;
+    private final Store fallbackStore;
 
-    private SwitchingStore(List<ConditionStore> conditionStores) {
+    private SwitchingStore(List<ConditionStore> conditionStores, Store fallbackStore) {
         this.conditionStores = Collections.unmodifiableList(conditionStores);
+        this.fallbackStore = fallbackStore == null ? NoOpStore.create() : fallbackStore;
     }
 
     @Override
     public <R> Mono<R> execute(StoreAction<R> action) {
         return Flux.fromIterable(conditionStores)
                 .filter(conditionStore -> conditionStore.condition.test(action))
-                .flatMap(conditionStore -> conditionStore.store.execute(action))
-                .takeLast(1)
-                .next();
+                .map(conditionStore -> conditionStore.store)
+                .next()
+                .defaultIfEmpty(fallbackStore)
+                .flatMap(store -> store.execute(action));
     }
 
     public static Builder builder() {
@@ -31,7 +36,8 @@ public class SwitchingStore implements Store {
 
     public static final class Builder {
 
-        private final List<ConditionStore> conditionStores = new ArrayList<>();
+        private final List<ConditionStore> conditionStores = new LinkedList<>();
+        private Store fallbackStore;
 
         public final Builder useIfActionMatches(Store store, Predicate<StoreAction<?>> condition) {
             Objects.requireNonNull(store);
@@ -51,14 +57,19 @@ public class SwitchingStore implements Store {
             return this;
         }
 
-        public final Builder useForAllActions(Store store) {
-            Objects.requireNonNull(store);
-            conditionStores.add(new ConditionStore(store, action -> true));
+        /**
+         * Sets the Store to use when no other store matches the action.
+         *
+         * @param fallbackStore the store to use as fallback. A null value is equivalent to a {@link NoOpStore}
+         * @return this builder
+         */
+        public final Builder setFallback(@Nullable Store fallbackStore) {
+            this.fallbackStore = fallbackStore;
             return this;
         }
 
         public final SwitchingStore build() {
-            return new SwitchingStore(conditionStores);
+            return new SwitchingStore(conditionStores, fallbackStore);
         }
     }
 
