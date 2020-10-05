@@ -1,8 +1,8 @@
 package discord4j.store.api.wip.switching;
 
-import discord4j.store.api.wip.Store;
-import discord4j.store.api.wip.action.StoreAction;
 import discord4j.store.api.wip.noop.NoOpStore;
+import discord4j.store.api.wip.Store;
+import discord4j.store.api.wip.StoreAction;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.annotation.Nullable;
