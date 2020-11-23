@@ -5,7 +5,7 @@ dependencies {
     annotationProcessor "com.austinv11.servicer:Servicer:$servicer_version"
 
     testImplementation project(':tck')
-    testImplementation 'it.ozimov:embedded-redis:0.7.2'
+    testImplementation 'it.ozimov:embedded-redis:0.7.3'
 }
 
 javadoc {
