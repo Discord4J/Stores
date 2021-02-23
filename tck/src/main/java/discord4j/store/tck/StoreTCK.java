@@ -46,6 +46,7 @@ import static org.junit.Assert.*;
 public abstract class StoreTCK {
 
     final static Class<? extends Comparable> GENERIC_KEY = String.class, PRIMITIVE_KEY = Long.class;
+    final static int MAX_RANDOM_ARRAY_LEN = 2048;
 
     final Logger logger = Loggers.getLogger(this.getClass());
     final Random rng = new Random();
@@ -83,7 +84,7 @@ public abstract class StoreTCK {
     }
 
     final String randString() {
-        int strLen = rng.nextInt(Integer.MAX_VALUE - 5);
+        int strLen = rng.nextInt(MAX_RANDOM_ARRAY_LEN);
         byte[] bytes = new byte[strLen];
         rng.nextBytes(bytes);
         return new String(bytes);
@@ -103,7 +104,7 @@ public abstract class StoreTCK {
                 if (field.getType().equals(long.class)) {
                     field.setLong(obj, randLong());
                 } else if (field.getType().equals(long[].class)) {
-                    int arrLen = rng.nextInt(Integer.MAX_VALUE - 5);
+                    int arrLen = rng.nextInt(MAX_RANDOM_ARRAY_LEN);
                     long[] arr = new long[arrLen];
                     for (int i = 0; i < arrLen; i++) {
                         arr[i] = randLong();
