@@ -19,16 +19,15 @@ package discord4j.store.redis;
 
 import discord4j.store.api.Store;
 import discord4j.store.api.util.WithinRangePredicate;
+import io.lettuce.core.Value;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.cluster.api.StatefulRedisClusterConnection;
 import io.lettuce.core.cluster.api.reactive.RedisClusterReactiveCommands;
+import java.nio.charset.StandardCharsets;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 public class RedisStore<K extends Comparable<K>, V> implements Store<K, V> {
 
@@ -72,9 +71,8 @@ public class RedisStore<K extends Comparable<K>, V> implements Store<K, V> {
     public Flux<V> findInRange(K start, K end) {
         WithinRangePredicate<K> predicate = new WithinRangePredicate<>(start, end);
         return Flux.defer(() -> commands.hgetall(storeName))
-                .flatMap(map -> Flux.fromIterable(map.entrySet()))
-                .filter(entry -> predicate.test(keySerializer.deserialize(entry.getKey())))
-                .map(Map.Entry::getValue)
+                .filter(keyValue -> predicate.test(keySerializer.deserialize(keyValue.getKey())))
+                .map(Value::getValue)
                 .map(valueSerializer::deserialize);
     }
 
