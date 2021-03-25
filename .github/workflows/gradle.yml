@@ -2,11 +2,20 @@ name: Java CI
 
 on:
   push:
+    paths:
+      - '**.gradle'
+      - '**.properties'
+      - '**/src/**'
     branches:
-      - '**'
+      - 'master'
+      - '3.1.x'
     tags-ignore:
       - '*.*'
   pull_request:
+    paths:
+      - '**.gradle'
+      - '**.properties'
+      - '**/src/**'
     types: [opened, synchronize, reopened]
 
 jobs:
@@ -30,12 +39,17 @@ jobs:
           java-version: ${{ matrix.java }}
       - name: Build with Gradle
         run: ./gradlew build
+        if: |
+          !contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.pull_request.title, '[ci skip]')
   release:
     name: Publish artifacts
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
     needs: build
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - uses: actions/cache@v1
         with:
           path: ~/.gradle/caches
