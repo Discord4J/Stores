@@ -38,23 +38,15 @@ libraryDependencies ++= Seq(
 
 ## Quick Example
 
-This module can be **auto-discovered** by Discord4J if it's on the classpath. Refer to this example for customization:
+This module can be **auto-discovered** by Discord4J if it's on the classpath.
 
 ```java
 DiscordClientBuilder.create(System.getenv("token"))
         .build()
-        .withGateway(client -> {
-            client.getEventDispatcher().on(ReadyEvent.class)
-                    .subscribe(ready -> System.out.println("Logged in as " + ready.getSelf().getUsername()));
-
-            client.getEventDispatcher().on(MessageCreateEvent.class)
-                    .map(MessageCreateEvent::getMessage)
-                    .filter(msg -> msg.getContent().equals("!ping"))
-                    .flatMap(Message::getChannel)
-                    .flatMap(channel -> channel.createMessage("Pong!"))
-                    .subscribe();
-
-            return client.onDisconnect();
-        })
+        .gateway()
+        .setStoreService(RedisStoreService.builder().build()) // connects to localhost:6379, configure the builder to change
+        .withGateway(client -> client.on(ReadyEvent.class)
+            .doOnNext(ready -> log.info("Logged in as {}", ready.getSelf().getUsername()))
+            .then())
         .block();
 ```
