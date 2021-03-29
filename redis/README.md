@@ -7,7 +7,7 @@ Dependencies:
 * [discord-json](https://github.com/Discord4J/discord-json)
 
 ## Installation
-Replace VERSION with the following: [![Maven Central](https://img.shields.io/maven-central/v/com.discord4j/stores-redis.svg?style=flat-square)](https://search.maven.org/artifact/com.discord4j/stores-redis)
+Replace VERSION with the following: [![Maven Central](https://img.shields.io/maven-central/v/com.discord4j/stores-redis/3.1.svg?style=flat-square)](https://search.maven.org/artifact/com.discord4j/stores-redis)
 ### Gradle
 ```groovy
 repositories {

@@ -3,7 +3,7 @@
 A store implementation backed by [Caffeine](https://github.com/ben-manes/caffeine), a high performance caching library for Java 8.
 
 ## Installation
-Replace VERSION with the following: [![Maven Central](https://img.shields.io/maven-central/v/com.discord4j/stores-caffeine.svg?style=flat-square)](https://search.maven.org/artifact/com.discord4j/stores-caffeine)
+Replace VERSION with the following: [![Maven Central](https://img.shields.io/maven-central/v/com.discord4j/stores-caffeine/3.1.svg?style=flat-square)](https://search.maven.org/artifact/com.discord4j/stores-caffeine)
 ### Gradle
 ```groovy
 repositories {
