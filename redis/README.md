@@ -36,15 +36,15 @@ libraryDependencies ++= Seq(
 )
 ```
 
-## Quick Example
+## Usage under Discord4J 3.2.0-M2 and higher
 
-This module can be **auto-discovered** by Discord4J if it's on the classpath.
+`RedisStoreService` is considered a legacy store layout and must be configured accordingly at `setStore`:
 
 ```java
 DiscordClientBuilder.create(System.getenv("token"))
         .build()
         .gateway()
-        .setStoreService(RedisStoreService.builder().build()) // connects to localhost:6379, configure the builder to change
+        .setStore(Store.fromLayout(LegacyStoreLayout.of(RedisStoreService.builder().build()))) // connects to localhost:6379, configure the builder to change
         .withGateway(client -> client.on(ReadyEvent.class)
             .doOnNext(ready -> log.info("Logged in as {}", ready.getSelf().getUsername()))
             .then())

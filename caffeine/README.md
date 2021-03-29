@@ -32,17 +32,17 @@ libraryDependencies ++= Seq(
 )
 ```
 
-## Quick Example
+## Usage under Discord4J 3.2.0-M2 and higher
 
-This module can be **auto-discovered** by Discord4J if it's on the classpath.
+`CaffeineStoreService` is considered a legacy store layout and must be configured accordingly at `setStore`:
 
 ```java
 DiscordClientBuilder.create(System.getenv("token"))
         .build()
         .gateway()
-        .setStoreService(new CaffeineStoreService(builder -> builder.maximumSize(10_000)
+        .setStore(Store.fromLayout(LegacyStoreLayout.of(new CaffeineStoreService(builder -> builder.maximumSize(10_000)
                                                                     .expireAfterWrite(5, TimeUnit.MINUTES)
-                                                                    .refreshAfterWrite(1, TimeUnit.MINUTES)))
+                                                                    .refreshAfterWrite(1, TimeUnit.MINUTES)))))
         .withGateway(client -> client.on(ReadyEvent.class)
             .doOnNext(ready -> log.info("Logged in as {}", ready.getSelf().getUsername()))
             .then())
