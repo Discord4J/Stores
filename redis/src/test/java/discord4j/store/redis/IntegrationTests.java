@@ -19,26 +19,29 @@ package discord4j.store.redis;
 
 import discord4j.store.api.service.StoreService;
 import discord4j.store.tck.StoreVerification;
+import io.lettuce.core.RedisClient;
+import io.lettuce.core.RedisURI;
 import org.junit.Before;
-import org.junit.BeforeClass;
-import redis.embedded.RedisServer;
-
-import java.io.IOException;
+import org.junit.Rule;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.utility.DockerImageName;
 
 public class IntegrationTests extends StoreVerification {
 
     private RedisStoreService service;
 
-    @BeforeClass
-    public static void setUpTests() throws IOException {
-        RedisServer redisServer = new RedisServer(6379);
-        redisServer.start();
-        Runtime.getRuntime().addShutdownHook(new Thread(redisServer::stop));
-    }
+    @Rule
+    public GenericContainer<?> redis = new GenericContainer<>(DockerImageName.parse("redis:5.0.3-alpine"))
+            .withExposedPorts(6379);
 
     @Before
     public void setUp() {
-        service = RedisStoreService.builder().build();
+        service = RedisStoreService.builder()
+                .redisClient(RedisClient.create(RedisURI.builder()
+                        .withHost(redis.getHost())
+                        .withPort(redis.getFirstMappedPort())
+                        .build()))
+                .build();
     }
 
     @Override
