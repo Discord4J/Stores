@@ -6,7 +6,7 @@ dependencies {
     annotationProcessor "com.austinv11.servicer:Servicer:$servicer_version"
 
     testImplementation project(':tck')
-    testImplementation "org.testcontainers:testcontainers:1.15.2"
+    testImplementation "org.testcontainers:testcontainers:$testcontainers_version"
 }
 
 javadoc {
