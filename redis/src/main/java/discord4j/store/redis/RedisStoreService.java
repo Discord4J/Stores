@@ -134,7 +134,7 @@ public class RedisStoreService implements StoreService {
      */
     public static class Builder {
 
-        private RedisClient redisClient = defaultClient();
+        private RedisClient redisClient;
         private RedisCodec<byte[], byte[]> redisCodec = byteArrayCodec();
         private String keyPrefix = RedisStoreDefaults.keyPrefix();
         private RedisSerializerFactory keySerializerFactory = stringKeySerializerFactory();
@@ -214,7 +214,10 @@ public class RedisStoreService implements StoreService {
          * @return a {@link RedisStoreService}
          */
         public RedisStoreService build() {
-            return new RedisStoreService(redisClient, redisCodec, keyPrefix,
+            if (this.redisClient == null) {
+                this.redisClient = defaultClient();
+            }
+            return new RedisStoreService(this.redisClient, redisCodec, keyPrefix,
                 keySerializerFactory, valueSerializerFactory, sharedConnection);
         }
     }
