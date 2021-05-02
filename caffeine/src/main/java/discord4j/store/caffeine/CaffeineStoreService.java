@@ -58,7 +58,7 @@ public class CaffeineStoreService implements StoreService {
 
     @Override
     public boolean hasLongObjStores() {
-        return false;
+        return true;
     }
 
     @Override
