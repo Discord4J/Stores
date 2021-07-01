@@ -22,7 +22,7 @@ ext {
     }
 
     // Dependencies
-    reactor_bom_version = 'Dysprosium-SR19'
+    reactor_bom_version = 'Dysprosium-SR21'
     servicer_version = '1.0.3'
     commons_codec_version = '1.12'
     junit_version = '4.13.2'
