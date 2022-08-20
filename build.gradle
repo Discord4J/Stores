@@ -22,14 +22,14 @@ ext {
     }
 
     // Dependencies
-    reactor_bom_version = '2020.0.8'
+    reactor_bom_version = '2020.0.22'
     servicer_version = '1.0.3'
     commons_codec_version = '1.12'
     junit_version = '4.13.2'
     logback_version = '1.2.3'
 
     caffeine_version = '2.9.0'
-    lettuce_version = '6.0.6.RELEASE'
+    lettuce_version = '6.0.9.RELEASE'
     jackson_version = '2.12.4'
     commons_lang_version = '3.12.0'
     testcontainers_version = '1.15.3'
