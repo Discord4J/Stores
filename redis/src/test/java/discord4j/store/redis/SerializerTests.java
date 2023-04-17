@@ -17,8 +17,13 @@
 
 package discord4j.store.redis;
 
+import discord4j.discordjson.Id;
 import discord4j.store.api.util.LongLongTuple2;
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
@@ -48,5 +53,16 @@ public class SerializerTests {
         assertEquals(k1, s1.deserialize(s1.serialize(k1)));
         assertEquals(k2, s2.deserialize(s2.serialize(k2)));
         assertEquals(k3, s3.deserialize(s3.serialize(k3)));
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Test
+    public void testRawTypeSerializer() {
+        RedisSerializer<Set> rawSerializer = RedisStoreDefaults.jacksonValueSerializerFactory().create(Set.class);
+        Set rawSet = new HashSet();
+        rawSet.add(Id.of("123456789012345678").asLong());
+        byte[] written = rawSerializer.serialize(rawSet);
+        Set read = rawSerializer.deserialize(written);
+        Assertions.assertThat(rawSet).hasSameElementsAs(read);
     }
 }
