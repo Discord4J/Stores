@@ -3,6 +3,7 @@ dependencies {
     api "io.lettuce:lettuce-core:$lettuce_version"
     implementation "com.discord4j:discord-json-api:$discordJsonVersion"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jackson_version"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jackson_version"
     annotationProcessor "com.austinv11.servicer:Servicer:$servicer_version"
 
     testImplementation project(':tck')
