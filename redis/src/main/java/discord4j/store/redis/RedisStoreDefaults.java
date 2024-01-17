@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.DeserializationProblemHandler;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import discord4j.discordjson.possible.PossibleFilter;
 import discord4j.discordjson.possible.PossibleModule;
 import discord4j.store.api.util.LongLongTuple2;
@@ -147,6 +148,7 @@ public class RedisStoreDefaults {
         ObjectMapper mapper = new ObjectMapper()
                 .registerModule(new PossibleModule())
                 .registerModule(new Jdk8Module())
+                .registerModule(new JavaTimeModule())
                 .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE)
                 .setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.PUBLIC_ONLY)
                 .setVisibility(PropertyAccessor.CREATOR, JsonAutoDetect.Visibility.ANY)
