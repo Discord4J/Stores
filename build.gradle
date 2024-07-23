@@ -24,7 +24,6 @@ ext {
     // Dependencies
     reactor_bom_version = '2023.0.8'
     servicer_version = '1.0.3'
-    commons_codec_version = '1.12'
     junit_version = '5.7.1'
     logback_version = '1.3.14'
 
