@@ -1,6 +1,6 @@
 dependencies {
     api project(':api')
-    api "junit:junit:$junit_version"
+    api "org.junit.jupiter:junit-jupiter-engine:$junit_version"
     api "io.projectreactor:reactor-test"
     api "org.apache.commons:commons-lang3:$commons_lang_version"
 }
@@ -15,7 +15,7 @@ javadoc {
 
 jar {
     manifest {
-        attributes 'Implementation-Title': archivesBaseName,
+        attributes 'Implementation-Title': base.archivesName.get(),
                 'Implementation-Version': archiveVersion,
                 'Automatic-Module-Name': 'discord4j.store.tck'
     }

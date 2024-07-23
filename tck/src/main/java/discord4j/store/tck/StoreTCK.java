@@ -21,7 +21,7 @@ import discord4j.store.api.Store;
 import discord4j.store.api.primitive.ForwardingStore;
 import discord4j.store.api.primitive.LongObjStore;
 import discord4j.store.api.service.StoreService;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import reactor.util.Logger;
 import reactor.util.Loggers;
 import reactor.util.annotation.Nullable;
@@ -34,13 +34,13 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Extend this class and provide your {@link discord4j.store.api.service.StoreService} implementation.
- *
+ * <p>
  * Running all the tests will ensure that your store implements all the operations expected.
- *
+ * <p>
  * You should probably implement your own tests on top of this to ensure your store's unique features work correctly.
  */
 public abstract class StoreTCK {
@@ -94,9 +94,9 @@ public abstract class StoreTCK {
         try {
             for (Field field : obj.getClass().getDeclaredFields()) {
                 if (field.isSynthetic()
-                        || Modifier.isFinal(field.getModifiers())
-                        || Modifier.isTransient(field.getModifiers())
-                        || Modifier.isStatic(field.getModifiers()))
+                    || Modifier.isFinal(field.getModifiers())
+                    || Modifier.isTransient(field.getModifiers())
+                    || Modifier.isStatic(field.getModifiers()))
                     continue;
 
                 field.setAccessible(true);
@@ -122,7 +122,7 @@ public abstract class StoreTCK {
                     field.setBoolean(obj, rng.nextBoolean());
                 } else if (field.getType().equals(String.class)) {
                     field.set(obj, randString());
-//                } else if (Serializable.class.isAssignableFrom(field.getType())) {
+//              } else if (Serializable.class.isAssignableFrom(field.getType())) {
 //                    field.set(obj, randomizeObject((Serializable) field.getType().newInstance()));
                 } else {
                     throw new RuntimeException("Unsupported field type " + field.getType());
@@ -143,7 +143,7 @@ public abstract class StoreTCK {
     @Test
     public final void tckEntryPoint() {
         StoreService service = getStoreService();
-        assertNotNull("Store service is null!", service);
+        assertNotNull(service, "Store service is null!");
         logger.info("Running the Store TCK on {}...", service.getClass());
 
         boolean hasGenericStores;
@@ -174,7 +174,8 @@ public abstract class StoreTCK {
             LongObjStore<?> testStore = null;
             try {
                 testStore = service.provideLongObjStore(TestBean.class);
-            } catch (Throwable ignored) {}
+            } catch (Throwable ignored) {
+            }
             if (testStore == null || testStore instanceof ForwardingStore) {
                 logger.info("Long-Object stores disabled.");
             } else {
@@ -228,15 +229,15 @@ public abstract class StoreTCK {
         store.save(key, bean).block();
 
         TestBean beanCopy = store.find(key).block();
-        assertNotNull("Bean not correctly saved!", beanCopy);
+        assertNotNull(beanCopy, "Bean not correctly saved!");
 
         if (bean == beanCopy) { //Same ref? Likely in memory store
             passedTestTotal++;
             return;
         }
 
-        assertFalse("Transient field serialized!", beanCopy.isOriginal());
-        assertEquals("Same beans are not equivalent!", bean, beanCopy);
+        assertFalse(beanCopy.isOriginal(), "Transient field serialized!");
+        assertEquals(bean, beanCopy, "Same beans are not equivalent!");
         passedTestTotal++;
     }
 
@@ -250,11 +251,14 @@ public abstract class StoreTCK {
 
         long someLong;
         long[] someLongArray;
-        @Nullable Long someLongObject;
+        @Nullable
+        Long someLongObject;
         int someInt;
         boolean someBoolean;
-        @Nullable String someString;
-        @Nullable AnotherBean someObject;
+        @Nullable
+        String someString;
+        @Nullable
+        AnotherBean someObject;
 
         public static TestBean getBean() {
             TestBean bean = new TestBean();
@@ -262,7 +266,8 @@ public abstract class StoreTCK {
             return bean;
         }
 
-        public TestBean() {}
+        public TestBean() {
+        }
 
         public boolean isOriginal() {
             return isOriginal;
@@ -337,13 +342,13 @@ public abstract class StoreTCK {
             }
             TestBean bean = (TestBean) o;
             return isOriginal() == bean.isOriginal() &&
-                    getSomeLong() == bean.getSomeLong() &&
-                    getSomeInt() == bean.getSomeInt() &&
-                    isSomeBoolean() == bean.isSomeBoolean() &&
-                    Arrays.equals(getSomeLongArray(), bean.getSomeLongArray()) &&
-                    Objects.equals(getSomeLongObject(), bean.getSomeLongObject()) &&
-                    Objects.equals(getSomeString(), bean.getSomeString()) &&
-                    Objects.equals(getSomeObject(), bean.getSomeObject());
+                getSomeLong() == bean.getSomeLong() &&
+                getSomeInt() == bean.getSomeInt() &&
+                isSomeBoolean() == bean.isSomeBoolean() &&
+                Arrays.equals(getSomeLongArray(), bean.getSomeLongArray()) &&
+                Objects.equals(getSomeLongObject(), bean.getSomeLongObject()) &&
+                Objects.equals(getSomeString(), bean.getSomeString()) &&
+                Objects.equals(getSomeObject(), bean.getSomeObject());
         }
 
         @Override
@@ -356,15 +361,15 @@ public abstract class StoreTCK {
         @Override
         public String toString() {
             return "TestBean{" +
-                    "isOriginal=" + isOriginal +
-                    ", someLong=" + someLong +
-                    ", someLongArray=" + Arrays.toString(someLongArray) +
-                    ", someLongObject=" + someLongObject +
-                    ", someInt=" + someInt +
-                    ", someBoolean=" + someBoolean +
-                    ", someString='" + someString + '\'' +
-                    ", someObject=" + someObject +
-                    '}';
+                "isOriginal=" + isOriginal +
+                ", someLong=" + someLong +
+                ", someLongArray=" + Arrays.toString(someLongArray) +
+                ", someLongObject=" + someLongObject +
+                ", someInt=" + someInt +
+                ", someBoolean=" + someBoolean +
+                ", someString='" + someString + '\'' +
+                ", someObject=" + someObject +
+                '}';
         }
     }
 
@@ -374,12 +379,15 @@ public abstract class StoreTCK {
 
         long someLong;
         long[] someLongArray;
-        @Nullable Long someLongObject;
+        @Nullable
+        Long someLongObject;
         int someInt;
         boolean someBoolean;
-        @Nullable String someString;
+        @Nullable
+        String someString;
 
-        public AnotherBean() {}
+        public AnotherBean() {
+        }
 
         public long getSomeLong() {
             return someLong;
@@ -441,11 +449,11 @@ public abstract class StoreTCK {
             }
             AnotherBean that = (AnotherBean) o;
             return getSomeLong() == that.getSomeLong() &&
-                    getSomeInt() == that.getSomeInt() &&
-                    isSomeBoolean() == that.isSomeBoolean() &&
-                    Arrays.equals(getSomeLongArray(), that.getSomeLongArray()) &&
-                    Objects.equals(getSomeLongObject(), that.getSomeLongObject()) &&
-                    Objects.equals(getSomeString(), that.getSomeString());
+                getSomeInt() == that.getSomeInt() &&
+                isSomeBoolean() == that.isSomeBoolean() &&
+                Arrays.equals(getSomeLongArray(), that.getSomeLongArray()) &&
+                Objects.equals(getSomeLongObject(), that.getSomeLongObject()) &&
+                Objects.equals(getSomeString(), that.getSomeString());
         }
 
         @Override
@@ -458,13 +466,13 @@ public abstract class StoreTCK {
         @Override
         public String toString() {
             return "AnotherBean{" +
-                    "someLong=" + someLong +
-                    ", someLongArray=" + Arrays.toString(someLongArray) +
-                    ", someLongObject=" + someLongObject +
-                    ", someInt=" + someInt +
-                    ", someBoolean=" + someBoolean +
-                    ", someString='" + someString + '\'' +
-                    '}';
+                "someLong=" + someLong +
+                ", someLongArray=" + Arrays.toString(someLongArray) +
+                ", someLongObject=" + someLongObject +
+                ", someInt=" + someInt +
+                ", someBoolean=" + someBoolean +
+                ", someString='" + someString + '\'' +
+                '}';
         }
     }
 }
