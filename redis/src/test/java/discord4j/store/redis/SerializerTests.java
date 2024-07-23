@@ -20,12 +20,12 @@ package discord4j.store.redis;
 import discord4j.discordjson.Id;
 import discord4j.store.api.util.LongLongTuple2;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SerializerTests {
 

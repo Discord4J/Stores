@@ -19,8 +19,7 @@ package discord4j.store.api.service;
 import discord4j.store.api.Store;
 import discord4j.store.api.noop.NoOpStoreService;
 import discord4j.store.api.primitive.ForwardingStoreService;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
@@ -28,7 +27,7 @@ import reactor.util.function.Tuples;
 
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StoreTests {
 
@@ -41,7 +40,7 @@ public class StoreTests {
     @Test
     public void testServiceDiscovery() {
         assertTrue(provider.getStoreService() instanceof ForwardingStoreService);
-        Assert.assertEquals(TestService.class,
+        assertEquals(TestService.class,
                 ((ForwardingStoreService) provider.getStoreService()).getOriginal().getClass());
     }
 
@@ -49,7 +48,7 @@ public class StoreTests {
     public void testGenericFallback() {
         assertTrue(provider.getStoreService() instanceof ForwardingStoreService);
         assertTrue(provider.getStoreService().hasLongObjStores());
-        Assert.assertEquals(TestService.class,
+        assertEquals(TestService.class,
                 ((ForwardingStoreService) provider.getStoreService()).getOriginal().getClass());
     }
 
@@ -59,7 +58,7 @@ public class StoreTests {
         override.put(TestService.class, Integer.MAX_VALUE);
         override.put(NoOpStoreService.class, Integer.MIN_VALUE);
         StoreServiceLoader overridden = new StoreServiceLoader(override);
-        Assert.assertEquals(TestService.class,
+        assertEquals(TestService.class,
                 ((ForwardingStoreService) provider.getStoreService()).getOriginal().getClass());
         assertEquals(NoOpStoreService.class, overridden.getStoreService().getClass());
     }

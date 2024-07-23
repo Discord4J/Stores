@@ -16,12 +16,13 @@
  */
 package discord4j.store.api.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class LongObjTuple2Test {
 
@@ -36,9 +37,9 @@ public class LongObjTuple2Test {
         assertEquals(obj, tuple.getT2());
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testNullObj() {
-        LongObjTuple2.of(key, null);
+        assertThrows(NullPointerException.class, () -> LongObjTuple2.of(key, null));
     }
 
     @Test
