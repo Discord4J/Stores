@@ -17,14 +17,13 @@
 
 package discord4j.store.crypto;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import javax.crypto.*;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-
-import static org.junit.Assert.assertEquals;
 
 public class EncryptDecryptTest {
 
@@ -48,6 +47,6 @@ public class EncryptDecryptTest {
                 "                                      `8888>    `888  \n" +
                 "                                       \"8888     8%   \n" +
                 "                                        `\"888x:-\"     ";
-        assertEquals(input, new String(AES.decrypt(AES.encrypt(input.getBytes(), skey), skey)));
+        Assertions.assertEquals(input, new String(AES.decrypt(AES.encrypt(input.getBytes(), skey), skey)));
     }
 }
