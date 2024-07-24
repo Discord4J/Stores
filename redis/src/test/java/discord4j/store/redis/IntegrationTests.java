@@ -31,7 +31,7 @@ public class IntegrationTests extends StoreVerification {
     private RedisStoreService service;
 
     @Rule
-    public GenericContainer<?> redis = new GenericContainer<>(DockerImageName.parse("redis:5.0.3-alpine"))
+    public GenericContainer<?> redis = new GenericContainer<>(DockerImageName.parse("redis:7.2.5-alpine"))
             .withExposedPorts(6379);
 
     @Before
