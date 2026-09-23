@@ -21,20 +21,22 @@ import discord4j.store.api.service.StoreService;
 import discord4j.store.tck.StoreVerification;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.RedisURI;
-import org.junit.Before;
-import org.junit.Rule;
+import org.junit.jupiter.api.BeforeEach;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
+@Testcontainers
 public class IntegrationTests extends StoreVerification {
 
     private RedisStoreService service;
 
-    @Rule
+    @Container
     public GenericContainer<?> redis = new GenericContainer<>(DockerImageName.parse("redis:7.2.5-alpine"))
             .withExposedPorts(6379);
 
-    @Before
+    @BeforeEach
     public void setUp() {
         service = RedisStoreService.builder()
                 .redisClient(RedisClient.create(RedisURI.builder()

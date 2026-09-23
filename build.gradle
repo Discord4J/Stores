@@ -31,7 +31,7 @@ ext {
     lettuce_version = '7.7.0.RELEASE'
     jackson_version = '2.22.2'
     commons_lang_version = '3.20.0'
-    testcontainers_version = '1.20.0'
+    testcontainers_version = '2.0.5'
     assertj_version = '3.26.3'
 
     isJitpack = "true" == System.getenv("JITPACK")
