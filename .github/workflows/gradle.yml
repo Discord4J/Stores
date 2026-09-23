@@ -1,83 +1,83 @@
 name: Java CI
 
 on:
-    workflow_dispatch:
-    push:
-        paths:
-            - '**.gradle'
-            - '**.properties'
-            - '**/src/**'
-            - '.github/workflows/**'
-        branches:
-            - 'master'
-            - '3.1.x'
-        tags-ignore:
-            - '*.*'
-    pull_request:
-        paths:
-            - '**.gradle'
-            - '**.properties'
-            - '**/src/**'
-        types: [ opened, synchronize, reopened ]
+  workflow_dispatch:
+  push:
+    paths:
+      - '**.gradle'
+      - '**.properties'
+      - '**/src/**'
+      - '.github/workflows/**'
+    branches:
+      - 'master'
+      - '3.1.x'
+    tags-ignore:
+      - '*.*'
+  pull_request:
+    paths:
+      - '**.gradle'
+      - '**.properties'
+      - '**/src/**'
+    types: [ opened, synchronize, reopened ]
 
 jobs:
-    build:
-        name: Build for JDK ${{ matrix.java }}
-        runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                java: [ 8, 11, 17, 21 ]
-        steps:
-            -   name: PR Check (PR Blocked by Dependency)
-                if: ${{ contains(toJson(github.event.pull_request.labels.*.name), 'PR depends on PR') }}
-                run: echo "::warning::This PR was marked with the label 'PR depends on PR' this can cause issues in building"
-            -   uses: actions/checkout@v6
-            -   uses: actions/cache@v5
-                with:
-                    path: ~/.gradle/caches
-                    key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-                    restore-keys: |
-                        ${{ runner.os }}-gradle-
-            -   name: Set up JDK ${{ matrix.java }}
-                uses: actions/setup-java@v4
-                with:
-                    java-version: ${{ matrix.java }}
-                    distribution: 'temurin'
-            -   name: Build with Gradle
-                run: ./gradlew build
-    release:
-        name: Publish artifacts
-        runs-on: ubuntu-latest
-        if: ${{ github.event_name != 'pull_request' && ( (vars.runReleaseOnPush || 'true') == 'true' || contains(github.event.head_commit.message, '[release]') ) }}
-        needs: build
+  build:
+    name: Build for JDK ${{ matrix.java }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [ 8, 11, 17, 21 ]
+    steps:
+      - name: PR Check (PR Blocked by Dependency)
+        if: ${{ contains(toJson(github.event.pull_request.labels.*.name), 'PR depends on PR') }}
+        run: echo "::warning::This PR was marked with the label 'PR depends on PR' this can cause issues in building"
+      - uses: actions/checkout@v7
+      - uses: actions/cache@v6
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v6
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: 'temurin'
+      - name: Build with Gradle
+        run: ./gradlew build
+  release:
+    name: Publish artifacts
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' && ( (vars.runReleaseOnPush || 'true') == 'true' || contains(github.event.head_commit.message, '[release]') ) }}
+    needs: build
+    env:
+      HAS_CREDENTIALS: ${{ secrets.signingKey != '' && secrets.signingPassword != '' && secrets.sonatypeUsername != '' && secrets.sonatypePassword != '' }}
+    steps:
+      - name: Validate repository secrets for publish
+        if: ${{ env.HAS_CREDENTIALS != 'true' }}
+        run: |
+          echo '### Release Failed ❌' >> $GITHUB_STEP_SUMMARY
+          echo 'This repository does not have all required secrets: signingKey, signingPassword, sonatypeUsername or sonatypePassword).' >> $GITHUB_STEP_SUMMARY
+          echo "::error::This repository does not have all required secrets: signingKey, signingPassword, sonatypeUsername or sonatypePassword)."
+          exit -1
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/cache@v6
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Set up JDK
+        uses: actions/setup-java@v6
+        with:
+          java-version: 11
+          distribution: 'temurin'
+      - name: Publish with Gradle
+        run: ./gradlew -x test publishToSonatype closeAndReleaseSonatypeStagingRepository
         env:
-            HAS_CREDENTIALS: ${{ secrets.signingKey != '' && secrets.signingPassword != '' && secrets.sonatypeUsername != '' && secrets.sonatypePassword != '' }}
-        steps:
-            -   name: Validate repository secrets for publish
-                if: ${{ env.HAS_CREDENTIALS != 'true' }}
-                run: |
-                    echo '### Release Failed ❌' >> $GITHUB_STEP_SUMMARY
-                    echo 'This repository does not have all required secrets: signingKey, signingPassword, sonatypeUsername or sonatypePassword).' >> $GITHUB_STEP_SUMMARY
-                    echo "::error::This repository does not have all required secrets: signingKey, signingPassword, sonatypeUsername or sonatypePassword)."
-                    exit -1
-            -   uses: actions/checkout@v6
-                with:
-                    fetch-depth: 0
-            -   uses: actions/cache@v5
-                with:
-                    path: ~/.gradle/caches
-                    key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-                    restore-keys: |
-                        ${{ runner.os }}-gradle-
-            -   name: Set up JDK
-                uses: actions/setup-java@v5
-                with:
-                    java-version: 11
-                    distribution: 'temurin'
-            -   name: Publish with Gradle
-                run: ./gradlew -x test publishToSonatype closeAndReleaseSonatypeStagingRepository
-                env:
-                    ORG_GRADLE_PROJECT_signingKey: ${{ secrets.signingKey }}
-                    ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.signingPassword }}
-                    ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.sonatypeUsername }}
-                    ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.sonatypePassword }}
+          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.signingKey }}
+          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.signingPassword }}
+          ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.sonatypeUsername }}
+          ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.sonatypePassword }}
