@@ -1,13 +1,13 @@
 dependencies {
-    api "io.projectreactor:reactor-core"
-    api "com.austinv11.servicer:Servicer:$servicer_version"
-    api "com.fasterxml.jackson.core:jackson-databind:$jackson_version"
-    annotationProcessor "com.austinv11.servicer:Servicer:$servicer_version"
+    api libs.reactor.core
+    api libs.servicer
+    api libs.jackson.databind
+    annotationProcessor libs.servicer
 
-    testImplementation platform("org.junit:junit-bom:$junit_version")
-    testImplementation "org.junit.jupiter:junit-jupiter-engine"
-    testAnnotationProcessor "com.austinv11.servicer:Servicer:$servicer_version"
-    testRuntimeOnly "org.junit.platform:junit-platform-launcher:"
+    testImplementation platform(libs.junit.bom)
+    testImplementation libs.junit.jupiter.engine
+    testAnnotationProcessor libs.servicer
+    testRuntimeOnly libs.junit.platform.launcher
 }
 
 jar {

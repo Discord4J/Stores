@@ -1,7 +1,7 @@
 dependencies {
     api project(':api')
-    api "com.github.ben-manes.caffeine:caffeine:$caffeine_version"
-    annotationProcessor "com.austinv11.servicer:Servicer:$servicer_version"
+    api libs.caffeine
+    annotationProcessor libs.servicer
 }
 
 javadoc {

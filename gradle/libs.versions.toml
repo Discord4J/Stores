@@ -1,0 +1,38 @@
+[versions]
+reactor = "2025.0.7"
+servicer = "1.0.3"
+junit = "5.14.4"
+caffeine = "2.9.3"
+lettuce = "7.7.0.RELEASE"
+jackson = "2.22.2"
+commons-lang = "3.20.0"
+testcontainers = "2.0.5"
+assertj = "3.27.7"
+jsr305 = "3.0.1"
+discord-json = "1.6.21"
+nexus-publish = "2.0.0"
+release-plugin = "3.1.0"
+
+[libraries]
+reactor-bom = { group = "io.projectreactor", name = "reactor-bom", version.ref = "reactor" }
+reactor-core = { group = "io.projectreactor", name = "reactor-core" }
+reactor-test = { group = "io.projectreactor", name = "reactor-test" }
+servicer = { group = "com.austinv11.servicer", name = "Servicer", version.ref = "servicer" }
+junit-bom = { group = "org.junit", name = "junit-bom", version.ref = "junit" }
+junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit" }
+junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
+caffeine = { group = "com.github.ben-manes.caffeine", name = "caffeine", version.ref = "caffeine" }
+lettuce = { group = "io.lettuce", name = "lettuce-core", version.ref = "lettuce" }
+jackson-databind = { group = "com.fasterxml.jackson.core", name = "jackson-databind", version.ref = "jackson" }
+jackson-datatype-jdk8 = { group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jdk8", version.ref = "jackson" }
+jackson-datatype-jsr310 = { group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version.ref = "jackson" }
+commons-lang = { group = "org.apache.commons", name = "commons-lang3", version.ref = "commons-lang" }
+testcontainers = { group = "org.testcontainers", name = "testcontainers", version.ref = "testcontainers" }
+testcontainers-junit-jupiter = { group = "org.testcontainers", name = "testcontainers-junit-jupiter", version.ref = "testcontainers" }
+assertj = { group = "org.assertj", name = "assertj-core", version.ref = "assertj" }
+jsr305 = { group = "com.google.code.findbugs", name = "jsr305", version.ref = "jsr305" }
+discord-json-api = { group = "com.discord4j", name = "discord-json-api", version.ref = "discord-json" }
+
+[plugins]
+nexus-publish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexus-publish" }
+release = { id = "net.researchgate.release", version.ref = "release-plugin" }

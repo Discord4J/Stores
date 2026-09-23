@@ -1,6 +1,6 @@
 dependencies {
     api project(':api')
-    annotationProcessor "com.austinv11.servicer:Servicer:$servicer_version"
+    annotationProcessor libs.servicer
 }
 
 javadoc {
