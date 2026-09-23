@@ -29,7 +29,7 @@ ext {
 
     caffeine_version = '2.9.3' // TODO: Version 3.x require JDK 11
     lettuce_version = '7.7.0.RELEASE'
-    jackson_version = '2.17.2'
+    jackson_version = '2.22.2'
     commons_lang_version = '3.15.0'
     testcontainers_version = '1.20.0'
     assertj_version = '3.26.3'
