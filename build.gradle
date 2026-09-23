@@ -14,7 +14,7 @@ ext {
     artifact_group = 'com.discord4j'
     project_version = "$version".toString()
     project_description = 'Java interface for the Discord API'
-    project_jdk = '1.8'
+
     jdk = JavaVersion.current().majorVersion
     jdk_javadoc = "https://docs.oracle.com/javase/$jdk/docs/api/".toString()
     if (JavaVersion.current().isJava11Compatible()) {
@@ -42,17 +42,18 @@ allprojects {
     apply plugin: 'java-library'
     apply plugin: 'com.github.ben-manes.versions'
     apply plugin: 'maven-publish'
-    if (!isJitpack && isRelease) {
+    if (!rootProject.ext.isJitpack && rootProject.ext.isRelease) {
         apply plugin: 'signing'
     }
 
-    group = artifact_group
-    version = project_version
-    description = project_description
+    group = rootProject.ext.artifact_group
+    version = rootProject.ext.project_version
+    description = rootProject.ext.project_description
 
     java {
-        sourceCompatibility = project_jdk
-        targetCompatibility = project_jdk
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(25)
+        }
     }
 
     dependencies {
@@ -65,7 +66,7 @@ allprojects {
     repositories {
         mavenLocal()
         mavenCentral()
-        if (!isRelease || isJitpack) {
+        if (!rootProject.ext.isRelease || rootProject.ext.isJitpack) {
             maven { url = 'https://central.sonatype.com/repository/maven-snapshots' }
             maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
             maven { url = 'https://oss.sonatype.org/content/repositories/staging' }
@@ -83,7 +84,7 @@ allprojects {
             addStringOption 'Xdoclint:none', '-quiet'
             addStringOption 'encoding', 'UTF-8'
             links = [
-                    jdk_javadoc,
+                    rootProject.ext.jdk_javadoc,
                     "https://www.reactive-streams.org/reactive-streams-1.0.4-javadoc/",
                     "https://projectreactor.io/docs/core/release/api/",
             ]
@@ -96,6 +97,7 @@ allprojects {
     tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8'
         options.incremental = true
+        options.release = 8
     }
 
     tasks.withType(Test).configureEach {
@@ -176,10 +178,10 @@ subprojects {
             }
         }
 
-        if (!isJitpack) {
+        if (!rootProject.ext.isJitpack) {
             repositories {
                 maven {
-                    if (isRelease) {
+                    if (rootProject.ext.isRelease) {
                         url = 'https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2'
                     } else {
                         url = 'https://central.sonatype.com/repository/maven-snapshots'
@@ -197,7 +199,7 @@ subprojects {
         }
     }
 
-    if (!isJitpack && isRelease) {
+    if (!rootProject.ext.isJitpack && rootProject.ext.isRelease) {
         signing {
             def signingKey = findProperty("signingKey")
             def signingPassword = findProperty("signingPassword")
