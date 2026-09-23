@@ -24,7 +24,7 @@ ext {
     // Dependencies
     reactor_bom_version = '2025.0.7'
     servicer_version = '1.0.3'
-    junit_version = '5.7.1'
+    junit_version = '5.14.4'
     logback_version = '1.3.14'
 
     caffeine_version = '2.9.3' // TODO: Version 3.x require JDK 11
@@ -96,6 +96,10 @@ allprojects {
     tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8'
         options.incremental = true
+    }
+
+    tasks.withType(Test).configureEach {
+        useJUnitPlatform()
     }
 
     tasks.register('downloadDependencies') {
