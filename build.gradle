@@ -22,7 +22,7 @@ ext {
     }
 
     // Dependencies
-    reactor_bom_version = '2023.0.8'
+    reactor_bom_version = '2025.0.7'
     servicer_version = '1.0.3'
     junit_version = '5.7.1'
     logback_version = '1.3.14'
